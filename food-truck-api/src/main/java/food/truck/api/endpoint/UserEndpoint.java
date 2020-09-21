@@ -1,5 +1,10 @@
 package food.truck.api.endpoint;
 
+import static food.truck.api.FoodTruckApplication.logger;
+import food.truck.api.Database;
+import java.sql.*;
+import java.util.logging.*;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,6 +21,22 @@ import lombok.extern.log4j.Log4j2;
 public class UserEndpoint {
     @Autowired
     private UserService userService;
+
+    @GetMapping("/test/user/{id}")
+    public String userIdTest(@PathVariable Long id) {
+        try {
+            ResultSet r = Database.get().query("SELECT * FROM users WHERE user_id =" + id + ";");
+            if (r.next()) {
+                String email = r.getString("email") + '\n';
+                logger.log(Level.INFO, email);
+                return email;
+            }
+        } catch (SQLException ex) {
+            logger.log(Level.WARNING, "user " + id + " not found");
+        }
+
+        return "user not found\n";
+    }
 
     @GetMapping("/user/{id}")
     public User findUserById(@PathVariable Long id) {
