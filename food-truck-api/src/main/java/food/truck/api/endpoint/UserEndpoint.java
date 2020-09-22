@@ -25,7 +25,7 @@ public class UserEndpoint {
     @GetMapping("/test/user/{id}")
     public String userIdTest(@PathVariable Long id) {
         try {
-            ResultSet r = Database.get().query("SELECT * FROM users WHERE user_id =" + id + ";");
+            ResultSet r = Database.query("SELECT * FROM users WHERE user_id=" + id + ";");
             if (r.next()) {
                 String email = r.getString("email") + '\n';
                 logger.log(Level.INFO, email);
@@ -47,5 +47,11 @@ public class UserEndpoint {
     @PostMapping("/user")
     public User saveUser(@RequestBody User user) {
         return userService.saveUser(user);
+    }
+    
+    @PostMapping("/login")
+    public String login(@RequestBody String json) {
+        logger.log(Level.INFO, json);
+        return json;
     }
 }
