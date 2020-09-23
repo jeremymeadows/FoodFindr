@@ -96,6 +96,13 @@ dependencies {
 
     testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-engine'
     testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test'
+    
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    testImplementation 'org.apache.httpcomponents:httpclient'
+    testImplementation ('org.springframework.boot:spring-boot-starter-test') {
+        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+    }
+
 
     compileOnly group: 'org.projectlombok', name: 'lombok'
     testCompileOnly group: 'org.projectlombok', name: 'lombok'
