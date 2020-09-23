@@ -10,9 +10,9 @@ public class Database {
 
     private Database() throws SQLException {
         con = DriverManager.getConnection(
-            "jdbc:mysql://127.0.0.1:3306/food-truck-finder",
+            "jdbc:mariadb://localhost:3306",
             "root",
-            "password"
+            "seven725"
         );
         st = con.createStatement(
             ResultSet.TYPE_SCROLL_INSENSITIVE,
