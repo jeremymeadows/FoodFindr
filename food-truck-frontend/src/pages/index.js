@@ -3,30 +3,51 @@ import Link from '@material-ui/core/Link';
 
 require('dotenv').config();
 
-function HomePage() {    
+function HomePage() {
     function login() {
-        var uname = document.getElementById("uname").value;
+        var email = document.getElementById("email").value;
         var passw = document.getElementById("passw").value;
-        var r = '{"uname":"' + uname + '","passw":"' + passw + '"}';
-        console.log(r);
+        // TODO: has password for security
+        var login_cred = email + ';' + passw;
         
         const xhr = new XMLHttpRequest();
-        xhr.open('POST', 'http://127.0.0.1:8080/ping', true);
+        xhr.open('POST', 'http://localhost:8080/login', true);
         
         xhr.onloadend = function() {
-            console.log(xhr);
-            return;
+            var res = document.getElementById("login_result");
+            if (xhr.status === 200) {
+                if (xhr.responseText === "") {
+                    console.log("invalid email or password");
+                    res.innerHTML = "invalid email or password";
+                } else {
+                    console.log("login success");
+                    res.innerHTML = xhr.responseText + " was logged in successfully";
+                }
+            } else {
+                console.log("could not connect to server");
+                res.innerHTML = "could not connect to server";
+            }
         };
-        xhr.send(r);
+        xhr.send(login_cred);
     };
     
+    function create_acc() {
+        console.log("TODO");
+    }
+    
     return (
-        <div style={{textAlign: 'center', marginTop: '30vh'}}>
-            <h1>This is the home page!</h1>
-            
-            <input id="uname" type="text" placeholder="username"/><br/>
-            <input id="passw" type="password" placeholder="password"/><br/>
-            <button onClick={login}>submit</button>
+        <div id="app">
+            <div style={{textAlign: 'right', margin: '20px'}}>
+                <button onClick={create_acc}>create account</button>
+            </div>
+            <div style={{textAlign: 'center', marginTop: '30vh'}}>
+                <h1>Food Truck Finder</h1>
+                
+                <input id="email" type="text" placeholder="email"/><br/>
+                <input id="passw" type="password" placeholder="password"/><br/>
+                <button onClick={login}>login</button>
+                <p id="login_result"></p>
+            </div>
         </div>
     )
 }
