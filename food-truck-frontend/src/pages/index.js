@@ -1,14 +1,7 @@
 import React from 'react';
 import Link from '@material-ui/core/Link';
+import HomePage from "./homepage";
 
 require('dotenv').config();
 
-function HomePage() {
-    return (
-        <div>
-            This is the home page!
-        </div>
-    )
-}
-
-export default HomePage
+ReactDOM.render(<HomePage />, document.getElementById('root'));
