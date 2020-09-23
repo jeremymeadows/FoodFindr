@@ -88,12 +88,21 @@ dependencies {
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa'
     compile group: 'com.h2database', name: 'h2'
 
+    compile 'mysql:mysql-connector-java:8.0.11'
+
     // compile group: 'org.liquibase', name: 'liquibase-core'
 
     compile group: 'org.springdoc', name: 'springdoc-openapi-ui'
 
     testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-engine'
     testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test'
+    
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    testImplementation 'org.apache.httpcomponents:httpclient'
+    testImplementation ('org.springframework.boot:spring-boot-starter-test') {
+        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+    }
+
 
     compileOnly group: 'org.projectlombok', name: 'lombok'
     testCompileOnly group: 'org.projectlombok', name: 'lombok'
