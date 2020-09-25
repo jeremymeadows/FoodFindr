@@ -6,10 +6,11 @@ import NavMenu from "./navmenu";
 require('dotenv').config();
 
 function HomePage() {
-    const router = useRouter();
+    //const router = useRouter();
     return (
         <div>
             <NavMenu></NavMenu>
+            <Link href={"/"}><a>Index</a></Link>
             <h2>This is the home page!</h2>
         </div>
     )
