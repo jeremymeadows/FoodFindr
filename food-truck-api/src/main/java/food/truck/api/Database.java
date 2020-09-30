@@ -10,7 +10,7 @@ public class Database {
 
     private Database() throws SQLException {
         con = DriverManager.getConnection(
-            "jdbc:mysql://localhost:3307",
+            "jdbc:mysql://127.0.0.1:3307/food-truck-finder",
             "root",
             "password"
         );
