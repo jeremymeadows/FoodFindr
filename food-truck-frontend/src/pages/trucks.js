@@ -5,7 +5,7 @@ import { useHistory } from 'react-router-dom';
 import NavMenu from "./navmenu";
 import user from './utils/user.js';
 import { useCookies } from 'react-cookie';
-import TruckTable from '../components/truckTable';
+import TruckTable from './truckTable';
 
 require('dotenv').config();
 
@@ -17,6 +17,27 @@ function Trucks() {
         // console.log('redirecting');
     }
 
+    // function getTruckData() {
+    //     var trucks;
+    //     const xhr = new XMLHttpRequest();
+    //     xhr.open('GET', 'http://localhost:8080/trucks', true);
+
+    //     xhr.onloadend = function() {
+    //         if (xhr.status === 200) {
+    //             if (xhr.responseText === "") {
+    //                 console.log("could not get trucks");
+    //             } else {
+    //                 console.log("got trucks");
+    //                 trucks = JSON.parse(xhr.responseText);
+    //             }
+    //         } else {
+    //             console.log("could not connect to server");
+    //         }
+    //     };
+    //     xhr.send();
+    // }
+
+    // getTruckData();
     return (
         <div>
             <NavMenu></NavMenu>

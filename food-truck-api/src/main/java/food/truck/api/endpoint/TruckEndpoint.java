@@ -20,32 +20,38 @@ public class TruckEndpoint {
     @Autowired
     // TODO: CrossOrigin * is not secure, but it is easy to configure. It should be changed to the react server when it is running up on Heroku
 
-    @CrossOrigin(origins="*")
-    @GetMapping("/test/truck/{id}")
-    public String truckIdTest(@PathVariable String id) {
-        try {
-            ResultSet r = Database.query("SELECT * FROM trucks WHERE truck_id='" + id + "';");
-            if (r.next()) {
-                String email = r.getString("email") + '\n';
-                logger.log(Level.INFO, email);
-                return email;
-            }
-        } catch (SQLException ex) {
-            logger.log(Level.WARNING, "user #" + id + " not found");
-        }
+    // @CrossOrigin(origins="*")
+    // @GetMapping("/test/truck/{id}")
+    // public String truckIdTest(@PathVariable String id) {
+    //     try {
+    //         ResultSet r = Database.query("SELECT * FROM trucks WHERE truck_id='" + id + "';");
+    //         if (r.next()) {
+    //             String email = r.getString("email") + '\n';
+    //             logger.log(Level.INFO, email);
+    //             return email;
+    //         }
+    //     } catch (SQLException ex) {
+    //         logger.log(Level.WARNING, "user #" + id + " not found");
+    //     }
+    //
+    //     return "truck not found";
+    // }
+    //
+    // @CrossOrigin(origins="*")
+    // @GetMapping("/truck/{id}")
+    // public Truck findTruckById(@PathVariable Long id) {
+    //     return null;
+    // }
 
-        return "truck not found";
+    @CrossOrigin(origins="*")
+    @GetMapping("/trucks")
+    public String getTrucks() {
+        return "{ id: 1, name: 'truck1' }";
     }
 
-    @CrossOrigin(origins="*")
-    @GetMapping("/truck/{id}")
-    public Truck findTruckById(@PathVariable Long id) {
-        return null;
-    }
-
-    @CrossOrigin(origins="*")
-    @PostMapping("/truck")
-    public Truck saveTruck(@RequestBody User user) {
-        return null;
-    }
+    // @CrossOrigin(origins="*")
+    // @PostMapping("/truck")
+    // public Truck saveTruck(@RequestBody Truck user) {
+    //     return null;
+    // }
 }
