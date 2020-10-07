@@ -3,15 +3,23 @@ import Link from '@material-ui/core/Link';
 import {useRouter} from "next/router";
 import sha256 from 'js-sha256';
 import NavMenu from "../navmenu";
+import user from '../utils/user';
+import { useCookies, Cookies } from 'react-cookie';
 
 require('dotenv').config();
 
 function Register() {
+    const [cookies, setCookie] = useCookies(['sessionUser']);
+
     function register() {
         var email = document.getElementById("email").value;
         var uname = document.getElementById("uname").value;
+        if (document.getElementById("passw").value !== document.getElementById("conf").value) {
+            document.getElementById("login_result").innerHTML = "password doesn't match";
+            return;
+        }
         var passw = sha256(email + document.getElementById("passw").value);
-        
+
         var login_cred = email + ';' + uname + ';' + passw;
         console.log(login_cred);
 
@@ -31,12 +39,9 @@ function Register() {
                     res.innerHTML = xhr.responseText + " was created successfully";
                     window.location = "../dashboard";
 
-                    if (document.getElementById("remember").checked) {
-                        var d = new Date();
-                        document.cookie = "session=" + passw + ';' + (d.getTime() + (14 * 24 * 60 * 60 * 1000)) + ';';
-                    } else {
-                        document.cookie = "session=" + xhr.responseText + ';';
-                    }
+                    setCookie('sessionUser', xhr.responseText.split('_')[0]);
+                    user.id = xhr.responseText;
+                    console.log(cookies.sessionUser);
                 }
             } else {
                 console.log("could not connect to server");
@@ -63,7 +68,7 @@ function Register() {
 
                 <input id="remember" type="checkbox"/>
                 <label for="remember">remember me</label><br/>
-                
+
                 <p style={{display: 'inline', color: 'red'}} id="login_result"><br/></p>
                 <button onClick={register}>create account</button>
             </div>
