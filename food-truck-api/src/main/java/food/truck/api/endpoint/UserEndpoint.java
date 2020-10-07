@@ -50,11 +50,11 @@ public class UserEndpoint {
     }
 
     @CrossOrigin(origins="*")
-    @GetMapping("/dashboard")
+    @PostMapping("/dashboard")
     public String getInfo(@RequestBody String email){
         try{
             // Query the database for the username and user_id of the associated email
-            ResultSet r = Database.query("SELECT username, user_id FROM users WHERE email=" + email + ";");
+            ResultSet r = Database.query("SELECT username, user_id FROM users WHERE email='" + email + "';");
 
             // Look at the only result from the result set
             if(r.next()){
