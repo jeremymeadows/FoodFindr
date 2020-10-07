@@ -4,7 +4,7 @@ import {useRouter} from "next/router";
 import sha256 from 'js-sha256';
 import NavMenu from "../navmenu";
 import user from '../utils/user';
-import { useCookies, Cookies } from 'react-cookie';
+import { useCookies } from 'react-cookie';
 
 require('dotenv').config();
 

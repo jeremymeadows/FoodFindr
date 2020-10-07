@@ -4,7 +4,7 @@ import {useRouter} from "next/router";
 import sha256 from 'js-sha256';
 import NavMenu from "../navmenu";
 import user from '../utils/user';
-import { useCookies, Cookies } from 'react-cookie';
+import { useCookies } from 'react-cookie';
 
 require('dotenv').config();
 
@@ -19,8 +19,9 @@ function Register() {
             return;
         }
         var passw = sha256(email + document.getElementById("passw").value);
+        var owner = document.getElementById("owner").value;
 
-        var login_cred = email + ';' + uname + ';' + passw;
+        var login_cred = email + ';' + uname + ';' + passw + ';' + owner;
         console.log(login_cred);
 
         const xhr = new XMLHttpRequest();
@@ -66,8 +67,11 @@ function Register() {
                 <input id="passw" type="password" placeholder="password"/><br/>
                 <input id="conf" type="password" placeholder="confirm password"/><br/>
 
-                <input id="remember" type="checkbox"/>
-                <label for="remember">remember me</label><br/>
+                <input id="owner" type="checkbox"/>
+                <label htmlFor="owner">owner account</label><br/>
+
+                {/* <input id="remember" type="checkbox"/>
+                <label htmlFor="remember">remember me</label><br/> */}
 
                 <p style={{display: 'inline', color: 'red'}} id="login_result"><br/></p>
                 <button onClick={register}>create account</button>

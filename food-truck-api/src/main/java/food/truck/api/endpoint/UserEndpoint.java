@@ -27,9 +27,9 @@ public class UserEndpoint {
 
     @CrossOrigin(origins="*")
     @GetMapping("/test/user/{id}")
-    public String userIdTest(@PathVariable Long id) {
+    public String userIdTest(@PathVariable String id) {
         try {
-            ResultSet r = Database.query("SELECT * FROM users WHERE user_id=" + id + ";");
+            ResultSet r = Database.query("SELECT * FROM users WHERE user_id='" + id + "';");
             if (r.next()) {
                 String email = r.getString("email") + '\n';
                 logger.log(Level.INFO, email);
