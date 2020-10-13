@@ -26,7 +26,7 @@ public class UserEndpoint {
     // TODO: CrossOrigin * is not secure, but it is easy to configure. It should be changed to the react server when it is running up on Heroku
 
     @CrossOrigin(origins="*")
-    @GetMapping("/test/user/{id}")
+    @PostMapping("/test/user/{id}")
     public String userIdTest(@PathVariable Long id) {
         try {
             ResultSet r = Database.query("SELECT * FROM users WHERE user_id=" + id + ";");
