@@ -22,9 +22,11 @@
     "msal": "^1.4.0",
     "next": "9.5.2",
     "react": "16.13.1",
+    "react-cookie": "^4.0.3",
     "react-dom": "16.13.1",
     "react-final-form": "6.5.1",
-    "react-redux": "7.2.1"
+    "react-redux": "7.2.1",
+    "react-router-dom": "^5.2.0"
   },
   "devDependencies": {
     "@babel/core": "7.11.1",

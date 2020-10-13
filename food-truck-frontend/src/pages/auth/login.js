@@ -3,14 +3,18 @@ import Link from '@material-ui/core/Link';
 import {useRouter} from "next/router";
 import sha256 from 'js-sha256';
 import NavMenu from "../navmenu";
+import user from '../utils/user';
+import { useCookies, Cookies } from 'react-cookie';
 
 require('dotenv').config();
 
 function Login() {
+    const [cookies, setCookie] = useCookies(['sessionUser']);
+
     function login() {
         var email = document.getElementById("email").value;
         var passw = sha256(email + document.getElementById("passw").value);
-        
+
         var login_cred = email + ';' + passw;
         console.log(login_cred);
 
@@ -27,15 +31,13 @@ function Login() {
                 } else {
                     console.log("login success");
                     res.style = "color: green, display: inline;";
+                    user.username = email;
                     res.innerHTML = xhr.responseText + " was logged in successfully";
                     window.location = "../dashboard";
 
-                    if (document.getElementById("remember").checked) {
-                        var d = new Date();
-                        document.cookie = "session=" + passw + ';' + (d.getTime() + (14 * 24 * 60 * 60 * 1000)) + ';';
-                    } else {
-                        document.cookie = "session=" + xhr.responseText + ';';
-                    }
+                    setCookie('sessionUser', xhr.responseText.split('_')[0]);
+                    user.id = xhr.responseText;
+                    console.log(cookies.sessionUser);
                 }
             } else {
                 console.log("could not connect to server");
@@ -62,8 +64,8 @@ function Login() {
                 <input id="passw" type="password" placeholder="password"/><br/>
 
                 <input id="remember" type="checkbox"/>
-                <label for="remember">remember me</label><br/>
-                
+                <label htmlFor="remember">remember me</label><br/>
+
                 <p style={{display: 'inline', color: 'red'}} id="login_result"><br/></p>
                 <button onClick={login}>login</button><br/>
                 or<br/>
