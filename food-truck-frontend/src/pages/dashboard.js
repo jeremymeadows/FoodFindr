@@ -19,7 +19,7 @@ function Dashboard() {
     }
 
     function get_info(){
-        var email = cookies.sessionUser;
+        var name = cookies.sessionUser;
 
         const xhr = new XMLHttpRequest();
         xhr.open('POST', 'http://localhost:8080/dashboard', true);
@@ -34,13 +34,19 @@ function Dashboard() {
                 } else {
                     console.log("information found");
                     res.style = "color: black, display: inline;";
-                    user.username = email;
-                    res.innerHTML = "user ID : " + xhr.responseText.split(';')[0]
-                                        + "\nusername : " + xhr.responseText.split(';')[1];
+                    user.username = name;
+
+                    var owner = xhr.responseText.split(';')[2], is_owner;
+                    if(owner == 1) is_owner = "yes";
+                    else is_owner = "no";
+
+                    res.innerHTML = "username: " + xhr.responseText.split(';')[0]
+                    + "<br />" + "email: " + xhr.responseText.split(';')[1] +
+                        "<br />" + "truck owner: " + is_owner;
                 }
             }
         };
-        xhr.send(email);
+        xhr.send(name);
 
     }
     return (
@@ -50,7 +56,7 @@ function Dashboard() {
 
             <p style={{display: 'inline', color: 'black'}} id="info_result"><br/></p>
             <div style={{textAlign: 'center', marginTop: '30vh'}}>
-                <button onClick={get_info}>get profile info</button>
+                <button onClick={get_info}>View Profile</button>
             </div>
         </div>
     )

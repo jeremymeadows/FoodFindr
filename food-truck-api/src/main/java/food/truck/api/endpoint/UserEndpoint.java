@@ -49,21 +49,24 @@ public class UserEndpoint {
         return user.orElse(null);
     }
 
+
+
     @CrossOrigin(origins="*")
     @PostMapping("/dashboard")
     public String getInfo(@RequestBody String email){
         try{
             // Query the database for the username and user_id of the associated email
-            ResultSet r = Database.query("SELECT username, user_id FROM users WHERE email='" + email + "';");
+            ResultSet r = Database.query("SELECT username, email, owner FROM users WHERE email='" + email + "';");
 
             // Look at the only result from the result set
             if(r.next()){
                 // Assign the result's values for username and user_id to strings
                 String username = r.getString("username");
-                String userID = r.getString("user_id");
+                String email_address = r.getString("email");
+                String owner = r.getString("owner");
 
                 // Return the strings with a semi-colon delimiter between the two
-                return userID + ';' + username;
+                return username + ';' + email_address + ';' + owner;
             }
             // If there was no result in the set
             else{
@@ -119,6 +122,10 @@ public class UserEndpoint {
         String email = fields[0];
         String uname = fields[1];
         String passw = fields[2];
+        String owner = fields[3];
+
+        int isOwner = 0;
+        if(owner.equals("true")) isOwner = 1;
 
         if (login(email + ';' + passw) != "") {
           logger.log(Level.INFO, "account already exists");
@@ -127,11 +134,12 @@ public class UserEndpoint {
 
         logger.log(Level.INFO, "registering " + email);
         try {
-            String qry = "INSERT INTO users (user_id, email, username, password) VALUES('" +
+            String qry = "INSERT INTO users (user_id, email, username, password, owner) VALUES('" +
               id + "','" +
               email + "','" +
               uname + "','" +
-              passw + "');";
+              passw + "'," +
+              isOwner + ");";
             logger.log(Level.INFO, qry);
             Database.update(qry);
             return email + '_' + Integer.toHexString((id + passw).hashCode());
