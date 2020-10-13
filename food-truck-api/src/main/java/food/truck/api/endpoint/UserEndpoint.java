@@ -50,6 +50,36 @@ public class UserEndpoint {
     }
 
     @CrossOrigin(origins="*")
+    @PostMapping("/dashboard")
+    public String getInfo(@RequestBody String email){
+        try{
+            // Query the database for the username and user_id of the associated email
+            ResultSet r = Database.query("SELECT username, user_id FROM users WHERE email='" + email + "';");
+
+            // Look at the only result from the result set
+            if(r.next()){
+                // Assign the result's values for username and user_id to strings
+                String username = r.getString("username");
+                String userID = r.getString("user_id");
+
+                // Return the strings with a semi-colon delimiter between the two
+                return userID + ';' + username;
+            }
+            // If there was no result in the set
+            else{
+                // Log that there was no user associated to the email
+                logger.log(Level.INFO, "no user associated to " + email);
+                return "";
+            }
+
+        }catch(SQLException ex){
+            logger.log(Level.WARNING, "database query failed");
+            return "";
+        }
+    }
+
+
+    @CrossOrigin(origins="*")
     @PostMapping("/user")
     public User saveUser(@RequestBody User user) {
         return userService.saveUser(user);
