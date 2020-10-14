@@ -14,6 +14,8 @@ function Register() {
     function register() {
         var email = document.getElementById("email").value;
         var uname = document.getElementById("uname").value;
+        var truck_owner = document.getElementById("truck").checked;
+
         if (document.getElementById("passw").value !== document.getElementById("conf").value) {
             document.getElementById("login_result").innerHTML = "password doesn't match";
             return;
@@ -21,7 +23,7 @@ function Register() {
         var passw = sha256(email + document.getElementById("passw").value);
         var owner = document.getElementById("owner").value;
 
-        var login_cred = email + ';' + uname + ';' + passw + ';' + owner;
+        var login_cred = email + ';' + uname + ';' + passw + ';' + truck_owner;
         console.log(login_cred);
 
         const xhr = new XMLHttpRequest();
@@ -72,6 +74,9 @@ function Register() {
 
                 {/* <input id="remember" type="checkbox"/>
                 <label htmlFor="remember">remember me</label><br/> */}
+
+                <input id="truck" type="checkbox"/>
+                <label for="truck">I am a truck owner</label><br/>
 
                 <p style={{display: 'inline', color: 'red'}} id="login_result"><br/></p>
                 <button onClick={register}>create account</button>
