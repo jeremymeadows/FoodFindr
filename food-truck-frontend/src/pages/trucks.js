@@ -66,6 +66,8 @@ function Trucks() {
         <div>
             <NavMenu></NavMenu>
             <h2 style={{textAlign: 'center'}}>Trucks</h2>
+            <TruckTable></TruckTable>
+            <!--need an authentication checker to show create food truck and manage trucks-->
             <div style={{textAlign: 'center', marginTop: '10vh'}}>
             <input id="truckname" type="text" placeholder="Truck Name"/><br/>
             <input id="truckdescription" type="text" placeholder="Truck Description"/><br/>
@@ -73,7 +75,7 @@ function Trucks() {
             <button onClick={createFoodTruck}>Create Food Truck</button><br/>
             </div>
 
-            <TruckTable></TruckTable>
+
         </div>
     )
 }
