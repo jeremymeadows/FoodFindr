@@ -13,6 +13,22 @@ public class Truck {
         this.rating = rating;
     }
 
+    public String getId() {
+        return this.id;
+    }
+
+    public String getName() {
+        return this.name;
+    }
+
+    public String getDescription() {
+        return this.description;
+    }
+
+    public Float getRating() {
+        return this.rating;
+    }
+
     public String toString() {
         return ("{\"id\":\"" + this.id + "\"," +
             "\"name\":\"" + this.name + "\"," +
