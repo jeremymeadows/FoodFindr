@@ -13,6 +13,12 @@ import lombok.Data;
 @Entity
 @Table(name = User.TABLE_NAME)
 public class User {
+    // private String id;
+    // private String email;
+    // private String username;
+    // private String password;
+    // private Boolean owner;
+
     public static final String TABLE_NAME = "USER";
 
     @Id

@@ -12,7 +12,6 @@ function Dashboard() {
     const router = useRouter();
     const [cookies, setCookie] = useCookies(['sessionUser']);
 
-
     console.log(cookies.sessionUser);
     if (cookies.sessionUser === undefined) {
         console.log('redirecting');
