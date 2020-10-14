@@ -70,62 +70,25 @@ public class TruckEndpoint {
     }
 
     @CrossOrigin(origins="*")
-    @DeleteMapping("/deletetruck")
-    public void deleteTruck(@RequestBody Truck truckID){
-        try {
-            Database.query("DELETE * FROM trucks WHERE truck_id='" + truckID + "';");
-        }
-        catch(SQLException ex){
-            logger.log(Level.WARNING, ex.toString());
-        }
-    }
-
-    @CrossOrigin(origins="*")
     @PutMapping("/trucks/create")
     public String createTruck(@RequestBody String truck_cred) {
-        //var truck_cred = truck.name + ';' + description + ';' + rating;
-
-
         String[] fields = truck_cred.split(";");
         String name = fields[0]; //truck.getName()
         String description = fields[1]; //truck.getDescription()
-        String rating = fields[2]; //truck.getRating();
-        String id = Integer.toHexString(truck_cred.hashCode()).substring(0, 8);
-
-        logger.log(Level.INFO, "creating new truck " + name);
-        try {
-            String qry = "INSERT INTO trucks (truck_id, name, description, rating) VALUES('" +
-                    id + "','" +
-                    name + "','" +
-                    description + "','" +
-                    rating + "');";
-            logger.log(Level.INFO, qry);
-            Database.update(qry);
-            return name + '_' + Integer.toHexString((id).hashCode()) + '_' + description + '_' + rating;
-
-        } catch (SQLException ex) {
-            logger.log(Level.WARNING, ex.toString());
-            return "";
-        }
-    }
-
-    @CrossOrigin(origins="*")
-    @PostMapping("/trucks/update")
-    public String updateTruck(@RequestBody String truck_cred) {
-        String[] fields = truck_cred.split(";");
-        String name = fields[0]; //truck.getName()
-        String description = fields[1]; //truck.getDescription()
-        String rating = fields[2]; //truck.getRating();
-        String id = fields[3]; //truck.getRating();
+        float rating = Float.parseFloat(fields[2]); //truck.getRating();
+        String id = Integer.toHexString(name.hashCode()).substring(0, 4); // generate truck id
 
         logger.log(Level.INFO, "changing truck " + name + " data");
         try {
-            String qry = "UPDATE trucks SET name='" + name + "', ' description" + description +
-                    "', rating='" + rating + "' WHERE truck_id='" + id + "';";
+            String qry = "INSERT INTO trucks (truck_id, name, description, rating) VALUES('" +
+              id + "','" +
+              name + "','" +
+              description + "'," +
+              rating + ");";
             logger.log(Level.INFO, qry);
             Database.update(qry);
-            return name + '_' + Integer.toHexString((id).hashCode()) + '_' + description + '_' + rating;
 
+            return name + '_' + Integer.toHexString((id).hashCode()) + '_' + description + '_' + rating;
         } catch (SQLException ex) {
             logger.log(Level.WARNING, ex.toString());
             return "";

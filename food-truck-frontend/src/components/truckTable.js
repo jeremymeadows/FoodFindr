@@ -30,7 +30,7 @@ class TruckTable extends Component {
     renderTableData() {
         return this.state.trucks.map((truck) => {
             const { id, name, description, rating } = truck;
-            const url = 'localhost:8080/truck/' + id;
+            const url = 'http://localhost:8080/truck/' + id;
 
             return (
                 <tr key={id}>
