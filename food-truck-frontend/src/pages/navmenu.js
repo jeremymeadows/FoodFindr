@@ -22,7 +22,7 @@ function NavMenu() {
                 marginBottom: 8, width: '181px', height: '48px'}}>Dashboard</a></Link>
                 <Link href={"/trucks"}><a style={{marginLeft: 8, marginRight: 8, marginTop: 8,
                     marginBottom: 8, width: '181px', height: '48px'}}>Trucks</a></Link>
-            </span>
+            </span>}
             {sess && <span style={{float: 'right', textAlign: 'right', margin: '20px'}}>
             <Link href={"/auth/login"}><a style={{marginLeft: 8, marginRight: 8, marginTop: 8,
                 marginBottom: 8, width: '181px', height: '48px'}}>Login</a></Link>
