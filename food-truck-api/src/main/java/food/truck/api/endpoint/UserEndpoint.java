@@ -78,6 +78,44 @@ public class UserEndpoint {
         }
     }
 
+    @CrossOrigin(origins="*")
+    @PostMapping("/manageaccount")
+    public String editPassword(@RequestBody String new_login) {
+
+        String id = Integer.toHexString(new_login.hashCode()).substring(0, 8);
+
+        String[] fields = new_login.split(";");
+        String email = fields[0];
+        String newPassword = fields[1];
+        String oldPassword = fields[2];
+
+        if (login(email + ';' + oldPassword) == "") {
+            logger.log(Level.INFO, "wrong old password");
+            return "";
+        }
+        if (newPassword == oldPassword) {
+            logger.log(Level.INFO, "same password");
+            return "";
+        }
+        logger.log(Level.INFO, "creating new password " + email);
+        try {
+
+            //Set email new password using update
+            String qry = "UPDATE users SET password='" + newPassword + "' WHERE email='" + email + "';";
+            logger.log(Level.INFO, qry);
+            Database.update(qry);
+            //return email + '_' + Integer.toHexString((id + passw).hashCode());
+
+          //  ResultSet r = Database.query("SELECT username, user_id FROM users WHERE email='" + email + "';");
+
+            return email + '_' + Integer.toHexString((id + newPassword).hashCode());
+        } catch (SQLException ex) {
+            logger.log(Level.WARNING, "database update failed");
+            logger.log(Level.WARNING, ex.toString());
+            return "";
+        }
+    }
+
 
     @CrossOrigin(origins="*")
     @PostMapping("/user")
