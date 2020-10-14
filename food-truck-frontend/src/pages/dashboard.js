@@ -17,28 +17,40 @@ function Dashboard() {
         console.log('redirecting');
     }
 
-    function getTruckInfo() {
-        console.log()
-        // let db = openDatabase('food-truck-finder', '1.0', 'Trucks', 'sizeofdatabase');
-        // db.transaction(function(transaction) {
-        //     //still can't find trucks?
-        //     transaction.executeSql('SELECT * FROM trucks;', [],
-        //         function(transaction, resultSet) {
-        //         let length = resultSet.rows.length;
-        //         let i;
-        //         for (i = 0; i < length; i++) {
-        //             alert(results.rows.item(i).log);
-        //         }
-        //     }, errorHandler); //need some sort of error handling...
-        // });
-    };
+    function get_info(){
+        var email = cookies.sessionUser;
 
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', 'http://localhost:8080/dashboard', true);
+
+        xhr.onloadend=function(){
+            var res = document.getElementById("info_result");
+            if(xhr.status == 200){
+                if(xhr.responseText === ""){
+                    console.log("user's email not found in database");
+                    res.style = "color: black; display: block;";
+                    res.innerHTML = "email not found in database";
+                } else {
+                    console.log("information found");
+                    res.style = "color: black, display: inline;";
+                    user.username = email;
+                    res.innerHTML = "user ID : " + xhr.responseText.split(';')[0]
+                                        + "\nusername : " + xhr.responseText.split(';')[1];
+                }
+            }
+        };
+        xhr.send(email);
+
+    }
     return (
         <div>
             <NavMenu></NavMenu>
             <h2 style={{textAlign: 'center'}}>This is { cookies.sessionUser }'s dashboard!</h2>
 
-            <button onClick={getTruckInfo}>Truck Info</button><br/>
+            <p style={{display: 'inline', color: 'black'}} id="info_result"><br/></p>
+            <div style={{textAlign: 'center', marginTop: '30vh'}}>
+                <button onClick={get_info}>get profile info</button>
+            </div>
         </div>
     )
 }
