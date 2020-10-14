@@ -120,6 +120,29 @@ public class TruckEndpoint {
             return "";
         }
     }
+
+    @CrossOrigin(origins="*")
+    @PostMapping("/trucks/schedule")
+    public String manageSchedule(@RequestBody String truck_cred) {
+        //var truck_cred = truck.name + ';' + description + ';' + rating;
+
+
+        String[] fields = truck_cred.split(";");
+        String id = fields[0]; //truck.getName()
+        String schedule = fields[1]; //truck.getDescription()
+
+        logger.log(Level.INFO, "updating truck schedule " + id);
+        try {
+            String qry = "UPDATE trucks SET schedule='" + schedule + "' WHERE id='" + id + "';";
+            logger.log(Level.INFO, qry);
+            Database.update(qry);
+            return Integer.toHexString((id).hashCode()) + '_' + schedule;
+
+        } catch (SQLException ex) {
+            logger.log(Level.WARNING, ex.toString());
+            return "";
+        }
+    }
     // @CrossOrigin(origins="*")
     // @PostMapping("/truck")
     // public Truck saveTruck(@RequestBody Truck user) {
