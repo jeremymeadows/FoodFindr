@@ -82,8 +82,6 @@ public class UserEndpoint {
     @PostMapping("/manageaccount")
     public String editPassword(@RequestBody String new_login) {
 
-        String id = Integer.toHexString(new_login.hashCode()).substring(0, 8);
-
         String[] fields = new_login.split(";");
         String email = fields[0];
         String newPassword = fields[1];
@@ -93,10 +91,7 @@ public class UserEndpoint {
             logger.log(Level.INFO, "wrong old password");
             return "";
         }
-        if (newPassword == oldPassword) {
-            logger.log(Level.INFO, "same password");
-            return "";
-        }
+
         logger.log(Level.INFO, "creating new password " + email);
         try {
 
@@ -108,7 +103,7 @@ public class UserEndpoint {
 
           //  ResultSet r = Database.query("SELECT username, user_id FROM users WHERE email='" + email + "';");
 
-            return email + '_' + Integer.toHexString((id + newPassword).hashCode());
+            return email + '_' + Integer.toHexString((newPassword).hashCode());
         } catch (SQLException ex) {
             logger.log(Level.WARNING, "database update failed");
             logger.log(Level.WARNING, ex.toString());

@@ -14,6 +14,12 @@ function Manageaccount() {
 
     function editPassword() {
         var email = cookies.sessionUser;
+
+        if (document.getElementById("oldpassword").value === document.getElementById("newpassword").value) {
+            document.getElementById("login_result").innerHTML = "password didn't change";
+            return;
+        }
+
         var oldPassword = sha256(email + document.getElementById("oldpassword").value);
         var newPassword = sha256(email + document.getElementById("newpassword").value);
 
@@ -36,7 +42,7 @@ function Manageaccount() {
                     console.log("old password is correct");
                     res.style = "color: green, display: inline;";
                     user.username = email;
-                    res.innerHTML = xhr.responseText + " entered the correct password";
+                    res.innerHTML = xhr.responseText + " changing password";
                     window.location = "../manageaccount";
 
                     setCookie('sessionUser', xhr.responseText.split('_')[0]);
