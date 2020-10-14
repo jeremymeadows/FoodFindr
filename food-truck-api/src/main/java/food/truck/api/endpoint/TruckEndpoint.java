@@ -84,7 +84,7 @@ public class TruckEndpoint {
          logger.log(Level.INFO, "updating truck " + name);
          try {
              String qry = "UPDATE trucks SET name='" + name + "', description='" + description +
-                     "', rating='" + rating + "' WHERE id='" + id + "';";
+                     "', rating='" + rating + "' WHERE truck_id='" + id + "';";
              logger.log(Level.INFO, qry);
              Database.update(qry);
              return name + '_' + Integer.toHexString((id).hashCode()) + '_' + description + '_' + rating;
@@ -133,7 +133,7 @@ public class TruckEndpoint {
 
         logger.log(Level.INFO, "updating truck schedule " + id);
         try {
-            String qry = "UPDATE trucks SET schedule='" + schedule + "' WHERE id='" + id + "';";
+            String qry = "UPDATE trucks SET schedule='" + schedule + "' WHERE truck_id='" + id + "';";
             logger.log(Level.INFO, qry);
             Database.update(qry);
             return Integer.toHexString((id).hashCode()) + '_' + schedule;
