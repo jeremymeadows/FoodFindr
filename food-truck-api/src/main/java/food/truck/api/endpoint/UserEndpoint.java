@@ -183,6 +183,27 @@ public class UserEndpoint {
         }
     }
 
+
+    @CrossOrigin(origins="*")
+    @PostMapping("/getOwnership/")
+    public String getOwnership(@RequestBody String email){
+        try{
+            logger.log(Level.INFO, "email is: " + email);
+            ResultSet r = Database.query("SELECT owner FROM users WHERE email='" + email + "';");
+            if(r.next()) {
+                String isOwner = r.getString("owner");
+                logger.log(Level.INFO, isOwner);
+                return isOwner;
+            }
+        }
+        catch(SQLException ex){
+            logger.log(Level.WARNING, "fetching from database failed");
+            logger.log(Level.WARNING, ex.toString());
+            return "";
+        }
+        return "";
+    }
+
     @CrossOrigin(origins="*")
     @PostMapping("/autologin")
     public String autologin(@RequestBody String cookie) {
