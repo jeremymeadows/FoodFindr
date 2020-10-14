@@ -8,6 +8,7 @@ import java.util.logging.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -97,7 +98,7 @@ public class TruckEndpoint {
     }
 
     @CrossOrigin(origins="*")
-    @PutMapping("/trucks/managetruck")
+    @PutMapping("/trucks/create")
     public String createTruck(@RequestBody String truck_cred) {
         String[] fields = truck_cred.split(";");
         String name = fields[0]; //truck.getName()

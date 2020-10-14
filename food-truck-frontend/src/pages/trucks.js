@@ -28,7 +28,7 @@ function Trucks() {
 
         //var truck = new Truck(id, name, description, rating);
         const xhr = new XMLHttpRequest();
-        xhr.open('POST', 'http://localhost:8080/trucks/createtruck', true);
+        xhr.open('POST', 'http://localhost:8080/trucks/create', true);
 
         xhr.onloadend = function() {
             var res = document.getElementById("create_truck_result");
