@@ -67,6 +67,34 @@ public class TruckEndpoint {
         return json;
     }
 
+    @CrossOrigin(origins="*")
+    @PostMapping("/trucks")
+    public String createTruck(@RequestBody String truck_cred) {
+        //var truck_cred = name + ';' + description + ';' + rating;
+        String id = Integer.toHexString(truck_cred.hashCode()).substring(0, 8);
+
+        String[] fields = truck_cred.split(";");
+        String name = fields[0];
+        String description = fields[1];
+        String rating = fields[2];
+
+        logger.log(Level.INFO, "creating new truck " + name);
+        try {
+            String qry = "INSERT INTO trucks (truck_id, name, description, rating) VALUES('" +
+                    id + "','" +
+                    name + "','" +
+                    description + "','" +
+                    rating + "');";
+            logger.log(Level.INFO, qry);
+            Database.update(qry);
+            return name + '_' + Integer.toHexString((id).hashCode()) + '_' + description + '_' + rating;
+
+        } catch (SQLException ex) {
+            logger.log(Level.WARNING, ex.toString());
+            return "";
+        }
+    }
+
     // @CrossOrigin(origins="*")
     // @PostMapping("/truck")
     // public Truck saveTruck(@RequestBody Truck user) {
