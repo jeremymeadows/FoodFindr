@@ -26,10 +26,10 @@ public class UserEndpoint {
     // TODO: CrossOrigin * is not secure, but it is easy to configure. It should be changed to the react server when it is running up on Heroku
 
     @CrossOrigin(origins="*")
-    @GetMapping("/test/user/{id}")
+    @PostMapping("/test/user/{id}")
     public String userIdTest(@PathVariable Long id) {
         try {
-            ResultSet r = Database.query("SELECT * FROM users WHERE user_id=" + id + ";");
+            ResultSet r = Database.query("SELECT * FROM users WHERE user_id='" + id + "';");
             if (r.next()) {
                 String email = r.getString("email") + '\n';
                 logger.log(Level.INFO, email);
@@ -77,6 +77,39 @@ public class UserEndpoint {
 
         }catch(SQLException ex){
             logger.log(Level.WARNING, "database query failed");
+            return "";
+        }
+    }
+
+    @CrossOrigin(origins="*")
+    @PostMapping("/manageaccount")
+    public String editPassword(@RequestBody String new_login) {
+
+        String[] fields = new_login.split(";");
+        String email = fields[0];
+        String newPassword = fields[1];
+        String oldPassword = fields[2];
+
+        if (login(email + ';' + oldPassword) == "") {
+            logger.log(Level.INFO, "wrong old password");
+            return "";
+        }
+
+        logger.log(Level.INFO, "creating new password " + email);
+        try {
+
+            //Set email new password using update
+            String qry = "UPDATE users SET password='" + newPassword + "' WHERE email='" + email + "';";
+            logger.log(Level.INFO, qry);
+            Database.update(qry);
+            //return email + '_' + Integer.toHexString((id + passw).hashCode());
+
+          //  ResultSet r = Database.query("SELECT username, user_id FROM users WHERE email='" + email + "';");
+
+            return email + '_' + Integer.toHexString((newPassword).hashCode());
+        } catch (SQLException ex) {
+            logger.log(Level.WARNING, "database update failed");
+            logger.log(Level.WARNING, ex.toString());
             return "";
         }
     }
