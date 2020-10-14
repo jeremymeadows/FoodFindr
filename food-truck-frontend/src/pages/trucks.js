@@ -6,7 +6,7 @@ import NavMenu from "./navmenu";
 import { useCookies } from 'react-cookie';
 import TruckTable from '../components/truckTable';
 import user from "./utils/user";
-import Truck from "../../../food-truck-api/src/main/java/food/truck/api/truck/Truck.java";
+//import Truck from "../../../food-truck-api/src/main/java/food/truck/api/truck/Truck.java";
 
 require('dotenv').config();
 
@@ -24,11 +24,11 @@ function Trucks() {
 
         var truck_cred = name + ';' + description + ';' + rating;
         console.log(truck_cred);
-        var id = Integer.toHexString(truck_cred.hashCode()).substring(0, 8);
+        //var id = Integer.toHexString(truck_cred.hashCode()).substring(0, 8);
 
-        var truck = new Truck(id, name, description, rating);
+        //var truck = new Truck(id, name, description, rating);
         const xhr = new XMLHttpRequest();
-        xhr.open('POST', 'http://localhost:8080/trucks', true);
+        xhr.open('POST', 'http://localhost:8080/trucks/createtruck', true);
 
         xhr.onloadend = function() {
             var res = document.getElementById("create_truck_result");
@@ -58,7 +58,7 @@ function Trucks() {
                 }
             }
         };
-        xhr.send(truck);
+        xhr.send(truck_cred);
 
     };
 

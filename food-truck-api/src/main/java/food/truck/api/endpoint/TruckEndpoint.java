@@ -68,16 +68,16 @@ public class TruckEndpoint {
     }
 
     @CrossOrigin(origins="*")
-    @PostMapping("/trucks")
-    public String createTruck(@RequestBody Truck truck) {
-        var truck_cred = truck.name + ';' + description + ';' + rating;
+    @PostMapping("/trucks/createtruck")
+    public String createTruck(@RequestBody String truck_cred) {
+        //var truck_cred = truck.name + ';' + description + ';' + rating;
 
 
-        //String[] fields = truck_cred.split(";");
-        String name = truck.getName()
-        String description = truck.getDescription()
-        String rating = truck.getRating();
-        String id = truck.getId();
+        String[] fields = truck_cred.split(";");
+        String name = fields[0]; //truck.getName()
+        String description = fields[1]; //truck.getDescription()
+        String rating = fields[2]; //truck.getRating();
+        String id = Integer.toHexString(truck_cred.hashCode()).substring(0, 8);
 
         logger.log(Level.INFO, "creating new truck " + name);
         try {
