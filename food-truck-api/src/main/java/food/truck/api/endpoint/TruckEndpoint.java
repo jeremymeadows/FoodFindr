@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -65,6 +66,17 @@ public class TruckEndpoint {
         json = json.substring(0, json.length() - 1) + "]";
         logger.log(Level.INFO, json);
         return json;
+    }
+
+    @CrossOrigin(origins="*")
+    @DeleteMapping("/deletetruck")
+    public void deleteTruck(@RequestBody Truck truckID){
+        try {
+            Database.query("DELETE * FROM trucks WHERE truck_id='" + truckID + "';");
+        }
+        catch(SQLException ex){
+            logger.log(Level.WARNING, ex.toString());
+        }
     }
 
     // @CrossOrigin(origins="*")
