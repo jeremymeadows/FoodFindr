@@ -64,10 +64,10 @@ function Trucks() {
     };
 
     function manageTruck() {
-        var name = document.getElementById("truckname").value;
-        var description = document.getElementById("truckdescription").value;
-        var rating = document.getElementById("rating").value;
-        var id = document.getElementById("id").value;
+        var name = document.getElementById("oldtruckname").value;
+        var description = document.getElementById("oldtruckdescription").value;
+        var rating = document.getElementById("oldrating").value;
+        var id = document.getElementById("truckid").value;
 
         var truck_cred = name + ';' + description + ';' + rating + ';' + id;
         console.log(truck_cred);
@@ -75,7 +75,7 @@ function Trucks() {
 
         //var truck = new Truck(id, name, description, rating);
         const xhr = new XMLHttpRequest();
-        xhr.open('PUT', 'http://localhost:8080/trucks/managetruck', true);
+        xhr.open('POST', 'http://localhost:8080/trucks/manage', true);
 
         xhr.onloadend = function() {
             var res = document.getElementById("manage_truck_result");
@@ -123,10 +123,10 @@ function Trucks() {
                 <button onClick={createFoodTruck}>Create Food Truck</button><br/>
             </div>
             <div style={{textAlign: 'center', marginTop: '30vh'}}>
-                <input id="truckname" type="text" placeholder="Truck Name"/><br/>
-                <input id="truckdescription" type="text" placeholder="Truck Description"/><br/>
-                <input id="rating" type="text" placeholder="Rating"/><br/>
-                <input id="id" type="text" placeholder="Truck ID"/><br/>
+                <input id="oldtruckname" type="text" placeholder="Truck Name"/><br/>
+                <input id="oldtruckdescription" type="text" placeholder="Truck Description"/><br/>
+                <input id="oldrating" type="text" placeholder="Rating"/><br/>
+                <input id="truckid" type="text" placeholder="Truck ID"/><br/>
                 <p style={{display: 'inline', color: 'red'}} id="manage_truck_result"><br/></p>
                 <button onClick={manageTruck}>Edit Food Truck</button><br/>
             </div>
