@@ -96,6 +96,28 @@ public class TruckEndpoint {
         }
     }
 
+    @CrossOrigin(origins="*")
+    @PutMapping("/trucks/managetruck")
+    public String createTruck(@RequestBody String truck_cred) {
+        String[] fields = truck_cred.split(";");
+        String name = fields[0]; //truck.getName()
+        String description = fields[1]; //truck.getDescription()
+        String rating = fields[2]; //truck.getRating();
+        String id = fields[3]; //truck.getRating();
+
+        logger.log(Level.INFO, "changing truck " + name + " data");
+        try {
+            String qry = "UPDATE trucks SET name='" + name + "', ' description" + description +
+                    "', rating='" + rating + "' WHERE truck_id='" + id + "';";
+            logger.log(Level.INFO, qry);
+            Database.update(qry);
+            return name + '_' + Integer.toHexString((id).hashCode()) + '_' + description + '_' + rating;
+
+        } catch (SQLException ex) {
+            logger.log(Level.WARNING, ex.toString());
+            return "";
+        }
+    }
     // @CrossOrigin(origins="*")
     // @PostMapping("/truck")
     // public Truck saveTruck(@RequestBody Truck user) {
