@@ -14,39 +14,57 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import food.truck.api.user.Truck;
+import lombok.extern.log4j.Log4j2;
 
+@Log4j2
 @RestController
 public class TruckEndpoint {
-    @Autowired
     // TODO: CrossOrigin * is not secure, but it is easy to configure. It should be changed to the react server when it is running up on Heroku
 
-    // @CrossOrigin(origins="*")
-    // @GetMapping("/test/truck/{id}")
-    // public String truckIdTest(@PathVariable String id) {
-    //     try {
-    //         ResultSet r = Database.query("SELECT * FROM trucks WHERE truck_id='" + id + "';");
-    //         if (r.next()) {
-    //             String email = r.getString("email") + '\n';
-    //             logger.log(Level.INFO, email);
-    //             return email;
-    //         }
-    //     } catch (SQLException ex) {
-    //         logger.log(Level.WARNING, "user #" + id + " not found");
-    //     }
-    //
-    //     return "truck not found";
-    // }
-    //
-    // @CrossOrigin(origins="*")
-    // @GetMapping("/truck/{id}")
-    // public Truck findTruckById(@PathVariable Long id) {
-    //     return null;
-    // }
+    @CrossOrigin(origins="*")
+    @GetMapping("/truck/{id}")
+    public String findTruckById(@PathVariable String id) {
+        try {
+            ResultSet r = Database.query("SELECT * FROM trucks WHERE truck_id='" + id + "';");
+            if (r.next()) {
+                String name = r.getString("name");
+                String description = r.getString("description");
+                Float rating = r.getFloat("rating");
+
+                Truck t = new Truck(id, name, description, rating);
+
+                logger.log(Level.INFO, t.toString());
+                return t.toString();
+            }
+        } catch (SQLException ex) {
+            logger.log(Level.WARNING, "user #" + id + " not found");
+        }
+
+        return "truck not found";
+    }
 
     @CrossOrigin(origins="*")
     @GetMapping("/trucks")
     public String getTrucks() {
-        return "{ id: 1, name: 'truck1' }";
+        String json = "[";
+        try {
+            ResultSet r = Database.query("SELECT * FROM trucks WHERE truck_id LIKE '%';");
+            while (r.next()) {
+                String id = r.getString("truck_id");
+                String name = r.getString("name");
+                String description = r.getString("description");
+                Float rating = r.getFloat("rating");
+
+                Truck t = new Truck(id, name, description, rating);
+                logger.log(Level.INFO, t.toString());
+                json = json + t.toString() + ",";
+            }
+        } catch (SQLException ex) {
+            logger.log(Level.WARNING, ex.toString());
+        }
+        json = json.substring(0, json.length() - 1) + "]";
+        logger.log(Level.INFO, json);
+        return json;
     }
 
     // @CrossOrigin(origins="*")

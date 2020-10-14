@@ -6,6 +6,8 @@ import Head from 'next/head';
 import { CssBaseline } from '@material-ui/core';
 import { FoodTruckThemeProvider } from '../util/theme';
 
+import '../util/style.css';
+
 let initialState = {};
 let store = buildStore(initialState);
 
