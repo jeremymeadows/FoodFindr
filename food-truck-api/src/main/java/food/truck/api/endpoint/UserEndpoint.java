@@ -114,6 +114,32 @@ public class UserEndpoint {
         }
     }
 
+    @CrossOrigin(origins="*")
+    @PostMapping("/manageaccount/usename")
+    public String editUsername(@RequestBody String new_username) {
+
+        String[] fields = new_login.split(";");
+        String email = fields[0];
+        String newUsername = fields[1];
+
+        logger.log(Level.INFO, "creating new username " + email);
+        try {
+
+            //Set email new user using update
+            String qry = "UPDATE users SET username='" + newUsername + "' WHERE email='" + email + "';";
+            logger.log(Level.INFO, qry);
+            Database.update(qry);
+            //return email + '_' + Integer.toHexString((id + passw).hashCode());
+
+            //  ResultSet r = Database.query("SELECT username, user_id FROM users WHERE email='" + email + "';");
+
+            return email + '_' + Integer.toHexString((newUsername).hashCode());
+        } catch (SQLException ex) {
+            logger.log(Level.WARNING, "database update failed");
+            logger.log(Level.WARNING, ex.toString());
+            return "";
+        }
+    }
 
     @CrossOrigin(origins="*")
     @PostMapping("/user")
