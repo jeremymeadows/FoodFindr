@@ -2,9 +2,11 @@ import React from 'react';
 import Link from '@material-ui/core/Link';
 import {useRouter} from "next/router";
 import { useHistory } from 'react-router-dom';
-import NavMenu from "./navmenu";
+import NavMenu from "../components/navmenu";
 import user from './utils/user.js';
 import { useCookies } from 'react-cookie';
+
+import host from './utils/network';
 
 require('dotenv').config();
 
@@ -21,7 +23,7 @@ function Dashboard() {
         var name = cookies.sessionUser;
 
         const xhr = new XMLHttpRequest();
-        xhr.open('POST', 'http://localhost:8080/dashboard', true);
+        xhr.open('POST', host.dashboard, true);
 
         xhr.onloadend=function(){
             var res = document.getElementById("info_result");
@@ -46,8 +48,8 @@ function Dashboard() {
             }
         };
         xhr.send(name);
-
     }
+    
     return (
         <div>
             <NavMenu></NavMenu>

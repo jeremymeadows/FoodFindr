@@ -2,11 +2,10 @@
 
 import React from 'react';
 import {useRouter} from "next/router";
-import NavMenu from "./navmenu";
+import NavMenu from "../components/navmenu";
 import { useCookies } from 'react-cookie';
 import TruckTable from '../components/truckTable';
 import user from "./utils/user";
-//import Truck from "../../../food-truck-api/src/main/java/food/truck/api/truck/Truck.java";
 
 require('dotenv').config();
 

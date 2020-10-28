@@ -44,9 +44,23 @@ public class UserEndpoint {
 
     @CrossOrigin(origins="*")
     @GetMapping("/user/{id}")
-    public User findUserById(@PathVariable Long id) {
-        var user = userService.findUser(id);
-        return user.orElse(null);
+    public String getUserSubscriptions(@PathVariable String id) {
+        String s = "{\"subscriptions\":[";
+        boolean empty = true;
+        try {
+            ResultSet r = Database.query("SELECT truck_id FROM subscriptions WHERE user_id='" + id + "';");
+            while (r.next()) {
+                empty = false;
+                s = s + "\"" + r.getString("truck_id") + "\",";
+            }
+            s = s.substring(0, s.length() - 1) + "]}";
+            return s;
+        }
+        catch (SQLException ex) {
+            logger.log(Level.WARNING, ex.toString());
+        }
+
+        return "user not found";
     }
 
 

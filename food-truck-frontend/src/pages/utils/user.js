@@ -1,8 +1,12 @@
-import { useCookies } from 'react-cookie';
-//const [cookie, setCookie] = useCookies(['session']);
+import React, { Component } from 'react';
 
-class User {
+class User extends Component {
+    static user = new User();
+    // static cookie;
+
     constructor() {
+        super();
+
         if (!User.user) {
             this.id = "";
             this.name = "";
@@ -12,7 +16,14 @@ class User {
         }
         return User.user;
     }
-}
-var user = new User();
 
-export default user;
+    render() {
+        return (
+            <div></div>
+        )
+    }
+}
+// const user = new User();
+
+export default User.user;
+// export default User.cookie;

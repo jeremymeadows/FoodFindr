@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Link from '@material-ui/core/Link';
-import NavMenu from "./navmenu";
+import NavMenu from "../components/navmenu";
 import {useRouter} from "next/router";
 
 require('dotenv').config();

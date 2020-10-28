@@ -1,0 +1,100 @@
+2020-10-21T21:49:48.151842+00:00 app[web.1]: > @ start /app
+2020-10-21T21:49:48.151843+00:00 app[web.1]: > next start
+2020-10-21T21:49:48.151843+00:00 app[web.1]: 
+2020-10-21T21:49:48.377349+00:00 app[web.1]: info  - Loaded env from /app/.env
+2020-10-21T21:49:48.382650+00:00 app[web.1]: Error: Cannot find module 'next-compose-plugins'
+2020-10-21T21:49:48.382652+00:00 app[web.1]: Require stack:
+2020-10-21T21:49:48.382652+00:00 app[web.1]: - /app/next.config.js
+2020-10-21T21:49:48.382653+00:00 app[web.1]: - /app/node_modules/next/dist/next-server/server/config.js
+2020-10-21T21:49:48.382653+00:00 app[web.1]: - /app/node_modules/next/dist/next-server/server/next-server.js
+2020-10-21T21:49:48.382654+00:00 app[web.1]: - /app/node_modules/next/dist/server/next.js
+2020-10-21T21:49:48.382654+00:00 app[web.1]: - /app/node_modules/next/dist/server/lib/start-server.js
+2020-10-21T21:49:48.382654+00:00 app[web.1]: - /app/node_modules/next/dist/cli/next-start.js
+2020-10-21T21:49:48.382655+00:00 app[web.1]: - /app/node_modules/next/dist/bin/next
+2020-10-21T21:49:48.382655+00:00 app[web.1]: at Function.Module._resolveFilename (internal/modules/cjs/loader.js:831:15)
+2020-10-21T21:49:48.382656+00:00 app[web.1]: at Function.Module._load (internal/modules/cjs/loader.js:687:27)
+2020-10-21T21:49:48.382656+00:00 app[web.1]: at Module.require (internal/modules/cjs/loader.js:903:19)
+2020-10-21T21:49:48.382656+00:00 app[web.1]: at require (internal/modules/cjs/helpers.js:74:18)
+2020-10-21T21:49:48.382657+00:00 app[web.1]: at Object.<anonymous> (/app/next.config.js:1:21)
+2020-10-21T21:49:48.382657+00:00 app[web.1]: at Module._compile (internal/modules/cjs/loader.js:1015:30)
+2020-10-21T21:49:48.382658+00:00 app[web.1]: at Object.Module._extensions..js (internal/modules/cjs/loader.js:1035:10)
+2020-10-21T21:49:48.382658+00:00 app[web.1]: at Module.load (internal/modules/cjs/loader.js:879:32)
+2020-10-21T21:49:48.382659+00:00 app[web.1]: at Function.Module._load (internal/modules/cjs/loader.js:724:14)
+2020-10-21T21:49:48.382659+00:00 app[web.1]: at Module.require (internal/modules/cjs/loader.js:903:19) {
+2020-10-21T21:49:48.382659+00:00 app[web.1]: code: 'MODULE_NOT_FOUND',
+2020-10-21T21:49:48.382660+00:00 app[web.1]: requireStack: [
+2020-10-21T21:49:48.382660+00:00 app[web.1]: '/app/next.config.js',
+2020-10-21T21:49:48.382660+00:00 app[web.1]: '/app/node_modules/next/dist/next-server/server/config.js',
+2020-10-21T21:49:48.382661+00:00 app[web.1]: '/app/node_modules/next/dist/next-server/server/next-server.js',
+2020-10-21T21:49:48.382661+00:00 app[web.1]: '/app/node_modules/next/dist/server/next.js',
+2020-10-21T21:49:48.382661+00:00 app[web.1]: '/app/node_modules/next/dist/server/lib/start-server.js',
+2020-10-21T21:49:48.382662+00:00 app[web.1]: '/app/node_modules/next/dist/cli/next-start.js',
+2020-10-21T21:49:48.382662+00:00 app[web.1]: '/app/node_modules/next/dist/bin/next'
+2020-10-21T21:49:48.382662+00:00 app[web.1]: ]
+2020-10-21T21:49:48.382662+00:00 app[web.1]: }
+2020-10-21T21:49:48.393816+00:00 app[web.1]: npm ERR! code ELIFECYCLE
+2020-10-21T21:49:48.394146+00:00 app[web.1]: npm ERR! errno 1
+2020-10-21T21:49:48.399855+00:00 app[web.1]: npm ERR! @ start: `next start`
+2020-10-21T21:49:48.400011+00:00 app[web.1]: npm ERR! Exit status 1
+2020-10-21T21:49:48.400179+00:00 app[web.1]: npm ERR!
+2020-10-21T21:49:48.400343+00:00 app[web.1]: npm ERR! Failed at the @ start script.
+2020-10-21T21:49:48.400476+00:00 app[web.1]: npm ERR! This is probably not a problem with npm. There is likely additional logging output above.
+2020-10-21T21:49:48.454802+00:00 app[web.1]: 
+2020-10-21T21:49:48.455102+00:00 app[web.1]: npm ERR! A complete log of this run can be found in:
+2020-10-21T21:49:48.455216+00:00 app[web.1]: npm ERR!     /app/.npm/_logs/2020-10-21T21_49_48_401Z-debug.log
+2020-10-21T21:49:48.508847+00:00 heroku[web.1]: Process exited with status 1
+2020-10-21T21:49:48.540323+00:00 heroku[web.1]: State changed from starting to crashed
+2020-10-21T21:49:48.542466+00:00 heroku[web.1]: State changed from crashed to starting
+2020-10-21T21:49:56.136190+00:00 heroku[web.1]: Starting process with command `npm start`
+2020-10-21T21:49:59.116346+00:00 app[web.1]: 
+2020-10-21T21:49:59.116382+00:00 app[web.1]: > @ start /app
+2020-10-21T21:49:59.116382+00:00 app[web.1]: > next start
+2020-10-21T21:49:59.116383+00:00 app[web.1]: 
+2020-10-21T21:49:59.357357+00:00 app[web.1]: info  - Loaded env from /app/.env
+2020-10-21T21:49:59.364056+00:00 app[web.1]: Error: Cannot find module 'next-compose-plugins'
+2020-10-21T21:49:59.364058+00:00 app[web.1]: Require stack:
+2020-10-21T21:49:59.364058+00:00 app[web.1]: - /app/next.config.js
+2020-10-21T21:49:59.364059+00:00 app[web.1]: - /app/node_modules/next/dist/next-server/server/config.js
+2020-10-21T21:49:59.364059+00:00 app[web.1]: - /app/node_modules/next/dist/next-server/server/next-server.js
+2020-10-21T21:49:59.364060+00:00 app[web.1]: - /app/node_modules/next/dist/server/next.js
+2020-10-21T21:49:59.364060+00:00 app[web.1]: - /app/node_modules/next/dist/server/lib/start-server.js
+2020-10-21T21:49:59.364061+00:00 app[web.1]: - /app/node_modules/next/dist/cli/next-start.js
+2020-10-21T21:49:59.364061+00:00 app[web.1]: - /app/node_modules/next/dist/bin/next
+2020-10-21T21:49:59.364062+00:00 app[web.1]: at Function.Module._resolveFilename (internal/modules/cjs/loader.js:831:15)
+2020-10-21T21:49:59.364062+00:00 app[web.1]: at Function.Module._load (internal/modules/cjs/loader.js:687:27)
+2020-10-21T21:49:59.364062+00:00 app[web.1]: at Module.require (internal/modules/cjs/loader.js:903:19)
+2020-10-21T21:49:59.364063+00:00 app[web.1]: at require (internal/modules/cjs/helpers.js:74:18)
+2020-10-21T21:49:59.364063+00:00 app[web.1]: at Object.<anonymous> (/app/next.config.js:1:21)
+2020-10-21T21:49:59.364064+00:00 app[web.1]: at Module._compile (internal/modules/cjs/loader.js:1015:30)
+2020-10-21T21:49:59.364064+00:00 app[web.1]: at Object.Module._extensions..js (internal/modules/cjs/loader.js:1035:10)
+2020-10-21T21:49:59.364064+00:00 app[web.1]: at Module.load (internal/modules/cjs/loader.js:879:32)
+2020-10-21T21:49:59.364065+00:00 app[web.1]: at Function.Module._load (internal/modules/cjs/loader.js:724:14)
+2020-10-21T21:49:59.364065+00:00 app[web.1]: at Module.require (internal/modules/cjs/loader.js:903:19) {
+2020-10-21T21:49:59.364065+00:00 app[web.1]: code: 'MODULE_NOT_FOUND',
+2020-10-21T21:49:59.364066+00:00 app[web.1]: requireStack: [
+2020-10-21T21:49:59.364066+00:00 app[web.1]: '/app/next.config.js',
+2020-10-21T21:49:59.364066+00:00 app[web.1]: '/app/node_modules/next/dist/next-server/server/config.js',
+2020-10-21T21:49:59.364067+00:00 app[web.1]: '/app/node_modules/next/dist/next-server/server/next-server.js',
+2020-10-21T21:49:59.364067+00:00 app[web.1]: '/app/node_modules/next/dist/server/next.js',
+2020-10-21T21:49:59.364067+00:00 app[web.1]: '/app/node_modules/next/dist/server/lib/start-server.js',
+2020-10-21T21:49:59.364067+00:00 app[web.1]: '/app/node_modules/next/dist/cli/next-start.js',
+2020-10-21T21:49:59.364068+00:00 app[web.1]: '/app/node_modules/next/dist/bin/next'
+2020-10-21T21:49:59.364068+00:00 app[web.1]: ]
+2020-10-21T21:49:59.364068+00:00 app[web.1]: }
+2020-10-21T21:49:59.398373+00:00 app[web.1]: npm ERR! code ELIFECYCLE
+2020-10-21T21:49:59.398518+00:00 app[web.1]: npm ERR! errno 1
+2020-10-21T21:49:59.398519+00:00 app[web.1]: npm ERR! @ start: `next start`
+2020-10-21T21:49:59.398519+00:00 app[web.1]: npm ERR! Exit status 1
+2020-10-21T21:49:59.398541+00:00 app[web.1]: npm ERR!
+2020-10-21T21:49:59.398579+00:00 app[web.1]: npm ERR! Failed at the @ start script.
+2020-10-21T21:49:59.398612+00:00 app[web.1]: npm ERR! This is probably not a problem with npm. There is likely additional logging output above.
+2020-10-21T21:49:59.398613+00:00 app[web.1]: 
+2020-10-21T21:49:59.398619+00:00 app[web.1]: npm ERR! A complete log of this run can be found in:
+2020-10-21T21:49:59.398620+00:00 app[web.1]: npm ERR!     /app/.npm/_logs/2020-10-21T21_49_59_389Z-debug.log
+2020-10-21T21:49:59.500047+00:00 heroku[web.1]: Process exited with status 1
+2020-10-21T21:49:59.540729+00:00 heroku[web.1]: State changed from starting to crashed
+2020-10-21T21:50:00.465342+00:00 heroku[router]: at=error code=H10 desc="App crashed" method=GET path="/" host=food-truck-finder-frontend.herokuapp.com request_id=468af74c-b264-4f5f-9cf3-7bff4011e5a6 fwd="67.198.91.20" dyno= connect= service= status=503 bytes= protocol=https
+2020-10-21T21:50:00.527063+00:00 heroku[router]: at=error code=H10 desc="App crashed" method=GET path="/" host=food-truck-finder-frontend.herokuapp.com request_id=a33ffa84-cdb4-4d66-a647-b8b63e6f1b87 fwd="67.198.91.20" dyno= connect= service= status=503 bytes= protocol=https
+2020-10-21T21:50:00.673755+00:00 heroku[router]: at=error code=H10 desc="App crashed" method=GET path="/" host=food-truck-finder-frontend.herokuapp.com request_id=33ad5a17-0e1f-46c0-930b-3adc4417821b fwd="67.198.91.20" dyno= connect= service= status=503 bytes= protocol=https
+2020-10-21T21:50:00.676062+00:00 heroku[router]: at=error code=H10 desc="App crashed" method=GET path="/" host=food-truck-finder-frontend.herokuapp.com request_id=57c8cd7d-577f-4a7e-92dc-ac114be538a2 fwd="67.198.91.20" dyno= connect= service= status=503 bytes= protocol=https
+2020-10-21T21:50:01.660478+00:00 heroku[router]: at=error code=H10 desc="App crashed" method=GET path="/favicon.ico" host=food-truck-finder-frontend.herokuapp.com request_id=5494ff22-2dfd-41df-9366-0b7f46ae0943 fwd="67.198.91.20" dyno= connect= service= status=503 bytes= protocol=https

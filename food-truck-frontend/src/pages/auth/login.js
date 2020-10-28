@@ -2,9 +2,11 @@ import React from 'react';
 import Link from '@material-ui/core/Link';
 import {useRouter} from "next/router";
 import sha256 from 'js-sha256';
-import NavMenu from "../navmenu";
+import NavMenu from "../../components/navmenu";
 import user from '../utils/user';
 import { useCookies } from 'react-cookie';
+
+import host from '../utils/network';
 
 require('dotenv').config();
 
@@ -19,7 +21,7 @@ function Login() {
         console.log(login_cred);
 
         const xhr = new XMLHttpRequest();
-        xhr.open('POST', 'http://localhost:8080/login', true);
+        xhr.open('POST', host.login, true);
 
         xhr.onloadend = function() {
             var res = document.getElementById("login_result");
@@ -37,6 +39,8 @@ function Login() {
 
                     setCookie('sessionUser', xhr.responseText.split('_')[0]);
                     user.id = xhr.responseText;
+                    // console.log('user: ');
+                    // console.log(user);
                     console.log(cookies.sessionUser);
                 }
             } else {
