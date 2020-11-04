@@ -152,10 +152,10 @@ public class UserEndpoint {
         try {
             ResultSet r = Database.query("SELECT user_id FROM subscriptions WHERE truck_id=" + id + ";");
             while (r.next()) {
-                //message should show up on user's dashboard
+                //add notification to user_id, message should show up on user's dashboard
 
             }
-            return "TEST SENT";
+            return "Notification [" + message + "] sent.";
         } catch(SQLException ex) {
             logger.log(Level.WARNING, "message send failed");
             logger.log(Level.WARNING, ex.toString());
