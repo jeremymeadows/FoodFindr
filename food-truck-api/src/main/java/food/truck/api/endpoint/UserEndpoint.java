@@ -184,8 +184,8 @@ public class UserEndpoint {
             // For every recipient, store the recipient and message into the inbox table
             for(String r_ID : recipients){
                 Database.update("INSERT INTO inbox (recipientID, " +
-                        "messageContent) VALUES ('" + r_ID +
-                        "', '" + message + "');");
+                        "messageContent, messageRead) VALUES ('" + r_ID +
+                        "', '" + message + "', 0);");
             }
             return "Notification [" + message + "] sent.";
         } catch(SQLException ex) {
