@@ -118,7 +118,7 @@ public class UserEndpoint {
     @PostMapping("/manageaccount/usename")
     public String editUsername(@RequestBody String new_username) {
 
-        String[] fields = new_login.split(";");
+        String[] fields = new_username.split(";");
         String email = fields[0];
         String newUsername = fields[1];
 
@@ -136,6 +136,28 @@ public class UserEndpoint {
             return email + '_' + Integer.toHexString((newUsername).hashCode());
         } catch (SQLException ex) {
             logger.log(Level.WARNING, "database update failed");
+            logger.log(Level.WARNING, ex.toString());
+            return "";
+        }
+    }
+
+    @CrossOrigin(origins="*")
+    @PostMapping("/dashboard/message")
+    public String sendmessage(@RequestBody String owner_message) {
+        String[] fields = owner_message.split(";");
+        String message = fields[0];
+        String id = fields[1];
+
+        logger.log(Level.INFO, "sending message " + message + " to truck " + id);
+        try {
+            ResultSet r = Database.query("SELECT user_id FROM subscriptions WHERE truck_id=" + id + ";");
+            while (r.next()) {
+                //message should show up on user's dashboard
+
+            }
+            return "TEST SENT";
+        } catch(SQLException ex) {
+            logger.log(Level.WARNING, "message send failed");
             logger.log(Level.WARNING, ex.toString());
             return "";
         }
