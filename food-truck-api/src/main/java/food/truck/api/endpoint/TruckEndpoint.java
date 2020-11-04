@@ -122,6 +122,24 @@ public class TruckEndpoint {
     }
 
     @CrossOrigin(origins="*")
+    @PostMapping("/trucks/subscribe")
+    public String subscribeToTruck(@RequestBody String subscriptionInfo) {
+        String[] fields = subscriptionInfo.split(";");
+        String userid = fields[0];
+        String truckid = fields[1];
+        logger.log(Level.INFO, userid + " subscribing to " + truckid);
+        try {
+            String query = "INSERT INTO subscriptions(user_id, truck_id) VALUES (" + userid + "," + truckid + ");";
+            logger.log(Level.INFO, query);
+            Database.update(query);
+            return Integer.toHexString((userid).hashCode()) + '_' + truckid;
+        } catch (SQLException ex) {
+            logger.log(Level.WARNING, ex.toString());
+            return "";
+        }
+    }
+
+    @CrossOrigin(origins="*")
     @PostMapping("/trucks/schedule")
     public String manageSchedule(@RequestBody String truck_cred) {
         //var truck_cred = truck.name + ';' + description + ';' + rating;
