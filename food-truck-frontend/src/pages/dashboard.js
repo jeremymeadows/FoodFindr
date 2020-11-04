@@ -57,7 +57,7 @@ function Dashboard() {
         console.log(owner_message);
 
         const xhr = new XMLHttpRequest();
-        xhr.open('POST', 'http://localhost:8080/dashboard/message', true);
+        xhr.open('PATCH', 'http://localhost:8080/dashboard/message', true);
 
         xhr.onloadend = function() {
             var res = document.getElementById("send_message_result");
@@ -72,9 +72,11 @@ function Dashboard() {
                     res.innerHTML = xhr.responseText + " was sent successfully";
                     window.location = "../dashboard";
 
+                    /**
                     setCookie('sessionUser', xhr.responseText.split('_')[0]);
                     user.id = xhr.responseText;
                     console.log(cookies.sessionUser);
+                     **/
                 }
             } else {
                 if (res === null) {

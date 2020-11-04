@@ -3,15 +3,11 @@ package food.truck.api.endpoint;
 import static food.truck.api.FoodTruckApplication.logger;
 import food.truck.api.Database;
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.logging.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import food.truck.api.user.User;
 import food.truck.api.user.UserService;
@@ -168,7 +164,7 @@ public class UserEndpoint {
     }
 
     @CrossOrigin(origins="*")
-    @PostMapping("/dashboard/message")
+    @PatchMapping("/dashboard/message")
     public String sendmessage(@RequestBody String owner_message) {
         String[] fields = owner_message.split(";");
         String message = fields[0];
@@ -176,10 +172,20 @@ public class UserEndpoint {
 
         logger.log(Level.INFO, "sending message " + message + " to truck " + id + " subscribers");
         try {
-            ResultSet r = Database.query("SELECT user_id FROM subscriptions WHERE truck_id=" + id + ";");
+            ResultSet r = Database.query("SELECT user_id FROM subscriptions WHERE truck_id LIKE '" + id + "';");
+            ArrayList<String> recipients = new ArrayList<String>();
+            // Go through every row of the result set
             while (r.next()) {
-                //add notification to user_id, message should show up on user's dashboard
+                // Store every message recipient into an array list from the result set
+                String recipient_id = r.getString("user_id");
+                recipients.add(recipient_id);
+            }
 
+            // For every recipient, store the recipient and message into the inbox table
+            for(String r_ID : recipients){
+                Database.update("INSERT INTO inbox (recipientID, " +
+                        "messageContent) VALUES ('" + r_ID +
+                        "', '" + message + "');");
             }
             return "Notification [" + message + "] sent.";
         } catch(SQLException ex) {
