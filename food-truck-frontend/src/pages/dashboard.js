@@ -48,6 +48,76 @@ function Dashboard() {
         xhr.send(name);
 
     }
+
+    function send_message() {
+        var message = document.getElementById("message").value;
+        var id = document.getElementById("truck_id_message").value;
+
+        var owner_message = message + ';' + id;
+        console.log(owner_message);
+
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', 'http://localhost:8080/dashboard/message', true);
+
+        xhr.onloadend = function() {
+            var res = document.getElementById("send_message_result");
+            if (xhr.status === 200) {
+                if (xhr.responseText === "") {
+                    console.log("could not send message");
+                    res.style = "color: red; display: block;";
+                    res.innerHTML = "could not send message";
+                } else {
+                    console.log("send message success");
+                    res.style = "color: green, display: inline;";
+                    res.innerHTML = xhr.responseText + " was sent successfully";
+                    window.location = "../dashboard";
+
+                    setCookie('sessionUser', xhr.responseText.split('_')[0]);
+                    user.id = xhr.responseText;
+                    console.log(cookies.sessionUser);
+                }
+            } else {
+                if (res === null) {
+                    console.log("Res returned NULL");
+                }
+                else {
+                    console.log("could not connect to server");
+                    res.style = "color: red; display: block;";
+                    res.innerHTML = "could not connect to server";
+                }
+            }
+        };
+        xhr.send(owner_message);
+    }
+
+    function is_truck_owner() {
+        var name = cookies.sessionUser;
+
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', 'http://localhost:8080/dashboard/ownercheck', true);
+
+        xhr.onloadend=function(){
+            var res = document.getElementById("owner_result");
+            if(xhr.status == 200){
+                if(xhr.responseText === ""){
+                    console.log("user's email not found in database");
+                    res.style = "color: black; display: block;";
+                    res.innerHTML = "email not found in database";
+                } else {
+                    console.log("information found");
+                    res.style = "color: black, display: inline;";
+                    user.username = name;
+
+                    var owner = xhr.responseText, is_owner;
+                    if(owner == 1) is_owner = "yes";
+                    else is_owner = "no";
+                    return is_owner;
+                }
+            }
+        };
+        xhr.send(name);
+    }
+
     return (
         <div>
             <NavMenu></NavMenu>
@@ -56,6 +126,12 @@ function Dashboard() {
             <p style={{display: 'inline', color: 'black'}} id="info_result"><br/></p>
             <div style={{textAlign: 'center', marginTop: '30vh'}}>
                 <button onClick={get_info}>View Profile</button>
+            </div>
+            <div style={{textAlign: 'center', marginTop: '30vh'}}>
+                <input id="message" type="text" placeholder="Type your message here."/><br/>
+                <input id="truck_id_message" type="text" placeholder="Truck ID of subscribers you want to message."/><br/>
+                <p style={{display: 'inline', color: 'red'}} id="send_message_result"><br/></p>
+                <button onClick={send_message}>Send Message</button>
             </div>
         </div>
     )

@@ -114,6 +114,80 @@ public class UserEndpoint {
         }
     }
 
+    @CrossOrigin(origins="*")
+    @PostMapping("/manageaccount/usename")
+    public String editUsername(@RequestBody String new_username) {
+
+        String[] fields = new_username.split(";");
+        String email = fields[0];
+        String newUsername = fields[1];
+
+        logger.log(Level.INFO, "creating new username " + email);
+        try {
+
+            //Set email new user using update
+            String qry = "UPDATE users SET username='" + newUsername + "' WHERE email='" + email + "';";
+            logger.log(Level.INFO, qry);
+            Database.update(qry);
+            //return email + '_' + Integer.toHexString((id + passw).hashCode());
+
+            //  ResultSet r = Database.query("SELECT username, user_id FROM users WHERE email='" + email + "';");
+
+            return email + '_' + Integer.toHexString((newUsername).hashCode());
+        } catch (SQLException ex) {
+            logger.log(Level.WARNING, "database update failed");
+            logger.log(Level.WARNING, ex.toString());
+            return "";
+        }
+    }
+
+    @CrossOrigin(origins="*")
+    @PostMapping("/dashboard/ownercheck")
+    public String isOwner(@RequestBody String email){
+        try{
+            // Query the database for if email is owner
+            ResultSet r = Database.query("SELECT owner FROM users WHERE email='" + email + "';");
+
+            if(r.next()){
+                String owner = r.getString("owner");
+
+                // Return if owner
+                return owner;
+            }
+            // If there was no result in the set
+            else{
+                // Log that there was no user associated to the email
+                logger.log(Level.INFO, "no user associated to " + email);
+                return "";
+            }
+
+        }catch(SQLException ex){
+            logger.log(Level.WARNING, "database query failed");
+            return "";
+        }
+    }
+
+    @CrossOrigin(origins="*")
+    @PostMapping("/dashboard/message")
+    public String sendmessage(@RequestBody String owner_message) {
+        String[] fields = owner_message.split(";");
+        String message = fields[0];
+        String id = fields[1];
+
+        logger.log(Level.INFO, "sending message " + message + " to truck " + id + " subscribers");
+        try {
+            ResultSet r = Database.query("SELECT user_id FROM subscriptions WHERE truck_id=" + id + ";");
+            while (r.next()) {
+                //add notification to user_id, message should show up on user's dashboard
+
+            }
+            return "Notification [" + message + "] sent.";
+        } catch(SQLException ex) {
+            logger.log(Level.WARNING, "message send failed");
+            logger.log(Level.WARNING, ex.toString());
+            return "";
+        }
+    }
 
     @CrossOrigin(origins="*")
     @PostMapping("/user")
