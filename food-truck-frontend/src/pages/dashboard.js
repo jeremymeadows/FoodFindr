@@ -90,6 +90,34 @@ function Dashboard() {
         xhr.send(owner_message);
     }
 
+    function is_truck_owner() {
+        var name = cookies.sessionUser;
+
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', 'http://localhost:8080/dashboard/ownercheck', true);
+
+        xhr.onloadend=function(){
+            var res = document.getElementById("owner_result");
+            if(xhr.status == 200){
+                if(xhr.responseText === ""){
+                    console.log("user's email not found in database");
+                    res.style = "color: black; display: block;";
+                    res.innerHTML = "email not found in database";
+                } else {
+                    console.log("information found");
+                    res.style = "color: black, display: inline;";
+                    user.username = name;
+
+                    var owner = xhr.responseText, is_owner;
+                    if(owner == 1) is_owner = "yes";
+                    else is_owner = "no";
+                    return is_owner;
+                }
+            }
+        };
+        xhr.send(name);
+    }
+
     return (
         <div>
             <NavMenu></NavMenu>

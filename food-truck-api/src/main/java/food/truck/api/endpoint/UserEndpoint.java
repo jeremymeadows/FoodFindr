@@ -142,13 +142,39 @@ public class UserEndpoint {
     }
 
     @CrossOrigin(origins="*")
+    @PostMapping("/dashboard/ownercheck")
+    public String isOwner(@RequestBody String email){
+        try{
+            // Query the database for if email is owner
+            ResultSet r = Database.query("SELECT owner FROM users WHERE email='" + email + "';");
+
+            if(r.next()){
+                String owner = r.getString("owner");
+
+                // Return if owner
+                return owner;
+            }
+            // If there was no result in the set
+            else{
+                // Log that there was no user associated to the email
+                logger.log(Level.INFO, "no user associated to " + email);
+                return "";
+            }
+
+        }catch(SQLException ex){
+            logger.log(Level.WARNING, "database query failed");
+            return "";
+        }
+    }
+
+    @CrossOrigin(origins="*")
     @PostMapping("/dashboard/message")
     public String sendmessage(@RequestBody String owner_message) {
         String[] fields = owner_message.split(";");
         String message = fields[0];
         String id = fields[1];
 
-        logger.log(Level.INFO, "sending message " + message + " to truck " + id);
+        logger.log(Level.INFO, "sending message " + message + " to truck " + id + " subscribers");
         try {
             ResultSet r = Database.query("SELECT user_id FROM subscriptions WHERE truck_id=" + id + ";");
             while (r.next()) {
