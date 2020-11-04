@@ -8,7 +8,9 @@ import java.util.logging.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -96,13 +98,13 @@ public class TruckEndpoint {
      }
 
     @CrossOrigin(origins="*")
-    @PostMapping("/trucks/create")
+    @PutMapping("/trucks/create")
     public String createTruck(@RequestBody String truck_cred) {
         String[] fields = truck_cred.split(";");
         String name = fields[0]; //truck.getName()
         String description = fields[1]; //truck.getDescription()
         float rating = Float.parseFloat(fields[2]); //truck.getRating();
-        String id = Integer.toHexString(truck_cred.hashCode()).substring(0, 4); // generate truck id
+        String id = Integer.toHexString(name.hashCode()).substring(0, 4); // generate truck id
 
         logger.log(Level.INFO, "changing truck " + name + " data");
         try {
