@@ -3,15 +3,11 @@ package food.truck.api.endpoint;
 import static food.truck.api.FoodTruckApplication.logger;
 import food.truck.api.Database;
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.logging.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import food.truck.api.user.User;
 import food.truck.api.user.UserService;
@@ -114,6 +110,90 @@ public class UserEndpoint {
         }
     }
 
+    @CrossOrigin(origins="*")
+    @PostMapping("/manageaccount/usename")
+    public String editUsername(@RequestBody String new_username) {
+
+        String[] fields = new_username.split(";");
+        String email = fields[0];
+        String newUsername = fields[1];
+
+        logger.log(Level.INFO, "creating new username " + email);
+        try {
+
+            //Set email new user using update
+            String qry = "UPDATE users SET username='" + newUsername + "' WHERE email='" + email + "';";
+            logger.log(Level.INFO, qry);
+            Database.update(qry);
+            //return email + '_' + Integer.toHexString((id + passw).hashCode());
+
+            //  ResultSet r = Database.query("SELECT username, user_id FROM users WHERE email='" + email + "';");
+
+            return email + '_' + Integer.toHexString((newUsername).hashCode());
+        } catch (SQLException ex) {
+            logger.log(Level.WARNING, "database update failed");
+            logger.log(Level.WARNING, ex.toString());
+            return "";
+        }
+    }
+
+    @CrossOrigin(origins="*")
+    @PostMapping("/dashboard/ownercheck")
+    public String isOwner(@RequestBody String email){
+        try{
+            // Query the database for if email is owner
+            ResultSet r = Database.query("SELECT owner FROM users WHERE email='" + email + "';");
+
+            if(r.next()){
+                String owner = r.getString("owner");
+
+                // Return if owner
+                return owner;
+            }
+            // If there was no result in the set
+            else{
+                // Log that there was no user associated to the email
+                logger.log(Level.INFO, "no user associated to " + email);
+                return "";
+            }
+
+        }catch(SQLException ex){
+            logger.log(Level.WARNING, "database query failed");
+            return "";
+        }
+    }
+
+    @CrossOrigin(origins="*")
+    @PatchMapping("/dashboard/message")
+    public String sendmessage(@RequestBody String owner_message) {
+        String[] fields = owner_message.split(";");
+        String message = fields[0];
+        String id = fields[1];
+
+        logger.log(Level.INFO, "sending message " + message + " to truck " + id + " subscribers");
+        try {
+            ResultSet r = Database.query("SELECT user_id FROM subscriptions WHERE truck_id LIKE '" + id + "';");
+            ArrayList<String> recipients = new ArrayList<String>();
+            // Go through every row of the result set
+            while (r.next()) {
+                // Store every message recipient into an array list from the result set
+                String recipient_id = r.getString("user_id");
+                recipients.add(recipient_id);
+            }
+
+            // For every recipient, store the recipient and message into the inbox table
+            for(String r_ID : recipients){
+                Database.update("INSERT INTO inbox (recipientID, " +
+                        "messageContent) VALUES ('" + r_ID +
+                        "', '" + message + "');");
+            }
+            return "Notification [" + message + "] sent.";
+        } catch(SQLException ex) {
+            logger.log(Level.WARNING, "message send failed");
+            logger.log(Level.WARNING, ex.toString());
+            return "";
+        }
+    }
 
     @CrossOrigin(origins="*")
     @PostMapping("/user")
@@ -181,6 +261,27 @@ public class UserEndpoint {
             logger.log(Level.WARNING, ex.toString());
             return "";
         }
+    }
+
+
+    @CrossOrigin(origins="*")
+    @PostMapping("/getOwnership/")
+    public String getOwnership(@RequestBody String email){
+        try{
+            logger.log(Level.INFO, "email is: " + email);
+            ResultSet r = Database.query("SELECT owner FROM users WHERE email='" + email + "';");
+            if(r.next()) {
+                String isOwner = r.getString("owner");
+                logger.log(Level.INFO, isOwner);
+                return isOwner;
+            }
+        }
+        catch(SQLException ex){
+            logger.log(Level.WARNING, "fetching from database failed");
+            logger.log(Level.WARNING, ex.toString());
+            return "";
+        }
+        return "";
     }
 
     @CrossOrigin(origins="*")
