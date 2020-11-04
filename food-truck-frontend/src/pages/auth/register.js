@@ -21,7 +21,7 @@ function Register() {
             return;
         }
         var passw = sha256(email + document.getElementById("passw").value);
-        var owner = document.getElementById("owner").value;
+        //var owner = document.getElementById("owner").value;
 
         var login_cred = email + ';' + uname + ';' + passw + ';' + truck_owner;
         console.log(login_cred);
@@ -69,11 +69,13 @@ function Register() {
                 <input id="passw" type="password" placeholder="password"/><br/>
                 <input id="conf" type="password" placeholder="confirm password"/><br/>
 
+                {/*
                 <input id="owner" type="checkbox"/>
-                <label htmlFor="owner">owner account</label><br/>
+                <label htmlFor="owner">owner account</label><br/>*/}
 
                 {/* <input id="remember" type="checkbox"/>
                 <label htmlFor="remember">remember me</label><br/> */}
+
 
                 <input id="truck" type="checkbox"/>
                 <label for="truck">I am a truck owner</label><br/>

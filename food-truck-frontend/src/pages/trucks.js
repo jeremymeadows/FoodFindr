@@ -116,24 +116,38 @@ function Trucks() {
             <TruckTable></TruckTable>
 
             <div style={{textAlign: 'center', marginTop: '10vh'}}>
-                <input id="truckname" type="text" placeholder="Truck Name"/><br/>
-                <input id="truckdescription" type="text" placeholder="Truck Description"/><br/>
-                <input id="rating" type="text" placeholder="Rating"/><br/>
-                <p style={{display: 'inline', color: 'red'}} id="create_truck_result"><br/></p>
-                <button onClick={createFoodTruck}>Create Food Truck</button><br/>
+                <input id="truckname" type="text" placeholder="Truck Name"/>
+                <br/>
+                <input id="truckdescription" type="text" placeholder="Truck Description"/>
+                <br/>
+                <input id="rating" type="text" placeholder="Rating"/>
+                <br/>
+                <p style={{display: 'inline', color: 'red'}} id="create_truck_result">
+                    <br/>
+                </p>
+                <button onClick={createFoodTruck}>Create Food Truck</button>
+                <br/>
             </div>
             <div style={{textAlign: 'center', marginTop: '30vh'}}>
-                <input id="truckname" type="text" placeholder="Truck Name"/><br/>
-                <input id="truckdescription" type="text" placeholder="Truck Description"/><br/>
-                <input id="rating" type="text" placeholder="Rating"/><br/>
-                <input id="id" type="text" placeholder="Truck ID"/><br/>
-                <p style={{display: 'inline', color: 'red'}} id="manage_truck_result"><br/></p>
-                <button onClick={manageTruck}>Edit Food Truck</button><br/>
+                <input id="truckname" type="text" placeholder="Truck Name"/>
+                <br/>
+                <input id="truckdescription" type="text" placeholder="Truck Description"/>
+                <br/>
+                <input id="rating" type="text" placeholder="Rating"/>
+                <br/>
+                <input id="id" type="text" placeholder="Truck ID"/>
+                <br/>
+                <p style={{display: 'inline', color: 'red'}} id="manage_truck_result">
+                    <br/>
+                </p>
+                <button onClick={manageTruck}>Edit Food Truck</button>
+                <br/>
             </div>
 
 
         </div>
     )
+
 }
 
 
