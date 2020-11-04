@@ -69,34 +69,31 @@ public class TruckEndpoint {
 
     // this method has the same signature as the one below it, and didn't look like it was being used
 
-    // @CrossOrigin(origins="*")
-    // @PostMapping("/trucks/createtruck")
-    // public String createTruck(@RequestBody String truck_cred) {
-    //     //var truck_cred = truck.name + ';' + description + ';' + rating;
-    //
-    //
-    //     String[] fields = truck_cred.split(";");
-    //     String name = fields[0]; //truck.getName()
-    //     String description = fields[1]; //truck.getDescription()
-    //     String rating = fields[2]; //truck.getRating();
-    //     String id = Integer.toHexString(truck_cred.hashCode()).substring(0, 8);
-    //
-    //     logger.log(Level.INFO, "creating new truck " + name);
-    //     try {
-    //         String qry = "INSERT INTO trucks (truck_id, name, description, rating) VALUES('" +
-    //                 id + "','" +
-    //                 name + "','" +
-    //                 description + "','" +
-    //                 rating + "');";
-    //         logger.log(Level.INFO, qry);
-    //         Database.update(qry);
-    //         return name + '_' + Integer.toHexString((id).hashCode()) + '_' + description + '_' + rating;
-    //
-    //     } catch (SQLException ex) {
-    //         logger.log(Level.WARNING, ex.toString());
-    //         return "";
-    //     }
-    // }
+     @CrossOrigin(origins="*")
+     @PostMapping("/trucks/manage")
+     public String manageTruck(@RequestBody String truck_cred) {
+         //var truck_cred = truck.name + ';' + description + ';' + rating;
+
+
+         String[] fields = truck_cred.split(";");
+         String name = fields[0]; //truck.getName()
+         String description = fields[1]; //truck.getDescription()
+         String rating = fields[2]; //truck.getRating();
+         String id = fields[3];
+
+         logger.log(Level.INFO, "updating truck " + name);
+         try {
+             String qry = "UPDATE trucks SET name='" + name + "', description='" + description +
+                     "', rating='" + rating + "' WHERE truck_id='" + id + "';";
+             logger.log(Level.INFO, qry);
+             Database.update(qry);
+             return name + '_' + Integer.toHexString((id).hashCode()) + '_' + description + '_' + rating;
+
+         } catch (SQLException ex) {
+             logger.log(Level.WARNING, ex.toString());
+             return "";
+         }
+     }
 
     @CrossOrigin(origins="*")
     @PostMapping("/trucks/create")
@@ -118,6 +115,29 @@ public class TruckEndpoint {
             Database.update(qry);
 
             return name + '_' + Integer.toHexString((id).hashCode()) + '_' + description + '_' + rating;
+        } catch (SQLException ex) {
+            logger.log(Level.WARNING, ex.toString());
+            return "";
+        }
+    }
+
+    @CrossOrigin(origins="*")
+    @PostMapping("/trucks/schedule")
+    public String manageSchedule(@RequestBody String truck_cred) {
+        //var truck_cred = truck.name + ';' + description + ';' + rating;
+
+
+        String[] fields = truck_cred.split(";");
+        String id = fields[0]; //truck.getName()
+        String schedule = fields[1]; //truck.getDescription()
+
+        logger.log(Level.INFO, "updating truck schedule " + id);
+        try {
+            String qry = "UPDATE trucks SET schedule='" + schedule + "' WHERE truck_id='" + id + "';";
+            logger.log(Level.INFO, qry);
+            Database.update(qry);
+            return Integer.toHexString((id).hashCode()) + '_' + schedule;
+
         } catch (SQLException ex) {
             logger.log(Level.WARNING, ex.toString());
             return "";
