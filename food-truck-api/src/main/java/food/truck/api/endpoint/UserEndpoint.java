@@ -197,11 +197,12 @@ public class UserEndpoint {
 
     @CrossOrigin(origins="*")
     @PatchMapping("/dashboard/getmessage")
-    public String showmessage(@RequestBody String recipientID) {
+    public String showmessage(@RequestBody String email) {
 
         logger.log(Level.INFO, "getting message for " + recipientID + " subscriber");
         try {
-            ResultSet allmessages = Database.query("SELECT messageContent FROM subscriptions WHERE recipientID LIKE '" + recipientID + "';");
+            String recipientID = Database.query("SELECT user_id FROM users WHERE email='" + email + "';");
+            ResultSet r = Database.query("SELECT messageContent FROM subscriptions WHERE recipientID LIKE '" + recipientID + "';");
             String messages = "";
             while (r.next()) {
                 // Store every message recipient into an array list from the result set
