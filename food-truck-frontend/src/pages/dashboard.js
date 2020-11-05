@@ -120,6 +120,34 @@ function Dashboard() {
         xhr.send(name);
     }
 
+    function get_message(){
+        var name = cookies.sessionUser;
+
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', 'http://localhost:8080/dashboard/getmessage', true);
+
+        xhr.onloadend=function(){
+            var res = document.getElementById("get_message_result");
+            if(xhr.status == 200){
+                if(xhr.responseText === ""){
+                    console.log("user's email not found in database");
+                    res.style = "color: black; display: block;";
+                    res.innerHTML = "email not found in database";
+                } else {
+                    console.log("information found");
+                    res.style = "color: black, display: inline;";
+                    user.username = name;
+
+                    while (xhr.responseText.split(';')) {
+                        res.innerHTML = "message: " + xhr.responseText.split(';') + "<br />";
+                    }
+                }
+            }
+        };
+        xhr.send(name);
+
+    }
+
     return (
         <div>
             <NavMenu></NavMenu>
@@ -128,6 +156,10 @@ function Dashboard() {
             <p style={{display: 'inline', color: 'black'}} id="info_result"><br/></p>
             <div style={{textAlign: 'center', marginTop: '30vh'}}>
                 <button onClick={get_info}>View Profile</button>
+            </div>
+            <div style={{textAlign: 'center', marginTop: '30vh'}}>
+                <p style={{display: 'inline', color: 'red'}} id="get_message_result"><br/></p>
+                <button onClick={get_message}>View Messages</button>
             </div>
             <div style={{textAlign: 'center', marginTop: '30vh'}}>
                 <input id="message" type="text" placeholder="Type your message here."/><br/>
