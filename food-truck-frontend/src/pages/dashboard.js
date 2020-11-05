@@ -121,7 +121,8 @@ function Dashboard() {
     }
 
     function get_message(){
-        var name = cookies.sessionUser;
+        //how to get user name?
+        var username = "";
 
         const xhr = new XMLHttpRequest();
         xhr.open('POST', 'http://localhost:8080/dashboard/getmessage', true);
@@ -144,7 +145,7 @@ function Dashboard() {
                 }
             }
         };
-        xhr.send(name);
+        xhr.send(username);
 
     }
 
