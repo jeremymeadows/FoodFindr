@@ -1,20 +1,27 @@
-import React from 'react';
-import Link from '@material-ui/core/Link';
-import {useRouter} from "next/router";
-import { useHistory } from 'react-router-dom';
-import NavMenu from "./navmenu";
-import user from './utils/user.js';
-import { useCookies } from 'react-cookie';
+import React, { Component } from 'react';
 import sha256 from "js-sha256";
+import NavMenu from "../components/navmenu";
 
-require('dotenv').config();
+class ManageAccount extends Component {
+    constructor() {
+        super();
 
-function Manageaccount() {
-    const [cookies, setCookie] = useCookies(['sessionUser']);
+        this.state = {
+            user: null
+        };
+        this.editPassword = this.editPassword.bind(this);
+        this.editUsername = this.editUsername.bind(this);
+    }
 
-    function editPassword() {
-        var email = cookies.sessionUser;
+    componentDidMount() {
+        this.state.user = JSON.parse(localStorage.getItem('user'));
+        if (this.state.user === null) {
+            window.location = 'auth/login';
+        }
+        this.forceUpdate();
+    }
 
+    editPassword() {
         if (document.getElementById("oldpassword").value === document.getElementById("newpassword").value) {
             document.getElementById("login_result").innerHTML = "password didn't change";
             return;
@@ -22,8 +29,6 @@ function Manageaccount() {
 
         var oldPassword = sha256(email + document.getElementById("oldpassword").value);
         var newPassword = sha256(email + document.getElementById("newpassword").value);
-
-
 
         var new_login = email + ';' + newPassword + ';' + oldPassword;
         console.log(new_login);
@@ -44,11 +49,6 @@ function Manageaccount() {
                     user.username = email;
                     res.innerHTML = xhr.responseText + " changing password";
                     window.location = "../manageaccount";
-
-                    setCookie('sessionUser', xhr.responseText.split('_')[0]);
-                    user.id = xhr.responseText;
-                    console.log(cookies.sessionUser);
-
                 }
             } else {
                 console.log("could not connect to server");
@@ -59,14 +59,13 @@ function Manageaccount() {
         xhr.send(new_login);
     };
 
-    function editUsername() {
-        var email = cookies.sessionUser;
-
+    editUsername() {
         if (document.getElementById("oldusername").value === document.getElementById("newusername").value) {
             document.getElementById("user_result").innerHTML = "username didn't change";
             return;
         }
 
+        var email = this.state.user.email;
         var newUsername = document.getElementById("newusername").value;
 
         var new_username = email + ';' + newUsername;
@@ -85,14 +84,18 @@ function Manageaccount() {
                 } else {
                     console.log("changing username");
                     res.style = "color: green, display: inline;";
-                    user.username = email;
                     res.innerHTML = xhr.responseText + " changing username";
-                    window.location = "../manageaccount/username";
+                    window.location = "../manageaccount";
 
-                    setCookie('sessionUser', xhr.responseText.split('_')[0]);
-                    user.id = xhr.responseText;
-                    console.log(cookies.sessionUser);
-
+                    var ustr = xhr.responseText.split(';');
+                    var user = {
+                        name: ustr[0],
+                        email: ustr[1],
+                        id: ustr[2],
+                        owner: ustr[3] == '0' ? false : true
+                    };
+                    console.log(user);
+                    localStorage.setItem('user', JSON.stringify(user));
                 }
             } else {
                 console.log("could not connect to server");
@@ -104,30 +107,29 @@ function Manageaccount() {
     };
 
 
-    return (
-        <div>
+    render() {
+        return (
             <div>
-                <NavMenu></NavMenu>
-
-                <h2 style={{textAlign: 'center'}}>Manage Account Data</h2>
-                <h3 style={{textAlign: 'center'}}>You can edit your username and password here.</h3>
+                <div>
+                    <NavMenu></NavMenu>
+                    <h2 style={{textAlign: 'center'}}>Manage Account Data</h2>
+                    <h3 style={{textAlign: 'center'}}>You can edit your username and password here.</h3>
+                </div>
+                <div style={{textAlign: 'center', marginTop: '30vh'}}>
+                    <input id="oldusername" type="text" placeholder="Old Username"/><br/>
+                    <input id="newusername" type="text" placeholder="New Username"/><br/>
+                    <p style={{display: 'inline', color: 'red'}} id="user_result"><br/></p>
+                    <button onClick={this.editUsername}>Edit Username</button><br/>
+                </div>
+                <div style={{textAlign: 'center', marginTop: '10vh'}}>
+                    <input id="oldpassword" type="text" placeholder="Old Password"/><br/>
+                    <input id="newpassword" type="text" placeholder="New Password"/><br/>
+                    <p style={{display: 'inline', color: 'red'}} id="login_result"><br/></p>
+                    <button onClick={this.editPassword}>Edit Password</button><br/>
+                </div>
             </div>
-            <div style={{textAlign: 'center', marginTop: '30vh'}}>
-                <input id="oldusername" type="text" placeholder="Old Username"/><br/>
-                <input id="newusername" type="text" placeholder="New Username"/><br/>
-                <p style={{display: 'inline', color: 'red'}} id="user_result"><br/></p>
-                <button onClick={editUsername}>Edit Username</button><br/>
-
-            </div>
-            <div style={{textAlign: 'center', marginTop: '10vh'}}>
-                <input id="oldpassword" type="text" placeholder="Old Password"/><br/>
-                <input id="newpassword" type="text" placeholder="New Password"/><br/>
-                <p style={{display: 'inline', color: 'red'}} id="login_result"><br/></p>
-                <button onClick={editPassword}>Edit Password</button><br/>
-
-            </div>
-        </div>
-    )
+        );
+    }
 }
 
-export default Manageaccount;
+export default ManageAccount

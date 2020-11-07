@@ -111,7 +111,6 @@ public class UserEndpoint {
 
         logger.log(Level.INFO, "creating new password " + email);
         try {
-
             //Set email new password using update
             String qry = "UPDATE users SET password='" + newPassword + "' WHERE email='" + email + "';";
             logger.log(Level.INFO, qry);
@@ -129,7 +128,7 @@ public class UserEndpoint {
     }
 
     @CrossOrigin(origins="*")
-    @PostMapping("/manageaccount/usename")
+    @PostMapping("/manageaccount/username")
     public String editUsername(@RequestBody String new_username) {
 
         String[] fields = new_username.split(";");
@@ -138,16 +137,27 @@ public class UserEndpoint {
 
         logger.log(Level.INFO, "creating new username " + email);
         try {
-
             //Set email new user using update
             String qry = "UPDATE users SET username='" + newUsername + "' WHERE email='" + email + "';";
             logger.log(Level.INFO, qry);
             Database.update(qry);
+            
+            ResultSet r = Database.query("SELECT * FROM users WHERE email='" + email + "';");
+            if (r.next()) {
+                String id = r.getString("user_id");
+                String uname = r.getString("username");
+                int owner = r.getInt("owner");
+
+                logger.log(Level.INFO, uname + " changed");
+                return uname + ';' + email + ';' + id + ';' + owner;
+            } else {
+                return "user not found";
+            }
             //return email + '_' + Integer.toHexString((id + passw).hashCode());
 
             //  ResultSet r = Database.query("SELECT username, user_id FROM users WHERE email='" + email + "';");
 
-            return email + '_' + Integer.toHexString((newUsername).hashCode());
+            //return email + '_' + Integer.toHexString((newUsername).hashCode());
         } catch (SQLException ex) {
             logger.log(Level.WARNING, "database update failed");
             logger.log(Level.WARNING, ex.toString());
@@ -233,6 +243,7 @@ public class UserEndpoint {
                 String id = r.getString("user_id");
                 String uname = r.getString("username");
                 int owner = r.getInt("owner");
+
                 logger.log(Level.INFO, uname + " authenticated");
                 return uname + ';' + email + ';' + id + ';' + owner;
             } else {

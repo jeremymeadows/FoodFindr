@@ -1,7 +1,7 @@
 import React from 'react';
 import sha256 from 'js-sha256';
 import NavMenu from "../../components/navmenu";
-import host from '../utils/network';
+import host from '../../util/network';
 
 function Login() {
     function login() {

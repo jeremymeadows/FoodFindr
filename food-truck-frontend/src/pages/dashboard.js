@@ -8,6 +8,8 @@ class Dashboard extends Component {
         this.state = {
             user: null
         }
+        this.send_message = this.send_message.bind(this);
+        this.is_truck_owner = this.is_truck_owner.bind(this);
     }
 
     componentDidMount() {
@@ -18,7 +20,7 @@ class Dashboard extends Component {
         this.forceUpdate();
     }
 
-    function send_message() {
+    send_message() {
         var message = document.getElementById("message").value;
         var id = document.getElementById("truck_id_message").value;
 
@@ -40,12 +42,6 @@ class Dashboard extends Component {
                     res.style = "color: green, display: inline;";
                     res.innerHTML = xhr.responseText + " was sent successfully";
                     window.location = "../dashboard";
-
-                    /**
-                    setCookie('sessionUser', xhr.responseText.split('_')[0]);
-                    user.id = xhr.responseText;
-                    console.log(cookies.sessionUser);
-                     **/
                 }
             } else {
                 if (res === null) {
@@ -61,7 +57,7 @@ class Dashboard extends Component {
         xhr.send(owner_message);
     }
 
-    function is_truck_owner() {
+    is_truck_owner() {
         var name = cookies.sessionUser;
 
         const xhr = new XMLHttpRequest();
@@ -89,11 +85,6 @@ class Dashboard extends Component {
         xhr.send(name);
     }
 
-    return (
-        <div>
-            <NavMenu></NavMenu>
-            <h2 style={{textAlign: 'center'}}>This is { cookies.sessionUser }'s dashboard!</h2>
-
     render() {
         const user = this.state.user;
 
@@ -113,15 +104,15 @@ class Dashboard extends Component {
                         <h3>My Trucks:</h3>
                     </div> }
                 </div> }
+                <div style={{textAlign: 'center', marginTop: '30vh'}}>
+                    <input id="message" type="text" placeholder="Type your message here."/><br/>
+                    <input id="truck_id_message" type="text" placeholder="Truck ID of subscribers you want to message."/><br/>
+                    <p style={{display: 'inline', color: 'red'}} id="send_message_result"><br/></p>
+                    <button onClick={this.send_message}>Send Message</button>
+                </div>
             </div>
-            <div style={{textAlign: 'center', marginTop: '30vh'}}>
-                <input id="message" type="text" placeholder="Type your message here."/><br/>
-                <input id="truck_id_message" type="text" placeholder="Truck ID of subscribers you want to message."/><br/>
-                <p style={{display: 'inline', color: 'red'}} id="send_message_result"><br/></p>
-                <button onClick={send_message}>Send Message</button>
-            </div>
-        </div>
-    )
+        );
+    }
 }
 
 export default Dashboard
