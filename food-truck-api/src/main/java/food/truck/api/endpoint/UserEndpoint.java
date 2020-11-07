@@ -45,16 +45,22 @@ public class UserEndpoint {
     @CrossOrigin(origins="*")
     @GetMapping("/user/{id}")
     public String getUserSubscriptions(@PathVariable String id) {
-        String s = "{\"subscriptions\":[";
+        String json = "[";
         boolean empty = true;
+
         try {
             ResultSet r = Database.query("SELECT truck_id FROM subscriptions WHERE user_id='" + id + "';");
             while (r.next()) {
                 empty = false;
-                s = s + "\"" + r.getString("truck_id") + "\",";
+                json = json + "\"" + r.getString("truck_id") + "\",";
             }
-            s = s.substring(0, s.length() - 1) + "]}";
-            return s;
+            if (!empty) {
+                json = json.substring(0, json.length() - 1);
+            }
+            json = json + "]";
+
+            logger.log(Level.INFO, json);
+            return json;
         }
         catch (SQLException ex) {
             logger.log(Level.WARNING, ex.toString());
@@ -62,8 +68,6 @@ public class UserEndpoint {
 
         return "user not found";
     }
-
-
 
     @CrossOrigin(origins="*")
     @PostMapping("/dashboard")
@@ -128,7 +132,6 @@ public class UserEndpoint {
         }
     }
 
-
     @CrossOrigin(origins="*")
     @PostMapping("/user")
     public User saveUser(@RequestBody User user) {
@@ -148,8 +151,9 @@ public class UserEndpoint {
             if (r.next()) {
                 String id = r.getString("user_id");
                 String uname = r.getString("username");
+                int owner = r.getInt("owner");
                 logger.log(Level.INFO, uname + " authenticated");
-                return email + '_' + Integer.toHexString((id + passw).hashCode());
+                return uname + ';' + email + ';' + id + ';' + owner;
             } else {
                 logger.log(Level.WARNING, email + " was not authenticated");
                 return "";
@@ -189,7 +193,7 @@ public class UserEndpoint {
               isOwner + ");";
             logger.log(Level.INFO, qry);
             Database.update(qry);
-            return email + '_' + Integer.toHexString((id + passw).hashCode());
+            return uname + ';' + email + ';' + id + ';' + isOwner;
         } catch (SQLException ex) {
             logger.log(Level.WARNING, "database update failed");
             logger.log(Level.WARNING, ex.toString());

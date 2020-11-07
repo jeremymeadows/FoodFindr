@@ -1,32 +1,22 @@
 import React, { Component } from 'react';
-import {useRouter} from "next/router";
 import Link from 'next/link';
-import user from '../pages/utils/user.js';
-import { useCookies } from 'react-cookie';
 
 class NavMenu extends Component{
     constructor() {
         super();
-        
+
         this.state = {
-            user: ""
+            user: null
         }
     }
-    sessionUser = undefined;
 
-    componentDidCatch() {
-        const [cookies, setCookie] = useCookies(['sessionUser']);
-        this.state.user = cookies.sessionUser;
-        console.log("noading nav sess" + this.sessionUser);
-    }
     componentDidMount() {
+        this.state.user = JSON.parse(localStorage.getItem('user'));
         this.forceUpdate();
-        console.log('something');
     }
 
     render() {
-        // var sess = user.id === "";
-        var sess = this.state.user === "";
+        const sess = this.state.user === null;
 
         return (
             <div>
@@ -56,7 +46,7 @@ class NavMenu extends Component{
                 </span>}
                 <div style={{clear: 'both'}}></div>
             </div>
-        )
+        );
     }
 }
 

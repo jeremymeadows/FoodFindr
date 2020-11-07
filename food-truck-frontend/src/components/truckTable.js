@@ -1,28 +1,17 @@
 import React, { Component } from 'react';
-import user from '../pages/utils/user';
-
-require('dotenv').config();
 
 class TruckTable extends Component {
-    sessionUser = undefined;
-
-    componentDidCatch() {
-        const [cookies, setCookie] = useCookies(['sessionUser']);
-        this.sessionUser = cookies.sessionUser;
-    }
-
     constructor(props) {
         super(props);
 
         this.state = {
+            user: null,
             loading: true,
             trucks: [
                 { id: '', name: '', description: '', rating: 0, favourite: false }
             ],
-            subs: [
-                {userId: '', truckId: '' }
-            ]
-        }
+            subs: [],
+        };
     }
 
     async getTrucks() {
@@ -32,23 +21,25 @@ class TruckTable extends Component {
     }
 
     async getSubscriptions() {
-        var fav = false;
-        await fetch('http://localhost:8080/user/' + this.sessionUser)
-            .then(res => res.json())
-            .then(subs => console.log('subs: ' + subs));
+        if (this.state.user !== null) {
+            await fetch('http://localhost:8080/user/' + this.state.user.id)
+                .then(res => res.json())
+                .then(subs => this.state.subs = subs);
+        }
     }
 
     renderTableHeader() {
         let header = Object.keys(this.state.trucks[0]).filter(key => key !== 'id');
         return header.map((key, index) => {
-            return <th key={index}>{key.toUpperCase()}</th>
-        })
+            if (key !== "favourite" || this.state.user !== null) {
+                return <th key={index}>{key.toUpperCase()}</th>;
+            }
+        });
     }
 
     renderTableData() {
         return this.state.trucks.map((truck) => {
             const { id, name, description, rating } = truck;
-
             const url = 'http://localhost:8080/truck/' + id;
 
             return (
@@ -56,21 +47,21 @@ class TruckTable extends Component {
                     <td><a href={url}>{name}</a></td>
                     <td><a href={url}>{description}</a></td>
                     <td><a href={url}>{rating}</a></td>
-                    {user.id === "" && <td><a href={url}>{truck.favourite ? 'yes' : 'no'}</a></td>}
+                    {this.state.user !== null && <td><a href={url}>{truck.favourite ? '♥' : '-️'}</a></td>}
                 </tr>
-            )
-        })
+            );
+        });
     }
 
     async componentDidMount() {
-        await this.getTrucks();//.then(() => {
+        this.state.user = JSON.parse(localStorage.getItem('user'));
+        this.getTrucks().then(() => {
             this.getSubscriptions().then(() => {
-                console.log(this.sessionUser);
-                this.state.trucks.forEach(truck => truck.favourite = this.state.subs.includes(truck.id))
+                this.state.trucks.forEach(truck => truck.favourite = this.state.subs.includes(truck.id));
                 this.state.loading = false;
                 this.forceUpdate();
             })
-        //});
+        });
     }
 
     render() {
@@ -78,7 +69,7 @@ class TruckTable extends Component {
             <div>
                 { /* loaging gif, probably want a different one later */ }
                 {this.state.loading && <img id='loading' src="http://i.stack.imgur.com/SBv4T.gif" alt="loading..." width='250'></img>}
-                
+
                 <table id='trucks'>
                     {!this.state.loading && this.renderTableHeader()}
                     <tbody id='table'>
@@ -86,7 +77,7 @@ class TruckTable extends Component {
                     </tbody>
                 </table>
             </div>
-        )
+        );
     }
 }
 

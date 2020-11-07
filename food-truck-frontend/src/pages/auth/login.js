@@ -1,18 +1,9 @@
 import React from 'react';
-import Link from '@material-ui/core/Link';
-import {useRouter} from "next/router";
 import sha256 from 'js-sha256';
 import NavMenu from "../../components/navmenu";
-import user from '../utils/user';
-import { useCookies } from 'react-cookie';
-
 import host from '../utils/network';
 
-require('dotenv').config();
-
 function Login() {
-    const [cookies, setCookie] = useCookies(['sessionUser']);
-
     function login() {
         var email = document.getElementById("email").value;
         var passw = sha256(email + document.getElementById("passw").value);
@@ -33,15 +24,18 @@ function Login() {
                 } else {
                     console.log("login success");
                     res.style = "color: green, display: inline;";
-                    user.username = email;
                     res.innerHTML = xhr.responseText + " was logged in successfully";
                     window.location = "../dashboard";
 
-                    setCookie('sessionUser', xhr.responseText.split('_')[0]);
-                    user.id = xhr.responseText;
-                    // console.log('user: ');
-                    // console.log(user);
-                    console.log(cookies.sessionUser);
+                    var ustr = xhr.responseText.split(';');
+                    var user = {
+                        name: ustr[0],
+                        email: ustr[1],
+                        id: ustr[2],
+                        owner: ustr[3] == '0' ? false : true
+                    };
+                    console.log(user);
+                    localStorage.setItem('user', JSON.stringify(user));
                 }
             } else {
                 console.log("could not connect to server");
@@ -76,7 +70,7 @@ function Login() {
                 <button onClick={create_acc}>create account</button>
             </div>
         </div>
-    )
+    );
 }
 
 export default Login
