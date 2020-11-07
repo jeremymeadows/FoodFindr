@@ -104,6 +104,15 @@ class Dashboard extends Component {
                         <h3>My Trucks:</h3>
                     </div> }
                 </div> }
+
+				<p style={{display: 'inline', color: 'black'}} id="info_result"><br/></p>
+				<div style={{textAlign: 'center', marginTop: '30vh'}}>
+					<button onClick={get_info}>View Profile</button>
+				</div>
+				<div style={{textAlign: 'center', marginTop: '30vh'}}>
+					<p style={{display: 'inline', color: 'red'}} id="get_message_result"><br/></p>
+					<button onClick={get_message}>View Messages</button>
+				</div>
                 <div style={{textAlign: 'center', marginTop: '30vh'}}>
                     <input id="message" type="text" placeholder="Type your message here."/><br/>
                     <input id="truck_id_message" type="text" placeholder="Truck ID of subscribers you want to message."/><br/>

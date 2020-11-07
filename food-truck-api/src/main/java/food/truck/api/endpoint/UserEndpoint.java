@@ -224,6 +224,28 @@ public class UserEndpoint {
     }
 
     @CrossOrigin(origins="*")
+    @PatchMapping("/dashboard/getmessage")
+    public String showmessage(@RequestBody String email) {
+
+        logger.log(Level.INFO, "getting message for " + recipientID + " subscriber");
+        try {
+            String recipientID = Database.query("SELECT user_id FROM users WHERE email='" + email + "';");
+            ResultSet r = Database.query("SELECT messageContent FROM subscriptions WHERE recipientID LIKE '" + recipientID + "';");
+            String messages = "";
+            while (r.next()) {
+                // Store every message recipient into an array list from the result set
+                String message = r.getString("messageContent");
+                messages += message + ";";
+            }
+            return messages;
+        } catch(SQLException ex) {
+            logger.log(Level.WARNING, "message retrieval failed");
+            logger.log(Level.WARNING, ex.toString());
+            return "";
+        }
+    }
+
+    @CrossOrigin(origins="*")
     @PostMapping("/user")
     public User saveUser(@RequestBody User user) {
         return userService.saveUser(user);
