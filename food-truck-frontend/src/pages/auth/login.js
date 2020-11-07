@@ -1,10 +1,23 @@
-import React from 'react';
+import React, { Component } from 'react';
 import sha256 from 'js-sha256';
 import NavMenu from "../../components/navmenu";
 import host from '../../util/network';
 
-function Login() {
-    function login() {
+class Login extends Component {
+    constructor() {
+        super();
+
+        this.login = this.login.bind(this);
+        this.create_acc = this.create_acc.bind(this);
+    }
+
+    componentDidMount() {
+        if (JSON.parse(localStorage.getItem('user')) !== null) {
+            window.location = '../dashboard';
+        }
+    }
+
+    login() {
         var email = document.getElementById("email").value;
         var passw = sha256(email + document.getElementById("passw").value);
 
@@ -46,31 +59,33 @@ function Login() {
         xhr.send(login_cred);
     };
 
-    function create_acc() {
+    create_acc() {
         window.location = "register";
     }
 
-    return (
-        <div>
+    render() {
+        return (
             <div>
-                <NavMenu></NavMenu>
+                <div>
+                    <NavMenu></NavMenu>
+                </div>
+                <div style={{textAlign: 'center', marginTop: '30vh'}}>
+                    <h1>Food Truck Finder</h1>
+
+                    <input id="email" type="text" placeholder="email"/><br/>
+                    <input id="passw" type="password" placeholder="password"/><br/>
+
+                    <input id="remember" type="checkbox"/>
+                    <label htmlFor="remember">remember me</label><br/>
+
+                    <p style={{display: 'inline', color: 'red'}} id="login_result"><br/></p>
+                    <button onClick={this.login}>login</button><br/>
+                    or<br/>
+                    <button onClick={this.create_acc}>create account</button>
+                </div>
             </div>
-            <div style={{textAlign: 'center', marginTop: '30vh'}}>
-                <h1>Food Truck Finder</h1>
-
-                <input id="email" type="text" placeholder="email"/><br/>
-                <input id="passw" type="password" placeholder="password"/><br/>
-
-                <input id="remember" type="checkbox"/>
-                <label htmlFor="remember">remember me</label><br/>
-
-                <p style={{display: 'inline', color: 'red'}} id="login_result"><br/></p>
-                <button onClick={login}>login</button><br/>
-                or<br/>
-                <button onClick={create_acc}>create account</button>
-            </div>
-        </div>
-    );
+        );
+    }
 }
 
 export default Login

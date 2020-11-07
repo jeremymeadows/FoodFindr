@@ -106,7 +106,6 @@ class ManageAccount extends Component {
         xhr.send(new_username);
     };
 
-
     render() {
         return (
             <div>

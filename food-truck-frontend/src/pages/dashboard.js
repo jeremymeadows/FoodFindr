@@ -8,8 +8,9 @@ class Dashboard extends Component {
         this.state = {
             user: null
         }
+        this.get_info = this.get_info.bind(this);
+        this.get_message = this.get_info.bind(this);
         this.send_message = this.send_message.bind(this);
-        this.is_truck_owner = this.is_truck_owner.bind(this);
     }
 
     componentDidMount() {
@@ -18,6 +19,12 @@ class Dashboard extends Component {
             window.location = 'auth/login';
         }
         this.forceUpdate();
+    }
+
+    get_info() {
+    }
+
+    get_message() {
     }
 
     send_message() {
@@ -57,34 +64,6 @@ class Dashboard extends Component {
         xhr.send(owner_message);
     }
 
-    is_truck_owner() {
-        var name = cookies.sessionUser;
-
-        const xhr = new XMLHttpRequest();
-        xhr.open('POST', 'http://localhost:8080/dashboard/ownercheck', true);
-
-        xhr.onloadend=function(){
-            var res = document.getElementById("owner_result");
-            if(xhr.status == 200){
-                if(xhr.responseText === ""){
-                    console.log("user's email not found in database");
-                    res.style = "color: black; display: block;";
-                    res.innerHTML = "email not found in database";
-                } else {
-                    console.log("information found");
-                    res.style = "color: black, display: inline;";
-                    user.username = name;
-
-                    var owner = xhr.responseText, is_owner;
-                    if(owner == 1) is_owner = "yes";
-                    else is_owner = "no";
-                    return is_owner;
-                }
-            }
-        };
-        xhr.send(name);
-    }
-
     render() {
         const user = this.state.user;
 
@@ -92,7 +71,7 @@ class Dashboard extends Component {
             <div>
                 <NavMenu></NavMenu>
                 { user !== null && <div>
-                    <h2 style={{textAlign: 'center'}}>This is { user.name }'s dashboard!</h2>
+                    <h2 style={{textAlign: 'center'}}>Welcome, { user.name }!</h2>
 
                     <p>
                         username: { user.name }<br/>
@@ -101,24 +80,24 @@ class Dashboard extends Component {
                         owner: { user.owner ? 'true' : 'false' }<br/>
                     </p>
                     { user.owner && <div>
-                        <h3>My Trucks:</h3>
+                        <h3>My Trucks:(TODO)</h3>
+                    </div> }
+
+    				<p style={{display: 'inline', color: 'black'}} id="info_result"><br/></p>
+    				<div style={{textAlign: 'center', marginTop: '20px'}}>
+    					<button onClick={this.get_info}>View Profile</button>
+    				</div>
+    				<div style={{textAlign: 'center', marginTop: '20px'}}>
+    					<p style={{display: 'inline', color: 'red'}} id="get_message_result"><br/></p>
+    					<button onClick={this.get_message}>View Messages</button>
+    				</div>
+                    { user.owner && <div style={{textAlign: 'center', marginTop: '20px'}}>
+                        <input id="message" type="text" placeholder="Type your message here."/><br/>
+                        <input id="truck_id_message" type="text" placeholder="Truck ID of subscribers you want to message."/><br/>
+                        <p style={{display: 'inline', color: 'red'}} id="send_message_result"><br/></p>
+                        <button onClick={this.send_message}>Send Message</button>
                     </div> }
                 </div> }
-
-				<p style={{display: 'inline', color: 'black'}} id="info_result"><br/></p>
-				<div style={{textAlign: 'center', marginTop: '30vh'}}>
-					<button onClick={get_info}>View Profile</button>
-				</div>
-				<div style={{textAlign: 'center', marginTop: '30vh'}}>
-					<p style={{display: 'inline', color: 'red'}} id="get_message_result"><br/></p>
-					<button onClick={get_message}>View Messages</button>
-				</div>
-                <div style={{textAlign: 'center', marginTop: '30vh'}}>
-                    <input id="message" type="text" placeholder="Type your message here."/><br/>
-                    <input id="truck_id_message" type="text" placeholder="Truck ID of subscribers you want to message."/><br/>
-                    <p style={{display: 'inline', color: 'red'}} id="send_message_result"><br/></p>
-                    <button onClick={this.send_message}>Send Message</button>
-                </div>
             </div>
         );
     }
