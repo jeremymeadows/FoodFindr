@@ -47,5 +47,13 @@
     "jest-dom": "4.0.0",
     "next-compose-plugins": "2.2.0",
     "next-transpile-modules": "4.1.0"
+  },
+  "engines": {
+    "name": "Food-Truck-Finder",
+    "description": "application finding food trucks",
+    "version": "1.0.0",
+    "engines": {
+      "node": "12.x"
+    }
   }
 }

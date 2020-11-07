@@ -14,11 +14,12 @@ function Trucks() {
 
         //var truck = new Truck(id, name, description, rating);
         const xhr = new XMLHttpRequest();
-        xhr.open('POST', 'http://localhost:8080/trucks/create', true);
+        xhr.open('PUT', 'http://localhost:8080/trucks/create', true);
 
         xhr.onloadend = function() {
             var res = document.getElementById("create_truck_result");
             //Since POST return for create is 201, wouldn't we want the status to be 201?
+            console.log(xhr.status);
             if (xhr.status === 200) {
                 if (xhr.responseText === "") {
                     console.log("could not create truck");
@@ -126,6 +127,29 @@ function Trucks() {
         xhr.send(truck_cred);
     };
 
+    var isOwner = "1";
+
+    function findOwnership() {
+        // Find out if the user navigating the page is a truck owner
+        const ownerRequest = new XMLHttpRequest();
+        ownerRequest.open('POST', 'http://localhost:8080/getOwnership/');
+        ownerRequest.onloadend = function () {
+            console.log(ownerRequest.status);
+            if (ownerRequest.status == 200) {
+                if (ownerRequest.responseText == "") {
+                    console.log("Could not find the current user");
+                } else {
+                    console.log("Found user status: " + ownerRequest.responseText);
+                    isOwner = ownerRequest.responseText;
+                }
+            }
+        };
+        ownerRequest.send("johnr.harrison@att.net");
+
+        if(isOwner === "1"){return 1;}
+        return 0;
+    }
+
     return (
         <div>
             <NavMenu></NavMenu>
@@ -133,11 +157,15 @@ function Trucks() {
             <TruckTable></TruckTable>
 
             <div style={{textAlign: 'center', marginTop: '10vh'}}>
-                <input id="truckname" type="text" placeholder="Truck Name"/><br/>
-                <input id="truckdescription" type="text" placeholder="Truck Description"/><br/>
-                <input id="rating" type="text" placeholder="Rating"/><br/>
-                <p style={{display: 'inline', color: 'red'}} id="create_truck_result"><br/></p>
-                <button onClick={createFoodTruck}>Create Food Truck</button><br/>
+                { findOwnership() &&
+                    <>
+                    <input id="truckname" type="text" placeholder="Truck Name"/><br/>
+                    <input id="truckdescription" type="text" placeholder="Truck Description"/><br/>
+                    <input id="rating" type="text" placeholder="Rating"/><br/>
+                    <p style={{display: 'inline', color: 'red'}} id="create_truck_result"><br/></p>
+                    <button onClick={createFoodTruck}>Create Food Truck</button><br/>
+                    </>
+                }
             </div>
             <div style={{textAlign: 'center', marginTop: '10vh'}}>
                 <input id="oldtruckname" type="text" placeholder="Truck Name"/><br/>
