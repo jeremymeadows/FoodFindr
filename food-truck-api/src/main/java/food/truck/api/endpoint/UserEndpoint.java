@@ -339,6 +339,40 @@ public class UserEndpoint {
     }
 
     @CrossOrigin(origins="*")
+    @PostMapping("/dashboard/preferences")
+    public String updatePreferences(@RequestBody String preferences){
+        // Separate the preferences according to their values
+        String[] prefs = preferences.split(";");
+        logger.log(Level.INFO,"price given: " + prefs[1]);
+        logger.log(Level.INFO, "rating given: " + prefs[2]);
+        logger.log(Level.INFO, "food type given: " + prefs[3]);
+
+        logger.log(Level.INFO, "user updated:  " + prefs[0]);
+
+        try {
+            ResultSet r = Database.query("SELECT userID FROM preferences WHERE userID='" + prefs[0] + "';");
+
+            // If the user is not in the preferences
+            if(!r.next()) {
+                Database.update("INSERT INTO preferences VALUES ('" + prefs[0] + "', " + prefs[1] + ", " + prefs[2]
+                        + ", '" + prefs[3] + "');");
+            }
+            // Otherwise update the preferences
+            else{
+                Database.update("UPDATE preferences SET price=" + prefs[1] + ", rating=" + prefs[2] + ", type='" + prefs[3]
+                        + "' WHERE userID='" + prefs[0] + "';");
+            }
+        }
+        catch(SQLException ex) {
+            logger.log(Level.WARNING, "updating preferences failed");
+            logger.log(Level.WARNING, ex.toString());
+        }
+
+        return "";
+    }
+
+
+    @CrossOrigin(origins="*")
     @PostMapping("/autologin")
     public String autologin(@RequestBody String cookie) {
         String[] fields = cookie.split("_");
