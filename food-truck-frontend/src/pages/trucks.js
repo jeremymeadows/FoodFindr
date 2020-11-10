@@ -1,22 +1,8 @@
-//package food-truck-api/src/main/java/food/truck/api/truck;
-
 import React from 'react';
-import {useRouter} from "next/router";
-import NavMenu from "./navmenu";
-import { useCookies } from 'react-cookie';
+import NavMenu from "../components/navmenu";
 import TruckTable from '../components/truckTable';
-import user from "./utils/user";
-//import Truck from "../../../food-truck-api/src/main/java/food/truck/api/truck/Truck.java";
-
-require('dotenv').config();
 
 function Trucks() {
-    const [cookies, setCookie] = useCookies(['sessionUser']);
-
-    if (cookies.sessionUser === undefined) {
-        // console.log('redirecting');
-    }
-
     function createFoodTruck() {
         var name = document.getElementById("truckname").value;
         var description = document.getElementById("truckdescription").value;
@@ -44,10 +30,6 @@ function Trucks() {
                     res.style = "color: green, display: inline;";
                     res.innerHTML = xhr.responseText + " was created successfully";
                     window.location = "../trucks";
-
-                    setCookie('sessionUser', xhr.responseText.split('_')[0]);
-                    user.id = xhr.responseText;
-                    console.log(cookies.sessionUser);
                 }
             } else {
                 if (res === null) {
@@ -61,7 +43,6 @@ function Trucks() {
             }
         };
         xhr.send(truck_cred);
-
     };
 
     function manageTruck() {
@@ -91,10 +72,6 @@ function Trucks() {
                     res.style = "color: green, display: inline;";
                     res.innerHTML = xhr.responseText + " was updated successfully";
                     window.location = "../trucks";
-
-                    setCookie('sessionUser', xhr.responseText.split('_')[0]);
-                    user.id = xhr.responseText;
-                    console.log(cookies.sessionUser);
                 }
             } else {
                 if (res === null) {
@@ -135,10 +112,6 @@ function Trucks() {
                     res.style = "color: green, display: inline;";
                     res.innerHTML = xhr.responseText + " was updated successfully";
                     window.location = "../trucks";
-
-                    setCookie('sessionUser', xhr.responseText.split('_')[0]);
-                    user.id = xhr.responseText;
-                    console.log(cookies.sessionUser);
                 }
             } else {
                 if (res === null) {
@@ -208,12 +181,8 @@ function Trucks() {
                 <p style={{display: 'inline', color: 'red'}} id="schedule_truck_result"><br/></p>
                 <button onClick={manageSchedule}>Edit Food Truck Schedule</button><br/>
             </div>
-
-
         </div>
-    )
+    );
 }
-
-
 
 export default Trucks

@@ -1,17 +1,22 @@
-import React from 'react';
-import Link from '@material-ui/core/Link';
-import {useRouter} from "next/router";
+import React, { Component } from 'react';
 import sha256 from 'js-sha256';
-import NavMenu from "../navmenu";
-import user from '../utils/user';
-import { useCookies } from 'react-cookie';
+import NavMenu from "../../components/navmenu";
+import host from '../../util/network';
 
-require('dotenv').config();
+class Register extends Component {
+    constructor() {
+        super();
 
-function Register() {
-    const [cookies, setCookie] = useCookies(['sessionUser']);
+        this.register = this.register.bind(this);
+    }
 
-    function register() {
+    componentDidMount() {
+        if (JSON.parse(localStorage.getItem('user')) !== null) {
+            window.location = '../dashboard';
+        }
+    }
+
+    register() {
         var email = document.getElementById("email").value;
         var uname = document.getElementById("uname").value;
         var truck_owner = document.getElementById("truck").checked;
@@ -27,7 +32,7 @@ function Register() {
         console.log(login_cred);
 
         const xhr = new XMLHttpRequest();
-        xhr.open('POST', 'http://localhost:8080/register', true);
+        xhr.open('POST', host.login, true);
 
         xhr.onloadend = function() {
             var res = document.getElementById("login_result");
@@ -42,9 +47,15 @@ function Register() {
                     res.innerHTML = xhr.responseText + " was created successfully";
                     window.location = "../dashboard";
 
-                    setCookie('sessionUser', xhr.responseText.split('_')[0]);
-                    user.id = xhr.responseText;
-                    console.log(cookies.sessionUser);
+                    var ustr = xhr.responseText.split(';');
+                    var user = {
+                        name: ustr[0],
+                        email: ustr[1],
+                        id: ustr[2],
+                        owner: ustr[3] == '0' ? false : true
+                    };
+                    console.log(user);
+                    localStorage.setItem('user', JSON.stringify(user));
                 }
             } else {
                 console.log("could not connect to server");
@@ -55,34 +66,33 @@ function Register() {
         xhr.send(login_cred);
     };
 
-    return (
-        <div>
+    render() {
+        return (
             <div>
-                <NavMenu></NavMenu>
+                <div>
+                    <NavMenu></NavMenu>
+                </div>
+                <div style={{textAlign: 'center', marginTop: '30vh'}}>
+                    <h1>Food Truck Finder</h1>
+
+                    <input id="email" type="text" placeholder="email"/><br/>
+                    <input id="uname" type="text" placeholder="username"/><br/>
+                    <br/>
+                    <input id="passw" type="password" placeholder="password"/><br/>
+                    <input id="conf" type="password" placeholder="confirm password"/><br/>
+
+                    {/* <input id="remember" type="checkbox"/>
+                    <label htmlFor="remember">remember me</label><br/> */}
+
+                    <input id="owner" type="checkbox"/>
+                    <label htmlFor="owner">I am a truck owner</label><br/>
+
+                    <p style={{display: 'inline', color: 'red'}} id="login_result"><br/></p>
+                    <button onClick={this.register}>create account</button>
+                </div>
             </div>
-            <div style={{textAlign: 'center', marginTop: '30vh'}}>
-                <h1>Food Truck Finder</h1>
-
-                <input id="email" type="text" placeholder="email"/><br/>
-                <input id="uname" type="text" placeholder="username"/><br/>
-                <br/>
-                <input id="passw" type="password" placeholder="password"/><br/>
-                <input id="conf" type="password" placeholder="confirm password"/><br/>
-
-                <input id="owner" type="checkbox"/>
-                <label htmlFor="owner">owner account</label><br/>
-
-                {/* <input id="remember" type="checkbox"/>
-                <label htmlFor="remember">remember me</label><br/> */}
-
-                <input id="truck" type="checkbox"/>
-                <label for="truck">I am a truck owner</label><br/>
-
-                <p style={{display: 'inline', color: 'red'}} id="login_result"><br/></p>
-                <button onClick={register}>create account</button>
-            </div>
-        </div>
-    )
+        );
+    }
 }
 
 export default Register

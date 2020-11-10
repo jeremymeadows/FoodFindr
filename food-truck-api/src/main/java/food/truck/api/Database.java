@@ -10,6 +10,7 @@ public class Database {
 
     private Database() throws SQLException {
         con = DriverManager.getConnection(
+            // "jdbc:mysql://food-truck-finder-database.herokuapp.com/",
             "jdbc:mysql://127.0.0.1:3307/food-truck-finder",
             "root",
             "password"

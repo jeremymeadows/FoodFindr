@@ -40,12 +40,30 @@ public class UserEndpoint {
 
     @CrossOrigin(origins="*")
     @GetMapping("/user/{id}")
-    public User findUserById(@PathVariable Long id) {
-        var user = userService.findUser(id);
-        return user.orElse(null);
+    public String getUserSubscriptions(@PathVariable String id) {
+        String json = "[";
+        boolean empty = true;
+
+        try {
+            ResultSet r = Database.query("SELECT truck_id FROM subscriptions WHERE user_id='" + id + "';");
+            while (r.next()) {
+                empty = false;
+                json = json + "\"" + r.getString("truck_id") + "\",";
+            }
+            if (!empty) {
+                json = json.substring(0, json.length() - 1);
+            }
+            json = json + "]";
+
+            logger.log(Level.INFO, json);
+            return json;
+        }
+        catch (SQLException ex) {
+            logger.log(Level.WARNING, ex.toString());
+        }
+
+        return "user not found";
     }
-
-
 
     @CrossOrigin(origins="*")
     @PostMapping("/dashboard")
@@ -93,7 +111,6 @@ public class UserEndpoint {
 
         logger.log(Level.INFO, "creating new password " + email);
         try {
-
             //Set email new password using update
             String qry = "UPDATE users SET password='" + newPassword + "' WHERE email='" + email + "';";
             logger.log(Level.INFO, qry);
@@ -111,7 +128,7 @@ public class UserEndpoint {
     }
 
     @CrossOrigin(origins="*")
-    @PostMapping("/manageaccount/usename")
+    @PostMapping("/manageaccount/username")
     public String editUsername(@RequestBody String new_username) {
 
         String[] fields = new_username.split(";");
@@ -120,16 +137,27 @@ public class UserEndpoint {
 
         logger.log(Level.INFO, "creating new username " + email);
         try {
-
             //Set email new user using update
             String qry = "UPDATE users SET username='" + newUsername + "' WHERE email='" + email + "';";
             logger.log(Level.INFO, qry);
             Database.update(qry);
+            
+            ResultSet r = Database.query("SELECT * FROM users WHERE email='" + email + "';");
+            if (r.next()) {
+                String id = r.getString("user_id");
+                String uname = r.getString("username");
+                int owner = r.getInt("owner");
+
+                logger.log(Level.INFO, uname + " changed");
+                return uname + ';' + email + ';' + id + ';' + owner;
+            } else {
+                return "user not found";
+            }
             //return email + '_' + Integer.toHexString((id + passw).hashCode());
 
             //  ResultSet r = Database.query("SELECT username, user_id FROM users WHERE email='" + email + "';");
 
-            return email + '_' + Integer.toHexString((newUsername).hashCode());
+            //return email + '_' + Integer.toHexString((newUsername).hashCode());
         } catch (SQLException ex) {
             logger.log(Level.WARNING, "database update failed");
             logger.log(Level.WARNING, ex.toString());
@@ -196,6 +224,30 @@ public class UserEndpoint {
     }
 
     @CrossOrigin(origins="*")
+    @PatchMapping("/dashboard/getmessage")
+    public String showmessage(@RequestBody String email) {
+        try {
+            ResultSet name = Database.query("SELECT user_id FROM users WHERE email='" + email + "';");
+            String recipientID = name.getString(0);
+
+            logger.log(Level.INFO, "getting message for " + recipientID + " subscriber");
+
+            ResultSet r = Database.query("SELECT messageContent FROM subscriptions WHERE recipientID LIKE '" + recipientID + "';");
+            String messages = "";
+            while (r.next()) {
+                // Store every message recipient into an array list from the result set
+                String message = r.getString("messageContent");
+                messages += message + ";";
+            }
+            return messages;
+        } catch(SQLException ex) {
+            logger.log(Level.WARNING, "message retrieval failed");
+            logger.log(Level.WARNING, ex.toString());
+            return "";
+        }
+    }
+
+    @CrossOrigin(origins="*")
     @PostMapping("/user")
     public User saveUser(@RequestBody User user) {
         return userService.saveUser(user);
@@ -214,8 +266,10 @@ public class UserEndpoint {
             if (r.next()) {
                 String id = r.getString("user_id");
                 String uname = r.getString("username");
+                int owner = r.getInt("owner");
+
                 logger.log(Level.INFO, uname + " authenticated");
-                return email + '_' + Integer.toHexString((id + passw).hashCode());
+                return uname + ';' + email + ';' + id + ';' + owner;
             } else {
                 logger.log(Level.WARNING, email + " was not authenticated");
                 return "";
@@ -255,7 +309,7 @@ public class UserEndpoint {
               isOwner + ");";
             logger.log(Level.INFO, qry);
             Database.update(qry);
-            return email + '_' + Integer.toHexString((id + passw).hashCode());
+            return uname + ';' + email + ';' + id + ';' + isOwner;
         } catch (SQLException ex) {
             logger.log(Level.WARNING, "database update failed");
             logger.log(Level.WARNING, ex.toString());

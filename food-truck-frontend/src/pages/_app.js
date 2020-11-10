@@ -1,5 +1,4 @@
 import React from 'react';
-import { Provider } from 'react-redux';
 import { buildStore } from '../util/redux';
 
 import Head from 'next/head';
@@ -9,7 +8,6 @@ import { FoodTruckThemeProvider } from '../util/theme';
 import '../util/style.css';
 
 let initialState = {};
-let store = buildStore(initialState);
 
 const FoodTruckApp = ({ Component, pageProps }) => {
     React.useEffect(() => {
@@ -21,7 +19,8 @@ const FoodTruckApp = ({ Component, pageProps }) => {
     }, []);
 
     return (
-        <Provider store={ store }>
+        <div>
+        {/*<Provider store={ store }>*/}
             <Head>
                 <title>My page</title>
                 <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width" />
@@ -30,13 +29,10 @@ const FoodTruckApp = ({ Component, pageProps }) => {
             <FoodTruckThemeProvider>
                 {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
                 <CssBaseline />
-
                 <Component {...pageProps} />
             </FoodTruckThemeProvider>
-        </Provider>
-    )
-
-
+        </div>
+    );
 };
 
-export default FoodTruckApp;
+export default FoodTruckApp
