@@ -229,7 +229,8 @@ public class UserEndpoint {
 
         logger.log(Level.INFO, "getting message for " + email + " subscriber");
         try {
-            String recipientID = Database.query("SELECT user_id FROM users WHERE email='" + email + "';");
+            ResultSet rid = Database.query("SELECT user_id FROM users WHERE email='" + email + "';");
+            String recipientID = rid.getString("recipientID");
             ResultSet r = Database.query("SELECT messageContent FROM subscriptions WHERE recipientID LIKE '" + recipientID + "';");
             String messages = "";
             while (r.next()) {
