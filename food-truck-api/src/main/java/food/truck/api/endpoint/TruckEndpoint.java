@@ -125,7 +125,7 @@ public class TruckEndpoint {
             }
             if (range != null) {
                 ResultSet r = Database.query("SELECT * FROM trucks;");
-                if (r.next()) {
+                while (r.next()) {
                     name = r.getString("name");
                     String description = r.getString("description");
                     Float rating = r.getFloat("rating");

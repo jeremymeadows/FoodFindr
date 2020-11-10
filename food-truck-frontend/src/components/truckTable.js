@@ -11,13 +11,18 @@ class TruckTable extends Component {
                 { id: '', name: '', description: '', rating: 0, favourite: false }
             ],
             subs: [],
+            search: false,
         };
     }
 
     async getTrucks() {
-        await fetch('http://localhost:8080/trucks')
-            .then(res => res.json())
-            .then(trucks => this.state.trucks = trucks);
+        if (this.state.search === false) {
+            await fetch('http://localhost:8080/trucks')
+                .then(res => res.json())
+                .then(trucks => this.state.trucks = trucks);
+        } else {
+
+        }
     }
 
     async getSubscriptions() {
@@ -55,18 +60,90 @@ class TruckTable extends Component {
 
     async componentDidMount() {
         this.state.user = JSON.parse(localStorage.getItem('user'));
-        this.getTrucks().then(() => {
-            this.getSubscriptions().then(() => {
-                this.state.trucks.forEach(truck => truck.favourite = this.state.subs.includes(truck.id));
-                this.state.loading = false;
-                this.forceUpdate();
-            })
-        });
+        if (this.state.seal === false) {
+            this.getTrucks().then(() => {
+                this.getSubscriptions().then(() => {
+                    this.state.trucks.forEach(truck => truck.favourite = this.state.subs.includes(truck.id));
+                    this.state.loading = false;
+                    this.forceUpdate();
+                })
+            });
+        } else {
+            this.getTrucks().then(() => {
+                this.getSubscriptions().then(() => {
+                    this.state.trucks.forEach(truck => truck.favourite = this.state.subs.includes(truck.id));
+                    this.state.loading = false;
+                    this.forceUpdate();
+                })
+            });
+        }
+    }
+
+    searchTrucks() {
+        let truckSelect = document.getElementById("namesearch").checked;
+        let rangeSelect = document.getElementById("rangesearch").checked;
+        let truckName = document.getElementById("searchtruckname").value;
+        let range = document.getElementById("range").value;
+
+        if(truckSelect === null && rangeSelect === null) {
+            console.log("No search parameters were entered.");
+            return 1;
+        }
+
+        this.setState({search: true});
+        let search_credentials = truckName + ";" + range;
+
+        const xhr = new XMLHttpRequest();
+
+        xhr.open('POST', 'http://localhost:8080/trucks/searchTrucks', true);
+
+        xhr.onloadend = function() {
+            var res = document.getElementById("schedule_truck_result");
+            if (xhr.status === 200) {
+                if (xhr.responseText === "]") {
+                    console.log("could not find any trucks");
+                    res.style = "color: red; display: block;";
+                    res.innerHTML = "could not find any trucks";
+                } else {
+                    console.log("found trucks");
+                    res => res.json();
+                    /*res.style = "color: green, display: inline;";
+                    res.innerHTML = xhr.responseText + " found successfully";
+                    window.location = "../trucks";*/
+
+                }
+
+            } else {
+                if (res === null) {
+                    console.log("Res returned NULL");
+                }
+                console.log(xhr.status);
+                console.log("Could not connect to server");
+                res.style = "color: red; display: block;";
+                res.innerHTML = "Could not connect to server";
+            }
+        }
+
+        xhr.send(search_credentials);
+
     }
 
     render() {
+        const searched = this.state.search;
         return (
             <div>
+                <div style={{textAlign: 'center'}}>
+                    <input id="searchtruckname" type="text" placeholder="Truck Name"/><br/>
+                    <input id="namesearch" type="checkbox"/>
+                    <label htmlFor="namesearch">Searching by truck name</label><br/>
+                    <input id="range" type="text" placeholder="Within -- Miles"/><br/>
+                    <input id="rangesearch" type="checkbox"/>
+                    <label htmlFor="rangesearch">Searching by range</label><br/>
+
+                    <p style={{display: 'inline', color: 'red'}} id="schedule_truck_result"><br/></p>
+                    <button onClick={this.searchTrucks}>Search</button>
+                </div>
+                {!searched && <div>
                 { /* loaging gif, probably want a different one later */ }
                 {this.state.loading && <img id='loading' src="http://i.stack.imgur.com/SBv4T.gif" alt="loading..." width='250'></img>}
 
@@ -76,6 +153,7 @@ class TruckTable extends Component {
                         {!this.state.loading && this.renderTableData()}
                     </tbody>
                 </table>
+                </div>}
             </div>
         );
     }
