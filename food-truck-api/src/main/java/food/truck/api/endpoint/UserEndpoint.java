@@ -226,10 +226,12 @@ public class UserEndpoint {
     @CrossOrigin(origins="*")
     @PatchMapping("/dashboard/getmessage")
     public String showmessage(@RequestBody String email) {
-
-        logger.log(Level.INFO, "getting message for " + recipientID + " subscriber");
         try {
-            String recipientID = Database.query("SELECT user_id FROM users WHERE email='" + email + "';");
+            ResultSet name = Database.query("SELECT user_id FROM users WHERE email='" + email + "';");
+            String recipientID = name.getString(0);
+
+            logger.log(Level.INFO, "getting message for " + recipientID + " subscriber");
+
             ResultSet r = Database.query("SELECT messageContent FROM subscriptions WHERE recipientID LIKE '" + recipientID + "';");
             String messages = "";
             while (r.next()) {
