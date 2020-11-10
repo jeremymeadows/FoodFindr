@@ -227,7 +227,7 @@ public class UserEndpoint {
     @PatchMapping("/dashboard/getmessage")
     public String showmessage(@RequestBody String email) {
 
-        logger.log(Level.INFO, "getting message for " + recipientID + " subscriber");
+        logger.log(Level.INFO, "getting message for " + email + " subscriber");
         try {
             String recipientID = Database.query("SELECT user_id FROM users WHERE email='" + email + "';");
             ResultSet r = Database.query("SELECT messageContent FROM subscriptions WHERE recipientID LIKE '" + recipientID + "';");
