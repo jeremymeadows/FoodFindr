@@ -1,23 +1,30 @@
-import React from 'react';
-import Link from '@material-ui/core/Link';
-import {useRouter} from "next/router";
-import { useHistory } from 'react-router-dom';
-import NavMenu from "./navmenu";
-import user from './utils/user.js';
-import { useCookies } from 'react-cookie';
+import React, { Component } from 'react';
+import NavMenu from "../components/navmenu";
 
-require('dotenv').config();
+class Dashboard extends Component {
+    constructor() {
+        super();
 
-function Dashboard() {
-    const router = useRouter();
-    const [cookies, setCookie] = useCookies(['sessionUser']);
-
-    console.log(cookies.sessionUser);
-    if (cookies.sessionUser === undefined) {
-        console.log('redirecting');
+        this.state = {
+            user: null
+        }
+        this.get_info = this.get_info.bind(this);
+        this.get_message = this.get_info.bind(this);
+        this.send_message = this.send_message.bind(this);
     }
 
-    function get_messages() {
+    componentDidMount() {
+        this.state.user = JSON.parse(localStorage.getItem('user'));
+        if (this.state.user === null) {
+            window.location = 'auth/login';
+        }
+        this.forceUpdate();
+    }
+
+    get_info() {
+    }
+
+    get_message() {
         var name = cookies.sessionUser;
         const xhr = new XMLHttpRequest();
         xhr.open('POST', 'http://localhost:8080/dashboard/messages', true);
@@ -42,39 +49,7 @@ function Dashboard() {
         xhr.send(name);
     }
 
-    function get_info(){
-        var name = cookies.sessionUser;
-
-        const xhr = new XMLHttpRequest();
-        xhr.open('POST', 'http://localhost:8080/dashboard', true);
-
-        xhr.onloadend=function(){
-            var res = document.getElementById("info_result");
-            if(xhr.status == 200){
-                if(xhr.responseText === ""){
-                    console.log("user's email not found in database");
-                    res.style = "color: black; display: block;";
-                    res.innerHTML = "email not found in database";
-                } else {
-                    console.log("information found");
-                    res.style = "color: black, display: inline;";
-                    user.username = name;
-
-                    var owner = xhr.responseText.split(';')[2], is_owner;
-                    if(owner == 1) is_owner = "yes";
-                    else is_owner = "no";
-
-                    res.innerHTML = "username: " + xhr.responseText.split(';')[0]
-                    + "<br />" + "email: " + xhr.responseText.split(';')[1] +
-                        "<br />" + "truck owner: " + is_owner;
-                }
-            }
-        };
-        xhr.send(name);
-
-    }
-
-    function send_message() {
+    send_message() {
         var message = document.getElementById("message").value;
         var id = document.getElementById("truck_id_message").value;
 
@@ -96,12 +71,6 @@ function Dashboard() {
                     res.style = "color: green, display: inline;";
                     res.innerHTML = xhr.responseText + " was sent successfully";
                     window.location = "../dashboard";
-
-                    /**
-                    setCookie('sessionUser', xhr.responseText.split('_')[0]);
-                    user.id = xhr.responseText;
-                    console.log(cookies.sessionUser);
-                     **/
                 }
             } else {
                 if (res === null) {
@@ -117,6 +86,7 @@ function Dashboard() {
         xhr.send(owner_message);
     }
 
+<<<<<<< HEAD
     function is_truck_owner() {
         var name = cookies.sessionUser;
 
@@ -164,11 +134,45 @@ function Dashboard() {
                 <input id="truck_id_message" type="text" placeholder="Truck ID of subscribers you want to message."/><br/>
                 <p style={{display: 'inline', color: 'red'}} id="send_message_result"><br/></p>
                 <button onClick={send_message}>Send Message</button>
+=======
+    render() {
+        const user = this.state.user;
+
+        return (
+            <div>
+                <NavMenu></NavMenu>
+                { user !== null && <div>
+                    <h2 style={{textAlign: 'center'}}>Welcome, { user.name }!</h2>
+
+                    <p>
+                        username: { user.name }<br/>
+                        email: { user.email }<br/>
+                        id: { user.id }<br/>
+                        owner: { user.owner ? 'true' : 'false' }<br/>
+                    </p>
+                    { user.owner && <div>
+                        <h3>My Trucks:(TODO)</h3>
+                    </div> }
+
+    				<p style={{display: 'inline', color: 'black'}} id="info_result"><br/></p>
+    				<div style={{textAlign: 'center', marginTop: '20px'}}>
+    					<button onClick={this.get_info}>View Profile</button>
+    				</div>
+    				<div style={{textAlign: 'center', marginTop: '20px'}}>
+    					<p style={{display: 'inline', color: 'red'}} id="get_message_result"><br/></p>
+    					<button onClick={this.get_message}>View Messages</button>
+    				</div>
+                    { user.owner && <div style={{textAlign: 'center', marginTop: '20px'}}>
+                        <input id="message" type="text" placeholder="Type your message here."/><br/>
+                        <input id="truck_id_message" type="text" placeholder="Truck ID of subscribers you want to message."/><br/>
+                        <p style={{display: 'inline', color: 'red'}} id="send_message_result"><br/></p>
+                        <button onClick={this.send_message}>Send Message</button>
+                    </div> }
+                </div> }
+>>>>>>> master
             </div>
-        </div>
-    )
+        );
+    }
 }
-
-
 
 export default Dashboard

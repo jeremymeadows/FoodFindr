@@ -1,17 +1,23 @@
-import React from 'react';
-import Link from '@material-ui/core/Link';
-import {useRouter} from "next/router";
+import React, { Component } from 'react';
 import sha256 from 'js-sha256';
-import NavMenu from "../navmenu";
-import user from '../utils/user';
-import { useCookies } from 'react-cookie';
+import NavMenu from "../../components/navmenu";
+import host from '../../util/network';
 
-require('dotenv').config();
+class Login extends Component {
+    constructor() {
+        super();
 
-function Login() {
-    const [cookies, setCookie] = useCookies(['sessionUser']);
+        this.login = this.login.bind(this);
+        this.create_acc = this.create_acc.bind(this);
+    }
 
-    function login() {
+    componentDidMount() {
+        if (JSON.parse(localStorage.getItem('user')) !== null) {
+            window.location = '../dashboard';
+        }
+    }
+
+    login() {
         var email = document.getElementById("email").value;
         var passw = sha256(email + document.getElementById("passw").value);
 
@@ -19,7 +25,7 @@ function Login() {
         console.log(login_cred);
 
         const xhr = new XMLHttpRequest();
-        xhr.open('POST', 'http://localhost:8080/login', true);
+        xhr.open('POST', host.login, true);
 
         xhr.onloadend = function() {
             var res = document.getElementById("login_result");
@@ -31,13 +37,18 @@ function Login() {
                 } else {
                     console.log("login success");
                     res.style = "color: green, display: inline;";
-                    user.username = email;
                     res.innerHTML = xhr.responseText + " was logged in successfully";
                     window.location = "../dashboard";
 
-                    setCookie('sessionUser', xhr.responseText.split('_')[0]);
-                    user.id = xhr.responseText;
-                    console.log(cookies.sessionUser);
+                    var ustr = xhr.responseText.split(';');
+                    var user = {
+                        name: ustr[0],
+                        email: ustr[1],
+                        id: ustr[2],
+                        owner: ustr[3] == '0' ? false : true
+                    };
+                    console.log(user);
+                    localStorage.setItem('user', JSON.stringify(user));
                 }
             } else {
                 console.log("could not connect to server");
@@ -48,31 +59,33 @@ function Login() {
         xhr.send(login_cred);
     };
 
-    function create_acc() {
+    create_acc() {
         window.location = "register";
     }
 
-    return (
-        <div>
+    render() {
+        return (
             <div>
-                <NavMenu></NavMenu>
+                <div>
+                    <NavMenu></NavMenu>
+                </div>
+                <div style={{textAlign: 'center', marginTop: '30vh'}}>
+                    <h1>Food Truck Finder</h1>
+
+                    <input id="email" type="text" placeholder="email"/><br/>
+                    <input id="passw" type="password" placeholder="password"/><br/>
+
+                    <input id="remember" type="checkbox"/>
+                    <label htmlFor="remember">remember me</label><br/>
+
+                    <p style={{display: 'inline', color: 'red'}} id="login_result"><br/></p>
+                    <button onClick={this.login}>login</button><br/>
+                    or<br/>
+                    <button onClick={this.create_acc}>create account</button>
+                </div>
             </div>
-            <div style={{textAlign: 'center', marginTop: '30vh'}}>
-                <h1>Food Truck Finder</h1>
-
-                <input id="email" type="text" placeholder="email"/><br/>
-                <input id="passw" type="password" placeholder="password"/><br/>
-
-                <input id="remember" type="checkbox"/>
-                <label htmlFor="remember">remember me</label><br/>
-
-                <p style={{display: 'inline', color: 'red'}} id="login_result"><br/></p>
-                <button onClick={login}>login</button><br/>
-                or<br/>
-                <button onClick={create_acc}>create account</button>
-            </div>
-        </div>
-    )
+        );
+    }
 }
 
 export default Login
