@@ -17,6 +17,31 @@ function Dashboard() {
         console.log('redirecting');
     }
 
+    function get_messages() {
+        var name = cookies.sessionUser;
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', 'http://localhost:8080/dashboard/messages', true);
+
+        xhr.onloadend = function(){
+            var res = document.getElementById("message_result");
+            if(xhr.responseText == "") {
+                console.log("user's email not found in database");
+                res.style = "color: black; display: block;";
+                res.innerHTML = "email not found in database";
+            } else {
+                var owner = xhr.responseText.split(';');
+                console.log(xhr.responseText)
+
+                res.innerHTML = "";
+                for(var i = 0; i < xhr.responseText.split(';').length-1; i++) {
+                    res.innerHTML += xhr.responseText.split(';')[i]
+                        + "<br />";
+                }
+            }
+        };
+        xhr.send(name);
+    }
+
     function get_info(){
         var name = cookies.sessionUser;
 
@@ -128,6 +153,11 @@ function Dashboard() {
             <p style={{display: 'inline', color: 'black'}} id="info_result"><br/></p>
             <div style={{textAlign: 'center', marginTop: '30vh'}}>
                 <button onClick={get_info}>View Profile</button>
+            </div>
+
+            <p style={{display: 'inline', color: 'black'}} id="message_result"><br/></p>
+            <div style={{textAlign: 'center', marginTop: '30vh'}}>
+                <button onClick={get_messages}>Get Messages</button>
             </div>
             <div style={{textAlign: 'center', marginTop: '30vh'}}>
                 <input id="message" type="text" placeholder="Type your message here."/><br/>

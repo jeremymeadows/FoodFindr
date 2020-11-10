@@ -45,7 +45,25 @@ public class UserEndpoint {
         return user.orElse(null);
     }
 
+    @CrossOrigin(origins="*")
+    @PostMapping("/dashboard/messages")
+    public String getMessages(@RequestBody String email) {
+        try {
 
+            logger.log(Level.INFO, "SELECT messageContent FROM inbox, users WHERE recipientID = users.user_id" +
+                    " and users.email = '" + email + "';");
+            ResultSet r = Database.query("SELECT messageContent FROM inbox, users WHERE recipientID = users.user_id" +
+                            " and users.email = '" + email + "';");
+            String message = "";
+            while(r.next()) {
+                message += r.getString("messageContent") + ";";
+            }
+            return message;
+        } catch(SQLException ex){
+            logger.log(Level.WARNING, "database query failed");
+            return "";
+        }
+    }
 
     @CrossOrigin(origins="*")
     @PostMapping("/dashboard")

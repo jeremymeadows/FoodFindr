@@ -17,11 +17,6 @@ function Trucks() {
         // console.log('redirecting');
     }
 
-    function subscribeToTruck() {
-        var name = document.getElementById("truckid").value;
-        var sub_info =
-    }
-
     function createFoodTruck() {
         var name = document.getElementById("truckname").value;
         var description = document.getElementById("truckdescription").value;
