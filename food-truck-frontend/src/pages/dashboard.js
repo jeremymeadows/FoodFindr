@@ -9,8 +9,9 @@ class Dashboard extends Component {
             user: null
         }
         this.get_info = this.get_info.bind(this);
-        this.get_message = this.get_info.bind(this);
+        this.get_message = this.get_message.bind(this);
         this.send_message = this.send_message.bind(this);
+        this.update_preferences = this.update_preferences.bind(this);
     }
 
     componentDidMount() {
@@ -64,6 +65,15 @@ class Dashboard extends Component {
         xhr.send(owner_message);
     }
 
+    update_preferences(){
+        var price = document.getElementById("cost").value;
+        var rating = document.getElementById("rating").value;
+        var foodtype = document.getElementById("food_type").value;
+
+
+        console.log(price + ' ' + rating + ' ' + foodtype);
+    }
+
     render() {
         const user = this.state.user;
 
@@ -96,6 +106,29 @@ class Dashboard extends Component {
                         <input id="truck_id_message" type="text" placeholder="Truck ID of subscribers you want to message."/><br/>
                         <p style={{display: 'inline', color: 'red'}} id="send_message_result"><br/></p>
                         <button onClick={this.send_message}>Send Message</button>
+                    </div> }
+                    { !user.owner && <div style={{textAlign: 'center', marginTop: '20px'}}>
+                        <p style={{display: 'inline', color: 'red'}} id="pref_result"><br/></p>
+                        <label for="cost">Choose a price: </label>
+                        <select id="cost" name="cost">
+                            <option value="nopref">None</option>
+                            <option value="1">$</option>
+                            <option value="2">$$</option>
+                            <option value="3">$$$</option>
+                        </select><br />
+                        <label for="rating">Choose a star rating: </label>
+                        <select id="rating" name="rating">
+                            <option value="nopref">None</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                        </select><br />
+                        <label for="food_type">Choose a food type: </label>
+                        <input id="food_type" type="text" placeholder="preferred food type here"/><br/>
+                        <p style={{display: 'inline', color: 'red'}} id="update_preferences_result"><br/></p>
+                        <button onClick={this.update_preferences}>Update Preferences</button>
                     </div> }
                 </div> }
             </div>
