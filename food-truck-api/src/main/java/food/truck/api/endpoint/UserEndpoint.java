@@ -141,7 +141,7 @@ public class UserEndpoint {
             String qry = "UPDATE users SET username='" + newUsername + "' WHERE email='" + email + "';";
             logger.log(Level.INFO, qry);
             Database.update(qry);
-            
+
             ResultSet r = Database.query("SELECT * FROM users WHERE email='" + email + "';");
             if (r.next()) {
                 String id = r.getString("user_id");
@@ -226,23 +226,28 @@ public class UserEndpoint {
     @CrossOrigin(origins="*")
     @PatchMapping("/dashboard/getmessage")
     public String showmessage(@RequestBody String email) {
-
-        logger.log(Level.INFO, "getting message for " + recipientID + " subscriber");
+        logger.log(Level.INFO, "getting message for " + email + " subscriber");
         try {
-            String recipientID = Database.query("SELECT user_id FROM users WHERE email='" + email + "';");
-            ResultSet r = Database.query("SELECT messageContent FROM subscriptions WHERE recipientID LIKE '" + recipientID + "';");
             String messages = "";
-            while (r.next()) {
-                // Store every message recipient into an array list from the result set
-                String message = r.getString("messageContent");
-                messages += message + ";";
+            String recipientID;
+            ResultSet r = Database.query("SELECT user_id FROM users WHERE email='" + email + "';");
+            if (r.next()) {
+                recipientID = r.getString("user_id");
+
+                ResultSet s = Database.query("SELECT messageContent FROM subscriptions WHERE recipientID LIKE '" + recipientID + "';");
+                while (s.next()) {
+                    // Store every message recipient into an array list from the result set
+                    String message = s.getString("messageContent");
+                    messages += message + ";";
+                }
+                return messages;
             }
-            return messages;
         } catch(SQLException ex) {
             logger.log(Level.WARNING, "message retrieval failed");
             logger.log(Level.WARNING, ex.toString());
             return "";
         }
+        return "";
     }
 
     @CrossOrigin(origins="*")
