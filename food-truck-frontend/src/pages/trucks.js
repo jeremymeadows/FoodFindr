@@ -151,8 +151,6 @@ function Trucks() {
     }
 
 
-
-
     return (
         <div>
             <NavMenu></NavMenu>

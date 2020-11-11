@@ -15,7 +15,7 @@ class TruckTable extends Component {
             search: false,
         };
         this.searchTrucks = this.searchTrucks.bind(this);
-
+        this.getNearby = this.getNearby.bind(this);
     }
 
     async getTrucks() {
@@ -76,6 +76,49 @@ class TruckTable extends Component {
         });
     }
 
+    getNearby(){
+        // If geolocation is supported
+        if (navigator.geolocation) {
+            // Attempt to get current position, if it is got it is sent to evaluatePosition
+            navigator.geolocation.getCurrentPosition(evaluatePosition);
+        } else {
+            console.log("Geolocation not supported");
+        }
+
+        // Function evaluating based on current position
+        function evaluatePosition(position) {
+            let user_lat = position.coords.latitude;
+            let user_long = position.coords.longitude;
+
+            const xhr = new XMLHttpRequest();
+            xhr.responseType = 'json';
+
+            // Log the request made for the user's address
+            var url = 'http://open.mapquestapi.com/geocoding/v1/reverse?key=KEY&location=' +
+                user_lat + ',' + user_long;
+
+            // Request for the user's address
+            fetch(url)
+                .then(function(response) {
+                    return response.json();
+                })
+                .then(function(jsonResponse){
+                    console.log(jsonResponse.street);
+                });
+
+            /**
+            xhr.open('GET', 'http://open.mapquestapi.com/geocoding/v1/reverse?key=KEY&location=' +
+                user_lat + ',' + user_long, true);
+            xhr.onload = function(){
+                var userAddress = xhr.response;
+
+                console.log(userAddress.street);
+            };
+            xhr.send(null);
+             **/
+        }
+    }
+
     async componentDidMount() {
         this.state.user = JSON.parse(localStorage.getItem('user'));
 
@@ -90,6 +133,8 @@ class TruckTable extends Component {
 
     searchTrucks() {
         let name = document.getElementById("searchtruckname").value;
+        console.log("got name: " + name);
+
         if (name !== null) {
             this.setState({search: true});
             this.setState({loading: true});
@@ -112,7 +157,8 @@ class TruckTable extends Component {
                 <div style={{textAlign: 'center'}}>
                     <input id="searchtruckname" type="text" placeholder="Truck Name"/><br/>
 
-                    <button onClick={this.searchTrucks}>Search</button>
+                    <button onClick={this.searchTrucks}>Search</button><br/><br/>
+                    <button onClick={this.getNearby}>Get Nearby</button><br/>
                 </div>
                 {!this.state.search && <div>
                 { /* loaging gif, probably want a different one later */ }
