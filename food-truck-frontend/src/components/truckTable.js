@@ -85,7 +85,7 @@ class TruckTable extends Component {
     }
 
     searchTrucks() {
-        this.search = 1;
+        this.state.search = 1;
     }
 
 
