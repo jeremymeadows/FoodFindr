@@ -40,12 +40,22 @@ class TruckTable extends Component {
                 }
             });
             if (tempList.length) {
-                this.setState({trucks: tempList});
+                this.setState({trucks: tempList}, () => {
+                    console.log(this.state.trucks);
+                });
             } else {
                 res.style = "color: red; display: block;";
                 res.innerHTML = "could not find truck '" + tname + "'";
             }
-            this.setState({search: false});
+            this.setState({search: false}, () => {
+                console.log(this.state.search);
+            });
+        }
+    }
+
+    componentDidUpdate(prevprops, prevstate) {
+        if (this.state.search !== prevstate.search) {
+            this.fetchData(this.state.search);
         }
     }
 
@@ -97,8 +107,12 @@ class TruckTable extends Component {
     searchTrucks() {
         let name = document.getElementById("searchtruckname").value;
         if (name !== null) {
-            this.setState({search: true});
-            this.setState({loading: true});
+            this.setState({search: true}, () => {
+                console.log(this.state.search);
+            });
+            this.setState({loading: true}, () => {
+                console.log(this.state.loading);
+            });
 
             console.log("Went into searchtrucks");
             this.componentDidMount().then(() => {
