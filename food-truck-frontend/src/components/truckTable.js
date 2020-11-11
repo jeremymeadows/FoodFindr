@@ -28,37 +28,18 @@ class TruckTable extends Component {
 
         } else {
             console.log("Passed through");
-            // Don't need a header
-            let header = new Headers();
-            let funcError = 1;
-            header.append('Content-Type', 'application/json');
-            header.append('Accept', 'application/json');
-            let name = document.getElementById("searchtruckname").value;
-            await fetch('http://localhost:8080/trucks/' + name, {mode: 'no-cors', method: 'GET'})
-                .then(function(res) {
-                    console.log(res);
-                    return res.json();})
-                .catch(function(error) {
-                    console.log("Fetching error gettrucks: " + error);
-                    funcError = 0;
-                })
-                .then(function(trucks) { console.log(trucks);this.state.trucks = trucks;})
-                .catch(function(error) {
-                    console.log("Fetching error gettrucks: " + error);
-                    funcError = 0;
-                });
-            if (funcError === 0) {
-                this.setState({search: false});
-                console.log("There was an error, loading normal table");
-                let res = document.getElementById("truck_found_result");
-                res.style = "color: red; display: block;";
-                res.innerHTML = "could not find truck";
-                this.componentDidMount().then(() => {
-                    //this.renderTableHeader();
-                    //this.renderTableData();
-                    this.forceUpdate();
-                });
+            let tname = document.getElementById("searchtruckname").value;
+            const tempTrucks = this.state.trucks;
+            let tempList = [];
+            tempTrucks.forEach(function(trucks){
+                if (trucks.name === tname) {
+                    tempList.push(trucks);
+                }
+            });
+            if (tempList.length) {
+                this.setState({trucks: tempList});
             }
+            this.setState({search: false});
         }
     }
 
