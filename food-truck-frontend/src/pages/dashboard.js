@@ -9,7 +9,7 @@ class Dashboard extends Component {
             user: null
         }
         this.get_info = this.get_info.bind(this);
-        this.get_message = this.get_info.bind(this);
+        this.get_message = this.get_message.bind(this);
         this.send_message = this.send_message.bind(this);
     }
 
@@ -25,16 +25,16 @@ class Dashboard extends Component {
     }
 
     get_message() {
-        var name = cookies.sessionUser;
+        var name = this.state.user.name;
         const xhr = new XMLHttpRequest();
         xhr.open('POST', 'http://localhost:8080/dashboard/messages', true);
 
         xhr.onloadend = function(){
             var res = document.getElementById("message_result");
             if(xhr.responseText == "") {
-                console.log("user's email not found in database");
+                console.log("No messages to display");
                 res.style = "color: black; display: block;";
-                res.innerHTML = "email not found in database";
+                res.innerHTML = "No messages to display";
             } else {
                 var owner = xhr.responseText.split(';');
                 console.log(xhr.responseText)
@@ -86,55 +86,6 @@ class Dashboard extends Component {
         xhr.send(owner_message);
     }
 
-<<<<<<< HEAD
-    function is_truck_owner() {
-        var name = cookies.sessionUser;
-
-        const xhr = new XMLHttpRequest();
-        xhr.open('POST', 'http://localhost:8080/dashboard/ownercheck', true);
-
-        xhr.onloadend=function(){
-            var res = document.getElementById("owner_result");
-            if(xhr.status == 200){
-                if(xhr.responseText === ""){
-                    console.log("user's email not found in database");
-                    res.style = "color: black; display: block;";
-                    res.innerHTML = "email not found in database";
-                } else {
-                    console.log("information found");
-                    res.style = "color: black, display: inline;";
-                    user.username = name;
-
-                    var owner = xhr.responseText, is_owner;
-                    if(owner == 1) is_owner = "yes";
-                    else is_owner = "no";
-                    return is_owner;
-                }
-            }
-        };
-        xhr.send(name);
-    }
-
-    return (
-        <div>
-            <NavMenu></NavMenu>
-            <h2 style={{textAlign: 'center'}}>This is { cookies.sessionUser }'s dashboard!</h2>
-
-            <p style={{display: 'inline', color: 'black'}} id="info_result"><br/></p>
-            <div style={{textAlign: 'center', marginTop: '30vh'}}>
-                <button onClick={get_info}>View Profile</button>
-            </div>
-
-            <p style={{display: 'inline', color: 'black'}} id="message_result"><br/></p>
-            <div style={{textAlign: 'center', marginTop: '30vh'}}>
-                <button onClick={get_messages}>Get Messages</button>
-            </div>
-            <div style={{textAlign: 'center', marginTop: '30vh'}}>
-                <input id="message" type="text" placeholder="Type your message here."/><br/>
-                <input id="truck_id_message" type="text" placeholder="Truck ID of subscribers you want to message."/><br/>
-                <p style={{display: 'inline', color: 'red'}} id="send_message_result"><br/></p>
-                <button onClick={send_message}>Send Message</button>
-=======
     render() {
         const user = this.state.user;
 
@@ -159,7 +110,7 @@ class Dashboard extends Component {
     					<button onClick={this.get_info}>View Profile</button>
     				</div>
     				<div style={{textAlign: 'center', marginTop: '20px'}}>
-    					<p style={{display: 'inline', color: 'red'}} id="get_message_result"><br/></p>
+    					<p style={{display: 'inline', color: 'black'}} id="message_result"><br/></p>
     					<button onClick={this.get_message}>View Messages</button>
     				</div>
                     { user.owner && <div style={{textAlign: 'center', marginTop: '20px'}}>
@@ -169,7 +120,6 @@ class Dashboard extends Component {
                         <button onClick={this.send_message}>Send Message</button>
                     </div> }
                 </div> }
->>>>>>> master
             </div>
         );
     }

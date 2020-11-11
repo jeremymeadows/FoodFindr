@@ -64,10 +64,22 @@ public class UserEndpoint {
     }
 
     @CrossOrigin(origins="*")
+    @PostMapping("/trucks/subscribe")
+    public String subscribeToTruck(@RequestBody String id) {
+        try {
+            Database.update("INSERT INTO ")
+
+        } catch(SQLException ex) {
+            logger.log(Level.WARNING, "database query failed");
+            return "";
+        }
+    }
+
+    @CrossOrigin(origins="*")
     @PostMapping("/dashboard/messages")
     public String getMessages(@RequestBody String email) {
         try {
-
+            logger.log(Level.INFO, email);
             logger.log(Level.INFO, "SELECT messageContent FROM inbox, users WHERE recipientID = users.user_id" +
                     " and users.email = '" + email + "';");
             ResultSet r = Database.query("SELECT messageContent FROM inbox, users WHERE recipientID = users.user_id" +
@@ -240,7 +252,7 @@ public class UserEndpoint {
             return "";
         }
     }
-
+    /*
     @CrossOrigin(origins="*")
     @PatchMapping("/dashboard/getmessage")
     public String showmessage(@RequestBody String email) {
@@ -261,7 +273,7 @@ public class UserEndpoint {
             logger.log(Level.WARNING, ex.toString());
             return "";
         }
-    }
+    }*/
 
     @CrossOrigin(origins="*")
     @PostMapping("/user")

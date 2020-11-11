@@ -1,8 +1,9 @@
-import React from 'react';
+import React, {Component} from 'react';
 import NavMenu from "../components/navmenu";
 import TruckTable from '../components/truckTable';
 
 function Trucks() {
+
     function createFoodTruck() {
         var name = document.getElementById("truckname").value;
         var description = document.getElementById("truckdescription").value;
@@ -129,6 +130,26 @@ function Trucks() {
 
     var isOwner = "1";
 
+    function subscribe() {
+        var truck_id = document.getElementById("truckid").value;
+
+        console.log(subInfo);
+
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', 'http://localhost:8080/subscribe');
+        xhr.onloadend = function() {
+            console.log(xhr.status);
+            if(xhr.status == 200) {
+                if(xhr.responseText == "") {
+                    console.log("could not subscribe to truck");
+                } else {
+                    console.log("Subscribed to truck " + xhr.responseText);
+                }
+            }
+        }
+        xhr.send(truck_id);
+    }
+
     function findOwnership() {
         // Find out if the user navigating the page is a truck owner
         const ownerRequest = new XMLHttpRequest();
@@ -158,7 +179,7 @@ function Trucks() {
 
             <div style={{textAlign: 'center', marginTop: '10vh'}}>
 
-                { findOwnership() &&
+                { //findOwnership() &&
                     <>
                     <input id="truckname" type="text" placeholder="Truck Name"/><br/>
                     <input id="truckdescription" type="text" placeholder="Truck Description"/><br/>
@@ -169,6 +190,7 @@ function Trucks() {
                 }
 
             </div>
+
             <div style={{textAlign: 'center', marginTop: '30vh'}}>
                 <input id="truckname" type="text" placeholder="Truck Name"/>
                 <br/>
@@ -182,6 +204,11 @@ function Trucks() {
                     <br/>
                 </p>
                 <button onClick={manageTruck}>Edit Food Truck</button>
+            </div>
+            <div style={{textAlign: 'center', marginTop: '20vh'}}>
+                <input id="truckid" type="text" placeholder="Truck ID"/><br/>
+                <p style={{display: 'inline', color: 'red'}} id="subscribe_truck"><br/></p>
+                <button onClick={subscribe}>Subscribe</button><br/>
             </div>
             <div style={{textAlign: 'center', marginTop: '10vh'}}>
                 <input id="truck_id" type="text" placeholder="Truck ID"/><br/>
