@@ -280,34 +280,6 @@ public class UserEndpoint {
             return "";
         }
     }
-    /*
-    @CrossOrigin(origins="*")
-    @PatchMapping("/dashboard/getmessage")
-    public String showmessage(@RequestBody String email) {
-
-        logger.log(Level.INFO, "getting message for " + email + " subscriber");
-        try {
-            ResultSet rid = Database.query("SELECT user_id FROM users WHERE email='" + email + "';");
-            if(rid.next()) {
-                String recipientID = rid.getString("recipientID");
-                ResultSet r = Database.query("SELECT messageContent FROM subscriptions WHERE recipientID LIKE '" + recipientID + "';");
-                String messages = "";
-                while (r.next()) {
-                    // Store every message recipient into an array list from the result set
-                    String message = r.getString("messageContent");
-                    messages += message + ";";
-                }
-                return messages;
-            } else {
-                // Need an error message
-                return "";
-            }
-        } catch(SQLException ex) {
-            logger.log(Level.WARNING, "message retrieval failed");
-            logger.log(Level.WARNING, ex.toString());
-            return "";
-        }
-    }*/
 
     @CrossOrigin(origins="*")
     @PostMapping("/user")
