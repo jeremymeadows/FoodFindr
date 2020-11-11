@@ -78,7 +78,7 @@ class TruckTable extends Component {
         return (
             <div>
                 <div style={{textAlign: 'center'}}>
-                    <input id="searchtruckname" type="text" onKeyUp={this.searchTrucks} placeholder="Truck Name"/><br/>
+                    <input id="searchtruckname" type="text" onInput={this.searchTrucks} placeholder="Truck Name"/><br/>
                     <p style={{display: 'inline', color: 'red'}} id="truck_found_result"><br/></p>
                 </div>
                 { true && <div>
