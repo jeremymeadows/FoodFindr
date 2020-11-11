@@ -160,7 +160,6 @@ public class UserEndpoint {
     @CrossOrigin(origins="*")
     @PostMapping("/manageaccount/username")
     public String editUsername(@RequestBody String new_username) {
-
         String[] fields = new_username.split(";");
         String email = fields[0];
         String newUsername = fields[1];
@@ -222,6 +221,45 @@ public class UserEndpoint {
     }
 
     @CrossOrigin(origins="*")
+    @PostMapping("/subscribe")
+    public String subscribe(@RequestBody String str) {
+        String[] fields = str.split(";");
+        String user = fields[0];
+        String truck = fields[1];
+
+        try {
+            Database.update("INSERT INTO subscriptions (user_id, truck_id) VALUES(" +
+                "'" + user + "'," +
+                "'" + truck + "');"
+            );
+            return "ok";
+        } catch(SQLException ex) {
+            logger.log(Level.WARNING, "failed to subscribe");
+            return "";
+        }
+    }
+
+    @CrossOrigin(origins="*")
+    @PostMapping("/unsubscribe")
+    public String unsubscribe(@RequestBody String str) {
+        String[] fields = str.split(";");
+        String user = fields[0];
+        String truck = fields[1];
+
+        try {
+            Database.update("DELETE FROM subscriptions WHERE " +
+                "user_id='" + user + "'" +
+                " AND " +
+                "truck_id='" + truck + "';"
+            );
+            return "ok";
+        } catch(SQLException ex) {
+            logger.log(Level.WARNING, "failed to unsubscribe");
+            return "";
+        }
+    }
+
+    @CrossOrigin(origins="*")
     @PatchMapping("/dashboard/message")
     public String sendmessage(@RequestBody String owner_message) {
         String[] fields = owner_message.split(";");
@@ -257,17 +295,23 @@ public class UserEndpoint {
     @PatchMapping("/dashboard/getmessage")
     public String showmessage(@RequestBody String email) {
 
-        logger.log(Level.INFO, "getting message for " + recipientID + " subscriber");
+        logger.log(Level.INFO, "getting message for " + email + " subscriber");
         try {
-            String recipientID = Database.query("SELECT user_id FROM users WHERE email='" + email + "';");
-            ResultSet r = Database.query("SELECT messageContent FROM subscriptions WHERE recipientID LIKE '" + recipientID + "';");
-            String messages = "";
-            while (r.next()) {
-                // Store every message recipient into an array list from the result set
-                String message = r.getString("messageContent");
-                messages += message + ";";
+            ResultSet rid = Database.query("SELECT user_id FROM users WHERE email='" + email + "';");
+            if(rid.next()) {
+                String recipientID = rid.getString("recipientID");
+                ResultSet r = Database.query("SELECT messageContent FROM subscriptions WHERE recipientID LIKE '" + recipientID + "';");
+                String messages = "";
+                while (r.next()) {
+                    // Store every message recipient into an array list from the result set
+                    String message = r.getString("messageContent");
+                    messages += message + ";";
+                }
+                return messages;
+            } else {
+                // Need an error message
+                return "";
             }
-            return messages;
         } catch(SQLException ex) {
             logger.log(Level.WARNING, "message retrieval failed");
             logger.log(Level.WARNING, ex.toString());

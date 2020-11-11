@@ -8,10 +8,12 @@ class TruckTable extends Component {
             user: null,
             loading: true,
             trucks: [
-                { id: '', name: '', description: '', rating: 0, favourite: false }
+                { id: '', name: '', description: '', rating: 0, subscribed: false }
             ],
             subs: [],
+            search: "",
         };
+        this.searchTrucks = this.searchTrucks.bind(this);
     }
 
     async getTrucks() {
@@ -40,42 +42,58 @@ class TruckTable extends Component {
     renderTableData() {
         return this.state.trucks.map((truck) => {
             const { id, name, description, rating } = truck;
-            const url = 'http://localhost:8080/truck/' + id;
+            const url = 'truckDetails?id=' + id;
 
-            return (
-                <tr key={id}>
-                    <td><a href={url}>{name}</a></td>
-                    <td><a href={url}>{description}</a></td>
-                    <td><a href={url}>{rating}</a></td>
-                    {this.state.user !== null && <td><a href={url}>{truck.favourite ? '♥' : '-️'}</a></td>}
-                </tr>
-            );
+            if (name.toLowerCase().includes(this.state.search.toLowerCase())) {
+                return (
+                    <tr key={id}>
+                        <td><a href={url}>{name}</a></td>
+                        <td><a href={url}>{description}</a></td>
+                        <td><a href={url}>{rating}</a></td>
+                        {this.state.user !== null && <td><a href={url}>{truck.subscribed ? '♥' : '-️'}</a></td>}
+                    </tr>
+                );
+            }
         });
     }
 
     async componentDidMount() {
         this.state.user = JSON.parse(localStorage.getItem('user'));
+
         this.getTrucks().then(() => {
             this.getSubscriptions().then(() => {
-                this.state.trucks.forEach(truck => truck.favourite = this.state.subs.includes(truck.id));
+                this.state.trucks.forEach(truck => truck.subscribed = this.state.subs.includes(truck.id));
                 this.state.loading = false;
                 this.forceUpdate();
-            })
+            });
         });
     }
+
+    searchTrucks() {
+        this.state.search = document.getElementById("searchtruckname").value;
+        this.forceUpdate();
+    };
 
     render() {
         return (
             <div>
+                <div style={{textAlign: 'center'}}>
+                    <input id="searchtruckname" type="text" onInput={this.searchTrucks} placeholder="Truck Name"/><br/>
+                    <p style={{display: 'inline', color: 'red'}} id="truck_found_result"><br/></p>
+                </div>
+                { true && <div>
                 { /* loaging gif, probably want a different one later */ }
-                {this.state.loading && <img id='loading' src="http://i.stack.imgur.com/SBv4T.gif" alt="loading..." width='250'></img>}
+                { this.state.loading && <img id='loading' src="http://i.stack.imgur.com/SBv4T.gif" alt="loading..." width='250'></img> }
 
                 <table id='trucks'>
-                    {!this.state.loading && this.renderTableHeader()}
+                    <thead>
+                        <tr>{ !this.state.loading && this.renderTableHeader() }</tr>
+                    </thead>
                     <tbody id='table'>
-                        {!this.state.loading && this.renderTableData()}
+                        { !this.state.loading && this.renderTableData() }
                     </tbody>
                 </table>
+                </div> }
             </div>
         );
     }

@@ -1,5 +1,4 @@
 import React from 'react';
-import { buildStore } from '../util/redux';
 
 import Head from 'next/head';
 import { CssBaseline } from '@material-ui/core';

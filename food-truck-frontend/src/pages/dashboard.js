@@ -11,6 +11,7 @@ class Dashboard extends Component {
         this.get_info = this.get_info.bind(this);
         this.get_message = this.get_message.bind(this);
         this.send_message = this.send_message.bind(this);
+        this.update_preferences = this.update_preferences.bind(this);
     }
 
     componentDidMount() {
@@ -86,6 +87,26 @@ class Dashboard extends Component {
         xhr.send(owner_message);
     }
 
+    update_preferences(){
+        var id_passed = this.state.user.id;
+        var price = document.getElementById("cost").value;
+        var rating = document.getElementById("rating").value;
+        var foodtype = document.getElementById("food_type").value;
+
+        var sendMessage = id_passed + ';' + price + ';' + rating + ';' + foodtype;
+        console.log("updating price with " + price + "\nrating with " + rating
+            + "food type with " + foodtype + "\nfor user: " + id_passed);
+
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', 'http://localhost:8080/dashboard/preferences', true);
+
+        xhr.onloadend = function() {
+            var res = document.getElementById("update_preferences_result");
+            console.log("status returned: " + xhr.status);
+        };
+        xhr.send(sendMessage);
+    }
+
     render() {
         const user = this.state.user;
 
@@ -95,12 +116,6 @@ class Dashboard extends Component {
                 { user !== null && <div>
                     <h2 style={{textAlign: 'center'}}>Welcome, { user.name }!</h2>
 
-                    <p>
-                        username: { user.name }<br/>
-                        email: { user.email }<br/>
-                        id: { user.id }<br/>
-                        owner: { user.owner ? 'true' : 'false' }<br/>
-                    </p>
                     { user.owner && <div>
                         <h3>My Trucks:(TODO)</h3>
                     </div> }
@@ -118,6 +133,29 @@ class Dashboard extends Component {
                         <input id="truck_id_message" type="text" placeholder="Truck ID of subscribers you want to message."/><br/>
                         <p style={{display: 'inline', color: 'red'}} id="send_message_result"><br/></p>
                         <button onClick={this.send_message}>Send Message</button>
+                    </div> }
+                    { !user.owner && <div style={{textAlign: 'center', marginTop: '20px'}}>
+                        <p style={{display: 'inline', color: 'red'}} id="pref_result"><br/></p>
+                        <label htmlFor="cost">Choose a price: </label>
+                        <select id="cost" name="cost">
+                            <option value="nopref">None</option>
+                            <option value="1">$</option>
+                            <option value="2">$$</option>
+                            <option value="3">$$$</option>
+                        </select><br />
+                        <label htmlFor="rating">Choose a star rating: </label>
+                        <select id="rating" name="rating">
+                            <option value="nopref">None</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                        </select><br />
+                        <label htmlFor="food_type">Choose a food type: </label>
+                        <input id="food_type" type="text" placeholder="preferred food type here"/><br/>
+                        <p style={{display: 'inline', color: 'red'}} id="update_preferences_result"><br/></p>
+                        <button onClick={this.update_preferences}>Update Preferences</button>
                     </div> }
                 </div> }
             </div>
