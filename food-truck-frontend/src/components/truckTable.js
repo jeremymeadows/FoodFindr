@@ -63,7 +63,7 @@ class TruckTable extends Component {
     renderTableData() {
         return this.state.trucks.map((truck) => {
             const { id, name, description, rating } = truck;
-            const url = 'http://localhost:8080/truck/' + id;
+            const url = 'truckDetails?id=' + id;
 
             return (
                 <tr key={id}>
@@ -84,7 +84,7 @@ class TruckTable extends Component {
                 this.state.trucks.forEach(truck => truck.favourite = this.state.subs.includes(truck.id));
                 this.state.loading = false;
                 this.forceUpdate();
-            })
+            });
         });
     }
 
@@ -117,7 +117,9 @@ class TruckTable extends Component {
                 {this.state.loading && <img id='loading' src="http://i.stack.imgur.com/SBv4T.gif" alt="loading..." width='250'></img>}
 
                 <table id='trucks'>
-                    {!this.state.loading && this.renderTableHeader()}
+                    <thead>
+                        <tr>{!this.state.loading && this.renderTableHeader()}</tr>
+                    </thead>
                     <tbody id='table'>
                         {!this.state.loading && this.renderTableData()}
                     </tbody>
