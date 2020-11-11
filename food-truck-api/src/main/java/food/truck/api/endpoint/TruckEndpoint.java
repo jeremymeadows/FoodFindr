@@ -69,6 +69,28 @@ public class TruckEndpoint {
         return json;
     }
 
+    @CrossOrigin(origins="*")
+    @GetMapping("/truck/{name}")
+    public String findTruckByName(@PathVariable String name) {
+        try {
+            ResultSet r = Database.query("SELECT * FROM trucks WHERE name='" + name + "';");
+            if (r.next()) {
+                String description = r.getString("description");
+                Float rating = r.getFloat("rating");
+                String id = r.getString("truck_id");
+
+                Truck t = new Truck(id, name, description, rating);
+
+                logger.log(Level.INFO, t.toString());
+                return t.toString();
+            }
+        } catch (SQLException ex) {
+            logger.log(Level.WARNING, "truck " + name + " not found");
+        }
+
+        return "truck not found";
+    }
+
     // this method has the same signature as the one below it, and didn't look like it was being used
 
      @CrossOrigin(origins="*")

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 
 class TruckTable extends Component {
+
     constructor(props) {
         super(props);
 
@@ -11,17 +12,21 @@ class TruckTable extends Component {
                 { id: '', name: '', description: '', rating: 0, favourite: false }
             ],
             subs: [],
-            search: false,
+            search: 0,
         };
+
     }
 
     async getTrucks() {
-        if (this.state.search === false) {
+        if (this.search === 0) {
             await fetch('http://localhost:8080/trucks')
                 .then(res => res.json())
                 .then(trucks => this.state.trucks = trucks);
         } else {
-
+            let name = document.getElementById("searchtruckname").value;
+            await fetch('http://localhost:8080/trucks/' + name)
+                .then(res => res.json())
+                .then(trucks => this.state.trucks = trucks);
         }
     }
 
@@ -60,7 +65,7 @@ class TruckTable extends Component {
 
     async componentDidMount() {
         this.state.user = JSON.parse(localStorage.getItem('user'));
-        if (this.state.seal === false) {
+        if (this.search === 0) {
             this.getTrucks().then(() => {
                 this.getSubscriptions().then(() => {
                     this.state.trucks.forEach(truck => truck.favourite = this.state.subs.includes(truck.id));
@@ -69,7 +74,7 @@ class TruckTable extends Component {
                 })
             });
         } else {
-            this.getTrucks().then(() => {
+            this.searchTrucks().then(() => {
                 this.getSubscriptions().then(() => {
                     this.state.trucks.forEach(truck => truck.favourite = this.state.subs.includes(truck.id));
                     this.state.loading = false;
@@ -79,7 +84,7 @@ class TruckTable extends Component {
         }
     }
 
-    searchTrucks() {
+    async searchTrucks() {
         let truckSelect = document.getElementById("namesearch").checked;
         let rangeSelect = document.getElementById("rangesearch").checked;
         let truckName = document.getElementById("searchtruckname").value;
@@ -90,7 +95,7 @@ class TruckTable extends Component {
             return 1;
         }
 
-        this.setState({search: true});
+        this.search = 1;
         let search_credentials = truckName + ";" + range;
 
         const xhr = new XMLHttpRequest();
@@ -129,7 +134,7 @@ class TruckTable extends Component {
     }
 
     render() {
-        const searched = this.state.search;
+        let searched = this.search;
         return (
             <div>
                 <div style={{textAlign: 'center'}}>
