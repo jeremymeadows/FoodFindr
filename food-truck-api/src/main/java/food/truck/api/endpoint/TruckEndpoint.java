@@ -92,7 +92,7 @@ public class TruckEndpoint {
 
         return null;
     }
-
+    /*
     @CrossOrigin(origins="*")
     @GetMapping("/truck/{name}")
     public String findTruckByName(@PathVariable String name) {
@@ -112,7 +112,7 @@ public class TruckEndpoint {
         } catch (SQLException ex) {
             logger.log(Level.WARNING, ex.toString(), "truck " + name + " not found");
         }
-
+    }*/
 
     // this method has the same signature as the one below it, and didn't look like it was being used
 
