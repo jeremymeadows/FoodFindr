@@ -181,39 +181,6 @@ public class TruckEndpoint {
     }
 
     @CrossOrigin(origins="*")
-    @PostMapping("/trucks/ids")
-    public String findTrucksByIDList(@RequestBody String list) {
-        String[] split = list.split(";");
-        String trucklist = "";
-
-        for (String s : split) {
-            trucklist += ("'" + s + "',");
-        }
-        trucklist = trucklist.substring(0, trucklist.length()-1);
-
-        String json = "[";
-        try {
-            logger.log(Level.INFO, "SELECT * FROM trucks WHERE truck_id IN (" + trucklist + ");");
-            ResultSet r = Database.query("SELECT * FROM trucks WHERE truck_id IN (" + trucklist + ");");
-            while (r.next()) {
-                String id = r.getString("truck_id");
-                String name = r.getString("name");
-                String description = r.getString("description");
-                Float rating = r.getFloat("rating");
-
-                Truck t = new Truck(id, name, description, rating);
-                logger.log(Level.INFO, t.toString());
-                json = json + t.toString() + ",";
-            }
-        } catch (SQLException ex) {
-            logger.log(Level.WARNING, ex.toString());
-        }
-        json = json.substring(0, json.length() - 1) + "]";
-        logger.log(Level.INFO, json);
-        return json;
-    }
-
-    @CrossOrigin(origins="*")
     @PostMapping("/trucks/searchTrucks")
     public String searchTruck(@RequestBody String search_cred) {
         //var truck_cred = truck.name + ';' + description + ';' + rating;
