@@ -67,6 +67,12 @@ public class UserEndpoint {
     @PostMapping("/dashboard/messages")
     public String getMessages(@RequestBody String email) {
         try {
+
+            logger.log(Level.INFO, "UPDATE inbox, users SET messageRead=1 WHERE recipientID = users.user_id " +
+                    "and users.email = '" + email + "';");
+            Database.update("UPDATE inbox, users SET messageRead=1 WHERE recipientID = users.user_id " +
+                    "and users.email = '" + email + "';");
+
             logger.log(Level.INFO, email);
             logger.log(Level.INFO, "SELECT messageContent FROM inbox, users WHERE recipientID = users.user_id" +
                     " and users.email = '" + email + "';");
@@ -78,6 +84,20 @@ public class UserEndpoint {
             }
             return message;
         } catch (SQLException ex) {
+            logger.log(Level.WARNING, "database query failed");
+            return "";
+        }
+    }
+
+    @CrossOrigin(origins="*")
+    @PostMapping("/dashboard/delete")
+    public String deleteMessages(@RequestBody String user_id) {
+        logger.log(Level.INFO, user_id);
+
+        try {
+            Database.update("DELETE FROM inbox WHERE recipientID = '" + user_id + "' and messageRead=1;");
+            return "Success";
+        } catch(SQLException ex) {
             logger.log(Level.WARNING, "database query failed");
             return "";
         }
@@ -270,8 +290,8 @@ public class UserEndpoint {
             // For every recipient, store the recipient and message into the inbox table
             for(String r_ID : recipients){
                 Database.update("INSERT INTO inbox (recipientID, " +
-                        "messageContent) VALUES ('" + r_ID +
-                        "', '" + message + "');");
+                        "messageContent, messageRead) VALUES ('" + r_ID +
+                        "', '" + message + "', 0);");
             }
             return "Notification [" + message + "] sent.";
         } catch(SQLException ex) {

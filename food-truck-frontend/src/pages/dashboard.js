@@ -13,6 +13,7 @@ class Dashboard extends Component {
         this.get_message = this.get_message.bind(this);
         this.send_message = this.send_message.bind(this);
         this.update_preferences = this.update_preferences.bind(this);
+        this.delete_message = this.delete_message.bind(this);
     }
 
     componentDidMount() {
@@ -88,6 +89,29 @@ class Dashboard extends Component {
         xhr.send(owner_message);
     }
 
+    delete_message() {
+        var user_id = this.state.user.id;
+        const xhr = new XMLHttpRequest();
+
+        xhr.open('POST', 'http://localhost:8080/dashboard/delete');
+        xhr.onloadend = function() {
+            var res = document.getElementById("delete_result");
+            if(xhr.status == 200) {
+                if(xhr.responseText == "") {
+                    console.log("could not delete messages");
+                    res.style = "color: red; display: block;";
+                    res.innerHTML = "could not delete messages";
+                } else {
+                    console.log("delete message success");
+                    res.style = "color: green, display: inline;";
+                    res.innerHTML = "messages were deleted successfully";
+                    window.location = "../dashboard";
+                }
+            }
+        }
+        xhr.send(user_id);
+    }
+
     update_preferences(){
         var id_passed = this.state.user.id;
         var price = document.getElementById("cost").value;
@@ -130,6 +154,10 @@ class Dashboard extends Component {
     					<p style={{display: 'inline', color: 'black'}} id="message_result"><br/></p>
     					<button onClick={this.get_message}>View Messages</button>
     				</div>
+                    <div style={{textAlign: 'center', marginTop: '0px'}}>
+                        <p style={{display: 'inline', color: 'black'}} id="delete_result"><br/></p>
+                        <button onClick={this.delete_message}>Delete Read Messages</button>
+                    </div>
                     { user.owner && <div style={{textAlign: 'center', marginTop: '20px'}}>
                         <input id="message" type="text" placeholder="Type your message here."/><br/>
                         <input id="truck_id_message" type="text" placeholder="Truck ID of subscribers you want to message."/><br/>
