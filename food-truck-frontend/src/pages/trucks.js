@@ -146,42 +146,49 @@ class Trucks extends Component {
         xhr.send(truck_cred);
     };
 
-    render() {
-        const user = this.state.user;
+    var isOwner = "1";
 
-        return (
-            <div>
-                <NavMenu></NavMenu>
-                <h2 style={{textAlign: 'center'}}>Trucks</h2>
-                <TruckTable></TruckTable>
+    function findOwnership() {
+        // Find out if the user navigating the page is a truck owner
+        const ownerRequest = new XMLHttpRequest();
+        ownerRequest.open('POST', 'http://localhost:8080/getOwnership/');
+        ownerRequest.onloadend = function () {
+            console.log(ownerRequest.status);
+            if (ownerRequest.status == 200) {
+                if (ownerRequest.responseText == "") {
+                    console.log("Could not find the current user");
+                } else {
+                    console.log("Found user status: " + ownerRequest.responseText);
+                    isOwner = ownerRequest.responseText;
+                }
+            }
+        };
+        ownerRequest.send("johnr.harrison@att.net");
 
-                { user !== null && <div>
-                    <div style={{textAlign: 'center', marginTop: '10vh'}}>
-                        { this.state.user.owner &&
-                            <>
-                            <input id="truckname" type="text" placeholder="Truck Name"/><br/>
-                            <input id="truckdescription" type="text" placeholder="Truck Description"/><br/>
-                            <input id="rating" type="text" placeholder="Rating"/><br/>
-                            <p style={{display: 'inline', color: 'red'}} id="create_truck_result"><br/></p>
-                            <button onClick={this.createFoodTruck}>Create Food Truck</button><br/>
-                            </>
-                        }
-                    </div>
-                    <div style={{textAlign: 'center', marginTop: '10vh'}}>
-                        <input id="oldtruckname" type="text" placeholder="Truck Name"/><br/>
-                        <input id="oldtruckdescription" type="text" placeholder="Truck Description"/><br/>
-                        <input id="oldrating" type="text" placeholder="Rating"/><br/>
-                        <input id="truckid" type="text" placeholder="Truck ID"/><br/>
-                        <p style={{display: 'inline', color: 'red'}} id="manage_truck_result"><br/></p>
-                        <button onClick={this.manageTruck}>Edit Food Truck</button><br/>
-                    </div>
-                    <div style={{textAlign: 'center', marginTop: '10vh'}}>
-                        <input id="truck_id" type="text" placeholder="Truck ID"/><br/>
-                        <input id="schedule" type="text" placeholder="Truck Schedule"/><br/>
-                        <p style={{display: 'inline', color: 'red'}} id="schedule_truck_result"><br/></p>
-                        <button onClick={this.manageSchedule}>Edit Food Truck Schedule</button><br/>
-                    </div>
-                </div> }
+        if(isOwner === "1"){return 1;}
+        return 0;
+    }
+
+
+    return (
+        <div>
+            <NavMenu></NavMenu>
+            <h2 style={{textAlign: 'center'}}>Trucks</h2>
+
+
+
+            <TruckTable></TruckTable>
+
+            <div style={{textAlign: 'center', marginTop: '10vh'}}>
+                { findOwnership() &&
+                    <>
+                    <input id="truckname" type="text" placeholder="Truck Name"/><br/>
+                    <input id="truckdescription" type="text" placeholder="Truck Description"/><br/>
+                    <input id="rating" type="text" placeholder="Rating"/><br/>
+                    <p style={{display: 'inline', color: 'red'}} id="create_truck_result"><br/></p>
+                    <button onClick={createFoodTruck}>Create Food Truck</button><br/>
+                    </>
+                }
             </div>
         );
     }
