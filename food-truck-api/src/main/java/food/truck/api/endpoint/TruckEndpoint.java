@@ -72,6 +72,7 @@ public class TruckEndpoint {
     @CrossOrigin(origins="*")
     @GetMapping("/truck/{name}")
     public String findTruckByName(@PathVariable String name) {
+        String json = "[";
         try {
             ResultSet r = Database.query("SELECT * FROM trucks WHERE name='" + name + "';");
             if (r.next()) {
@@ -82,13 +83,15 @@ public class TruckEndpoint {
                 Truck t = new Truck(id, name, description, rating);
 
                 logger.log(Level.INFO, t.toString());
-                return t.toString();
+                json = json + t.toString() + ",";
             }
         } catch (SQLException ex) {
-            logger.log(Level.WARNING, "truck " + name + " not found");
+            logger.log(Level.WARNING, ex.toString(), "truck " + name + " not found");
         }
 
-        return "truck not found";
+        json = json.substring(0, json.length() - 1) + "]";
+        logger.log(Level.INFO, json);
+        return json;
     }
 
     // this method has the same signature as the one below it, and didn't look like it was being used
