@@ -73,6 +73,9 @@ public class TruckEndpoint {
     @GetMapping("/truck/{name}")
     public String findTruckByName(@PathVariable String name) {
         String json = "[";
+        //Float testr = new Float("4");
+        //Truck test = new Truck("657c", "tester", "es ist a test", testr);
+        //json = json + test.toString() + ",";
         try {
             ResultSet r = Database.query("SELECT * FROM trucks WHERE name='" + name + "';");
             while (r.next()) {

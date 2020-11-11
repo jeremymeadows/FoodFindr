@@ -28,7 +28,9 @@ class TruckTable extends Component {
 
         } else {
             console.log("Passed through");
+            // Don't need a header
             let header = new Headers();
+            let funcError = 1;
             header.append('Content-Type', 'application/json');
             header.append('Accept', 'application/json');
             let name = document.getElementById("searchtruckname").value;
@@ -38,8 +40,25 @@ class TruckTable extends Component {
                     return res.json();})
                 .catch(function(error) {
                     console.log("Fetching error gettrucks: " + error);
+                    funcError = 0;
                 })
-                .then(trucks => this.state.trucks = trucks);
+                .then(function(trucks) { console.log(trucks);this.state.trucks = trucks;})
+                .catch(function(error) {
+                    console.log("Fetching error gettrucks: " + error);
+                    funcError = 0;
+                });
+            if (funcError === 0) {
+                this.setState({search: false});
+                console.log("There was an error, loading normal table");
+                let res = document.getElementById("truck_found_result");
+                res.style = "color: red; display: block;";
+                res.innerHTML = "could not find truck";
+                this.componentDidMount().then(() => {
+                    //this.renderTableHeader();
+                    //this.renderTableData();
+                    this.forceUpdate();
+                });
+            }
         }
     }
 
@@ -111,7 +130,7 @@ class TruckTable extends Component {
             <div>
                 <div style={{textAlign: 'center'}}>
                     <input id="searchtruckname" type="text" placeholder="Truck Name"/><br/>
-
+                    <p style={{display: 'inline', color: 'red'}} id="truck_found_result"><br/></p>
                     <button onClick={this.searchTrucks}>Search</button>
                 </div>
                 {!this.state.search && <div>
