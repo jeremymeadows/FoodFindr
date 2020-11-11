@@ -74,7 +74,7 @@ class TruckTable extends Component {
                 })
             });
         } else {
-            this.searchTrucks().then(() => {
+            this.getTrucks().then(() => {
                 this.getSubscriptions().then(() => {
                     this.state.trucks.forEach(truck => truck.favourite = this.state.subs.includes(truck.id));
                     this.state.loading = false;
@@ -84,54 +84,11 @@ class TruckTable extends Component {
         }
     }
 
-    async searchTrucks() {
-        let truckSelect = document.getElementById("namesearch").checked;
-        let rangeSelect = document.getElementById("rangesearch").checked;
-        let truckName = document.getElementById("searchtruckname").value;
-        let range = document.getElementById("range").value;
-
-        if(truckSelect === null && rangeSelect === null) {
-            console.log("No search parameters were entered.");
-            return 1;
-        }
-
+    searchTrucks() {
         this.search = 1;
-        let search_credentials = truckName + ";" + range;
-
-        const xhr = new XMLHttpRequest();
-
-        xhr.open('POST', 'http://localhost:8080/trucks/searchTrucks', true);
-
-        xhr.onloadend = function() {
-            var res = document.getElementById("schedule_truck_result");
-            if (xhr.status === 200) {
-                if (xhr.responseText === "]") {
-                    console.log("could not find any trucks");
-                    res.style = "color: red; display: block;";
-                    res.innerHTML = "could not find any trucks";
-                } else {
-                    console.log("found trucks");
-                    res => res.json();
-                    /*res.style = "color: green, display: inline;";
-                    res.innerHTML = xhr.responseText + " found successfully";
-                    window.location = "../trucks";*/
-
-                }
-
-            } else {
-                if (res === null) {
-                    console.log("Res returned NULL");
-                }
-                console.log(xhr.status);
-                console.log("Could not connect to server");
-                res.style = "color: red; display: block;";
-                res.innerHTML = "Could not connect to server";
-            }
-        }
-
-        xhr.send(search_credentials);
-
     }
+
+
 
     render() {
         let searched = this.search;
@@ -139,13 +96,8 @@ class TruckTable extends Component {
             <div>
                 <div style={{textAlign: 'center'}}>
                     <input id="searchtruckname" type="text" placeholder="Truck Name"/><br/>
-                    <input id="namesearch" type="checkbox"/>
-                    <label htmlFor="namesearch">Searching by truck name</label><br/>
-                    <input id="range" type="text" placeholder="Within -- Miles"/><br/>
-                    <input id="rangesearch" type="checkbox"/>
-                    <label htmlFor="rangesearch">Searching by range</label><br/>
 
-                    <p style={{display: 'inline', color: 'red'}} id="schedule_truck_result"><br/></p>
+
                     <button onClick={this.searchTrucks}>Search</button>
                 </div>
                 {!searched && <div>
