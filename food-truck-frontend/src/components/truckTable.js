@@ -15,6 +15,7 @@ class TruckTable extends Component {
         };
         this.searchTrucks = this.searchTrucks.bind(this);
         this.getNearby = this.getNearby.bind(this);
+        this.getTrucksByIDList = this.getTrucksByIDList.bind(this);
     }
 
     async getTrucks() {
@@ -56,6 +57,23 @@ class TruckTable extends Component {
                 );
             }
         });
+    }
+
+    getTrucksByIDList() {
+        var trucks = 'e352';
+
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', 'http://localhost:8080/trucks/ids');
+        xhr.onloadend = function() {
+            if(xhr.status == 200) {
+                if(xhr.responseText == "") {
+                    console.log("could not find trucks");
+                } else {
+                    console.log(xhr.responseText);
+                }
+            }
+        }
+        xhr.send(trucks);
     }
 
     getNearby(){
@@ -159,6 +177,7 @@ class TruckTable extends Component {
 
                     <button onClick={this.searchTrucks}>Search</button><br/><br/>
                     <button onClick={this.getNearby}>Get Nearby</button><br/>
+                    <button onClick={this.getTrucksByIDList}>Find By ID List</button><br/>
                 </div>
                 { true && <div>
                 { /* loaging gif, probably want a different one later */ }
