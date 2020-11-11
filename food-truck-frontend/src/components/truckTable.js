@@ -87,39 +87,56 @@ class TruckTable extends Component {
 
         // Function evaluating based on current position
         function evaluatePosition(position) {
-            let user_lat = position.coords.latitude;
-            let user_long = position.coords.longitude;
+            // Store the user's coordinates and the key value to access mapquest's API,
+            // as well as the web address reached by the xmlhttp request
+            let user_coord = position.coords.latitude + ',' + position.coords.longitude;
+            let keyVal = "HvhBy6rdLPqZkmPnsEa4fMS95IDRRo2K";
+            let url = 'http://open.mapquestapi.com/geocoding/v1/reverse?key=' + keyVal
+                + '&location=' + user_coord;
 
-            const xhr = new XMLHttpRequest();
-            xhr.responseType = 'json';
+            let physicalAddress = "";
 
-            // Log the request made for the user's address
-            var url = 'http://open.mapquestapi.com/geocoding/v1/reverse?key=HvhBy6rdLPqZkmPnsEa4fMS95IDRRo2K&location=' +
-                user_lat + ',' + user_long;
+            // Launch a new XMLHttp request which returns a json object
+            const userLocReq = new XMLHttpRequest();
+            userLocReq.responseType = 'json';
 
-            // Request for the user's address
-            /**
-            fetch(url)
+            // Get from the mapquest API the address of the user
+            userLocReq.open('GET', url, true);
 
-                .then(res => res.json())
+            // After getting the address of the user
+            userLocReq.onloadend = function(){
+                // Store the user's address
+                let userAddress = userLocReq.response.results[0].locations[0];
+                physicalAddress = userAddress.street + ", " + userAddress.adminArea5 + ' '
+                    + userAddress.adminArea3 + ", " + userAddress.postalCode;
 
-                .then(function(json){
-                    console.log(json.street);
-                });
-            **/
+                console.log(physicalAddress);
 
-            xhr.open('GET', 'http://open.mapquestapi.com/geocoding/v1/reverse?key=HvhBy6rdLPqZkmPnsEa4fMS95IDRRo2K&location=' +
-                user_lat + ',' + user_long, true);
-            xhr.onload = function(){
-                if(xhr.responseType.includes("json")){
-                    let userAddress = xhr.response.results[0].locations[0];
-                    let physicalAddress = userAddress.street + ", " + userAddress.adminArea5 + ' '
-                        + userAddress.adminArea3 + ", " + userAddress.postalCode;
-                    console.log(physicalAddress);
+                // Launch an XMLHttp request which returns every truck whose location isn't null
+                const truckLocReq = new XMLHttpRequest();
+                truckLocReq.open('GET', 'http://localhost:8080/trucks/locations', true);
+
+                truckLocReq.onloadend = function(){
+                    // Get the pairs of truck id's and addresses returned
+                    let res = truckLocReq.response;
+                    if(res) {
+                        // For every pair returned
+                        console.log(res);
+                        let array = res.split(/(",")/);
+                        console.log(array.length);
+                        console.log(array);
+                        array.forEach(function(pair){
+                            console.log(pair);
+                        });
+                    }
+
+                    else{
+                        console.log("no trucks have locations");
+                    }
                 }
+                truckLocReq.send();
             }
-            xhr.send(null);
-
+            userLocReq.send();
         }
     }
 

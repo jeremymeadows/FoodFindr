@@ -3,6 +3,7 @@ package food.truck.api.endpoint;
 import static food.truck.api.FoodTruckApplication.logger;
 import food.truck.api.Database;
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.logging.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,6 +68,29 @@ public class TruckEndpoint {
         json = json.substring(0, json.length() - 1) + "]";
         logger.log(Level.INFO, json);
         return json;
+    }
+
+    @CrossOrigin(origins="*")
+    @GetMapping("/trucks/locations")
+    public ArrayList<String[]> getTrucksWithLocations() {
+        ArrayList<String[]> PairArray = new ArrayList<String[]>();
+        try {
+            ResultSet rs = Database.query("SELECT truck_id, location FROM trucks WHERE location IS NOT NULL;");
+            while(rs.next()){
+                String Pair[] = new String[2];
+                Pair[0] = rs.getString("truck_id");
+                Pair[1] = rs.getString("location");
+
+                PairArray.add(Pair);
+            }
+
+            return PairArray;
+        }
+        catch(SQLException ex){
+            logger.log(Level.WARNING, ex.toString());
+        }
+
+        return null;
     }
 
     @CrossOrigin(origins="*")
