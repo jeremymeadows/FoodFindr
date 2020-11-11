@@ -64,18 +64,6 @@ public class UserEndpoint {
     }
 
     @CrossOrigin(origins="*")
-    @PostMapping("/trucks/subscribe")
-    public String subscribeToTruck(@RequestBody String id) {
-        try {
-            Database.update("INSERT INTO ")
-
-        } catch(SQLException ex) {
-            logger.log(Level.WARNING, "database query failed");
-            return "";
-        }
-    }
-
-    @CrossOrigin(origins="*")
     @PostMapping("/dashboard/messages")
     public String getMessages(@RequestBody String email) {
         try {
@@ -226,6 +214,8 @@ public class UserEndpoint {
         String[] fields = str.split(";");
         String user = fields[0];
         String truck = fields[1];
+
+        logger.log(Level.INFO, user + " " + truck);
 
         try {
             Database.update("INSERT INTO subscriptions (user_id, truck_id) VALUES(" +
