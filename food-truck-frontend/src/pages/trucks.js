@@ -148,7 +148,7 @@ class Trucks extends Component {
 
     var isOwner = "1";
 
-    function findOwnership() {
+    findOwnership() {
         // Find out if the user navigating the page is a truck owner
         const ownerRequest = new XMLHttpRequest();
         ownerRequest.open('POST', 'http://localhost:8080/getOwnership/');
@@ -169,29 +169,31 @@ class Trucks extends Component {
         return 0;
     }
 
+    render() {
+        return (
+            <div>
+                <NavMenu></NavMenu>
+                <h2 style={{textAlign: 'center'}}>Trucks</h2>
 
-    return (
-        <div>
-            <NavMenu></NavMenu>
-            <h2 style={{textAlign: 'center'}}>Trucks</h2>
 
 
+                <TruckTable></TruckTable>
 
-            <TruckTable></TruckTable>
-
-            <div style={{textAlign: 'center', marginTop: '10vh'}}>
-                { findOwnership() &&
-                    <>
-                    <input id="truckname" type="text" placeholder="Truck Name"/><br/>
-                    <input id="truckdescription" type="text" placeholder="Truck Description"/><br/>
-                    <input id="rating" type="text" placeholder="Rating"/><br/>
-                    <p style={{display: 'inline', color: 'red'}} id="create_truck_result"><br/></p>
-                    <button onClick={createFoodTruck}>Create Food Truck</button><br/>
-                    </>
-                }
+                <div style={{textAlign: 'center', marginTop: '10vh'}}>
+                    { findOwnership() &&
+                        <>
+                        <input id="truckname" type="text" placeholder="Truck Name"/><br/>
+                        <input id="truckdescription" type="text" placeholder="Truck Description"/><br/>
+                        <input id="rating" type="text" placeholder="Rating"/><br/>
+                        <p style={{display: 'inline', color: 'red'}} id="create_truck_result"><br/></p>
+                        <button onClick={createFoodTruck}>Create Food Truck</button><br/>
+                        </>
+                    }
+                </div>
             </div>
         );
     }
+
 }
 
 export default Trucks
