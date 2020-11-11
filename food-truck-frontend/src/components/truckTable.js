@@ -20,9 +20,12 @@ class TruckTable extends Component {
 
     async getTrucks() {
         if (this.state.search === false) {
+            console.log("false passed");
+
             await fetch('http://localhost:8080/trucks')
-                .then(res => res.json())
+                .then(res => {console.log(res);return res.json();})
                 .then(trucks => this.state.trucks = trucks);
+
         } else {
             console.log("Passed through");
             let header = new Headers();
@@ -30,7 +33,12 @@ class TruckTable extends Component {
             header.append('Accept', 'application/json');
             let name = document.getElementById("searchtruckname").value;
             await fetch('http://localhost:8080/trucks/' + name, {mode: 'no-cors', method: 'GET'})
-                .then(res => res.json())
+                .then(function(res) {
+                    console.log(res);
+                    return res.json();})
+                .catch(function(error) {
+                    console.log("Fetching error gettrucks: " + error);
+                })
                 .then(trucks => this.state.trucks = trucks);
         }
     }
@@ -84,10 +92,11 @@ class TruckTable extends Component {
         let name = document.getElementById("searchtruckname").value;
         if (name !== null) {
             this.setState({search: true});
+            this.setState({loading: true});
             this.componentDidMount().then(() => {
-                this.renderTableHeader()
-                this.renderTableData()
-                this.forceUpdate()
+                this.renderTableHeader();
+                this.renderTableData();
+                this.forceUpdate();
             });
         }
     };
