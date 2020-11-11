@@ -25,12 +25,15 @@ class TruckTable extends Component {
             await fetch('http://localhost:8080/trucks')
                 .then(res => {console.log(res);return res.json();})
                 .then(trucks => this.state.trucks = trucks);
+            let res = document.getElementById("truck_found_result");
+            res.innerHTML = "";
 
         } else {
             console.log("Passed through");
             let tname = document.getElementById("searchtruckname").value;
             const tempTrucks = this.state.trucks;
             let tempList = [];
+            let res = document.getElementById("truck_found_result");
             tempTrucks.forEach(function(trucks){
                 if (trucks.name === tname) {
                     tempList.push(trucks);
@@ -38,6 +41,9 @@ class TruckTable extends Component {
             });
             if (tempList.length) {
                 this.setState({trucks: tempList});
+            } else {
+                res.style = "color: red; display: block;";
+                res.innerHTML = "could not find truck '" + tname + "'";
             }
             this.setState({search: false});
         }
