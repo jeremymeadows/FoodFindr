@@ -70,9 +70,36 @@ public class TruckEndpoint {
     }
 
     @CrossOrigin(origins="*")
-    @PostMapping("/trucks/manage")
-    public String manageTruck(@RequestBody String truck_cred) {
-     //var truck_cred = truck.name + ';' + description + ';' + rating;
+    @GetMapping("/truck/{name}")
+    public String findTruckByName(@PathVariable String name) {
+        String json = "[";
+        try {
+            ResultSet r = Database.query("SELECT * FROM trucks WHERE name='" + name + "';");
+            while (r.next()) {
+                String description = r.getString("description");
+                Float rating = r.getFloat("rating");
+                String id = r.getString("truck_id");
+
+                Truck t = new Truck(id, name, description, rating);
+
+                logger.log(Level.INFO, t.toString());
+                json = json + t.toString() + ",";
+            }
+        } catch (SQLException ex) {
+            logger.log(Level.WARNING, ex.toString(), "truck " + name + " not found");
+        }
+
+        json = json.substring(0, json.length() - 1) + "]";
+        logger.log(Level.INFO, json);
+        return json;
+    }
+
+    // this method has the same signature as the one below it, and didn't look like it was being used
+
+     @CrossOrigin(origins="*")
+     @PostMapping("/trucks/manage")
+     public String manageTruck(@RequestBody String truck_cred) {
+         //var truck_cred = truck.name + ';' + description + ';' + rating;
 
 
         String[] fields = truck_cred.split(";");
@@ -93,6 +120,55 @@ public class TruckEndpoint {
             logger.log(Level.WARNING, ex.toString());
             return "";
         }
+    }
+
+    @CrossOrigin(origins="*")
+    @PostMapping("/trucks/searchTrucks")
+    public String searchTruck(@RequestBody String search_cred) {
+        //var truck_cred = truck.name + ';' + description + ';' + rating;
+
+        String json = "[";
+        String[] fields = search_cred.split(";");
+        String name = fields[0]; //truck.getName()
+        String range = fields[1]; //truck.getDescription()
+
+
+        logger.log(Level.INFO, "searching truck " + name);
+        try {
+            if (name != null) {
+                ResultSet r = Database.query("SELECT * FROM trucks WHERE name='" + name + "';");
+                if (r.next()) {
+                    String description = r.getString("description");
+                    Float rating = r.getFloat("rating");
+                    String id = r.getString("truck_id");
+
+                    Truck t = new Truck(id, name, description, rating);
+
+                    logger.log(Level.INFO, t.toString());
+                    json = json + t.toString() + ",";
+                }
+            }
+            if (range != null) {
+                ResultSet r = Database.query("SELECT * FROM trucks;");
+                while (r.next()) {
+                    name = r.getString("name");
+                    String description = r.getString("description");
+                    Float rating = r.getFloat("rating");
+                    String id = r.getString("truck_id");
+
+                    Truck t = new Truck(id, name, description, rating);
+
+                    logger.log(Level.INFO, t.toString());
+                    json = json + t.toString() + ",";
+                }
+            }
+
+        } catch (SQLException ex) {
+            logger.log(Level.WARNING, ex.toString());
+        }
+        json = json.substring(0, json.length() - 1) + "]";
+        logger.log(Level.INFO, json);
+        return json;
     }
 
     @CrossOrigin(origins="*")

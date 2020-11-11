@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 
 class TruckTable extends Component {
+
     constructor(props) {
         super(props);
 
@@ -11,13 +12,35 @@ class TruckTable extends Component {
                 { id: '', name: '', description: '', rating: 0, subscribed: false }
             ],
             subs: [],
+            search: false,
         };
+        this.searchTrucks = this.searchTrucks.bind(this);
+
     }
 
     async getTrucks() {
-        await fetch('http://localhost:8080/trucks')
-            .then(res => res.json())
-            .then(trucks => this.state.trucks = trucks);
+        if (this.state.search === false) {
+            console.log("false passed");
+
+            await fetch('http://localhost:8080/trucks')
+                .then(res => {console.log(res);return res.json();})
+                .then(trucks => this.state.trucks = trucks);
+
+        } else {
+            console.log("Passed through");
+            let header = new Headers();
+            header.append('Content-Type', 'application/json');
+            header.append('Accept', 'application/json');
+            let name = document.getElementById("searchtruckname").value;
+            await fetch('http://localhost:8080/trucks/' + name, {mode: 'no-cors', method: 'GET'})
+                .then(function(res) {
+                    console.log(res);
+                    return res.json();})
+                .catch(function(error) {
+                    console.log("Fetching error gettrucks: " + error);
+                })
+                .then(trucks => this.state.trucks = trucks);
+        }
     }
 
     async getSubscriptions() {
@@ -55,6 +78,7 @@ class TruckTable extends Component {
 
     async componentDidMount() {
         this.state.user = JSON.parse(localStorage.getItem('user'));
+
         this.getTrucks().then(() => {
             this.getSubscriptions().then(() => {
                 this.state.trucks.forEach(truck => truck.subscribed = this.state.subs.includes(truck.id));
@@ -64,9 +88,33 @@ class TruckTable extends Component {
         });
     }
 
+    searchTrucks() {
+        let name = document.getElementById("searchtruckname").value;
+        if (name !== null) {
+            this.setState({search: true});
+            this.setState({loading: true});
+
+            console.log("Went into searchtrucks");
+            this.componentDidMount().then(() => {
+                //this.renderTableHeader();
+                //this.renderTableData();
+                this.forceUpdate();
+            });
+        }
+    };
+
+
+
     render() {
+        let searched = this.state.search;
         return (
             <div>
+                <div style={{textAlign: 'center'}}>
+                    <input id="searchtruckname" type="text" placeholder="Truck Name"/><br/>
+
+                    <button onClick={this.searchTrucks}>Search</button>
+                </div>
+                {!this.state.search && <div>
                 { /* loaging gif, probably want a different one later */ }
                 {this.state.loading && <img id='loading' src="http://i.stack.imgur.com/SBv4T.gif" alt="loading..." width='250'></img>}
 
@@ -78,6 +126,18 @@ class TruckTable extends Component {
                         {!this.state.loading && this.renderTableData()}
                     </tbody>
                 </table>
+                </div>}
+                {this.state.search && <div>
+                    {this.state.loading && <img id='loading' src="http://i.stack.imgur.com/SBv4T.gif" alt="loading..." width='250'></img>}
+
+                    <table id='trucks'>
+                        {!this.state.loading && this.renderTableHeader()}
+                        <tbody id='table'>
+                        {!this.state.loading && this.renderTableData()}
+                        </tbody>
+                    </table>
+                </div>
+                }
             </div>
         );
     }
