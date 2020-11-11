@@ -93,9 +93,11 @@ class TruckTable extends Component {
         if (name !== null) {
             this.setState({search: true});
             this.setState({loading: true});
+
+            console.log("Went into searchtrucks");
             this.componentDidMount().then(() => {
-                this.renderTableHeader();
-                this.renderTableData();
+                //this.renderTableHeader();
+                //this.renderTableData();
                 this.forceUpdate();
             });
         }
