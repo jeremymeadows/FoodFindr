@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import NavMenu from "../components/navmenu";
+import TruckTable from '../components/truckTable';
 
 class Dashboard extends Component {
     constructor() {
@@ -91,6 +92,7 @@ class Dashboard extends Component {
         return (
             <div>
                 <NavMenu></NavMenu>
+
                 { user !== null && <div>
                     <h2 style={{textAlign: 'center'}}>Welcome, { user.name }!</h2>
 
@@ -133,7 +135,7 @@ class Dashboard extends Component {
                         <label htmlFor="food_type">Choose a food type: </label>
                         <input id="food_type" type="text" placeholder="preferred food type here"/><br/>
                         <p style={{display: 'inline', color: 'red'}} id="update_preferences_result"><br/></p>
-                        <button onClick={this.update_preferences}>Update Preferences</button>
+                        <button onClick={this.update_preferences}>Update Preferences</button><br/><br/>
                     </div> }
                 </div> }
             </div>

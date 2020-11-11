@@ -19,7 +19,7 @@ class Register extends Component {
     register() {
         var email = document.getElementById("email").value;
         var uname = document.getElementById("uname").value;
-        var truck_owner = document.getElementById("truck").checked;
+        var truck_owner = document.getElementById("owner").checked;
 
         if (document.getElementById("passw").value !== document.getElementById("conf").value) {
             document.getElementById("login_result").innerHTML = "password doesn't match";
@@ -32,7 +32,7 @@ class Register extends Component {
         console.log(login_cred);
 
         const xhr = new XMLHttpRequest();
-        xhr.open('POST', host.login, true);
+        xhr.open('POST', 'http://localhost:8080/register', true);
 
         xhr.onloadend = function() {
             var res = document.getElementById("login_result");
