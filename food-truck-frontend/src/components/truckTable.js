@@ -12,14 +12,14 @@ class TruckTable extends Component {
                 { id: '', name: '', description: '', rating: 0, favourite: false }
             ],
             subs: [],
-            search: 0,
+            search: false,
         };
         this.searchTrucks = this.searchTrucks.bind(this);
 
     }
 
     async getTrucks() {
-        if (this.search === 0) {
+        if (this.search === false) {
             await fetch('http://localhost:8080/trucks')
                 .then(res => res.json())
                 .then(trucks => this.state.trucks = trucks);
@@ -78,23 +78,26 @@ class TruckTable extends Component {
 
     searchTrucks() {
 
-        this.setState({search: 1});
-        componentDidMount();
+        this.setState({search: true});
+        this.componentDidMount().then(() => {
+            this.renderTableHeader()
+            this.renderTableData()
+            this.forceUpdate()
+        });
     };
 
 
 
     render() {
-        let searched = this.search;
+        let searched = this.state.search;
         return (
             <div>
                 <div style={{textAlign: 'center'}}>
                     <input id="searchtruckname" type="text" placeholder="Truck Name"/><br/>
 
-
                     <button onClick={this.searchTrucks}>Search</button>
                 </div>
-                {!searched && <div>
+                {!this.state.search && <div>
                 { /* loaging gif, probably want a different one later */ }
                 {this.state.loading && <img id='loading' src="http://i.stack.imgur.com/SBv4T.gif" alt="loading..." width='250'></img>}
 
@@ -105,6 +108,17 @@ class TruckTable extends Component {
                     </tbody>
                 </table>
                 </div>}
+                {this.state.search && <div>
+                    {this.state.loading && <img id='loading' src="http://i.stack.imgur.com/SBv4T.gif" alt="loading..." width='250'></img>}
+
+                    <table id='trucks'>
+                        {!this.state.loading && this.renderTableHeader()}
+                        <tbody id='table'>
+                        {!this.state.loading && this.renderTableData()}
+                        </tbody>
+                    </table>
+                </div>
+                }
             </div>
         );
     }
