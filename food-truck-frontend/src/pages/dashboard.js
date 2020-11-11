@@ -114,14 +114,14 @@ class Dashboard extends Component {
                     </div> }
                     { !user.owner && <div style={{textAlign: 'center', marginTop: '20px'}}>
                         <p style={{display: 'inline', color: 'red'}} id="pref_result"><br/></p>
-                        <label for="cost">Choose a price: </label>
+                        <label htmlFor="cost">Choose a price: </label>
                         <select id="cost" name="cost">
                             <option value="nopref">None</option>
                             <option value="1">$</option>
                             <option value="2">$$</option>
                             <option value="3">$$$</option>
                         </select><br />
-                        <label for="rating">Choose a star rating: </label>
+                        <label htmlFor="rating">Choose a star rating: </label>
                         <select id="rating" name="rating">
                             <option value="nopref">None</option>
                             <option value="1">1</option>
@@ -130,7 +130,7 @@ class Dashboard extends Component {
                             <option value="4">4</option>
                             <option value="5">5</option>
                         </select><br />
-                        <label for="food_type">Choose a food type: </label>
+                        <label htmlFor="food_type">Choose a food type: </label>
                         <input id="food_type" type="text" placeholder="preferred food type here"/><br/>
                         <p style={{display: 'inline', color: 'red'}} id="update_preferences_result"><br/></p>
                         <button onClick={this.update_preferences}>Update Preferences</button>
