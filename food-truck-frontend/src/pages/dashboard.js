@@ -66,23 +66,12 @@ class Dashboard extends Component {
     }
 
     update_preferences(){
-        var id_passed = this.state.user.id;
         var price = document.getElementById("cost").value;
         var rating = document.getElementById("rating").value;
         var foodtype = document.getElementById("food_type").value;
 
-        var sendMessage = id_passed + ';' + price + ';' + rating + ';' + foodtype;
-        console.log("updating price with " + price + "\nrating with " + rating
-            + "food type with " + foodtype + "\nfor user: " + id_passed);
 
-        const xhr = new XMLHttpRequest();
-        xhr.open('POST', 'http://localhost:8080/dashboard/preferences', true);
-
-        xhr.onloadend = function() {
-            var res = document.getElementById("update_preferences_result");
-            console.log("status returned: " + xhr.status);
-        };
-        xhr.send(sendMessage);
+        console.log(price + ' ' + rating + ' ' + foodtype);
     }
 
     render() {
