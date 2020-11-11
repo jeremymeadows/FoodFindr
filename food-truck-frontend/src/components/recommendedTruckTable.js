@@ -11,47 +11,46 @@ class TruckTable extends Component {
             trucks: [
                 { id: '', name: '', description: '', rating: 0, subscribed: false }
             ],
-            subs: [],
-            search: false,
+            preferences: [
+                {price: '', rating: '', type: ''}
+            ],
+            subs: []
+
         };
-        this.searchTrucks = this.searchTrucks.bind(this);
+
         this.getNearby = this.getNearby.bind(this);
-        this.getTrucksByIDList = this.getTrucksByIDList.bind(this);
+
     }
 
     async getTrucks() {
-        if (this.state.search === false) {
-            console.log("false passed");
+
+            console.log("getting trucks");
 
             await fetch('http://localhost:8080/trucks')
                 .then(res => {console.log(res);return res.json();})
                 .then(trucks => this.state.trucks = trucks);
-            let res = document.getElementById("truck_found_result");
-            res.innerHTML = "";
 
-        } else {
-            console.log("Passed through");
-            let tname = document.getElementById("searchtruckname").value;
-            const tempTrucks = this.state.trucks;
-            let tempList = [];
-            let res = document.getElementById("truck_found_result");
-            tempTrucks.forEach(function(trucks){
-                if (trucks.name === tname) {
-                    tempList.push(trucks);
-                }
+        console.log("getting preferences");
+        await fetch('http://localhost:8080/dashboard/getpreferences')
+            .then(res => {console.log(res);return res.json();})
+            .then(function(preferences) {
+                let list = res.split(';');
+                this.state.preferences[0] = list[0];
+                this.state.preferences[1] = list[1];
+                this.state.preferences[2] = list[2];
             });
-            if (tempList.length) {
-                this.setState({trucks: tempList}, () => {
-                    console.log(this.state.trucks);
-                });
-            } else {
-                res.style = "color: red; display: block;";
-                res.innerHTML = "could not find truck '" + tname + "'";
+
+
+        let temptrucks = [];
+        this.state.trucks.forEach(function(truck) {
+            if(this.preferences.includes(truck.price)) {
+                temptrucks.push(truck);
             }
-            this.setState({search: false},
-                () => console.log(this.state.search)
-            );
-        }
+        });
+        this.setState({trucks: temptrucks});
+        this.forceUpdate();
+
+
     }
 
     async getSubscriptions() {
@@ -85,23 +84,6 @@ class TruckTable extends Component {
                 </tr>
             );
         });
-    }
-
-    getTrucksByIDList() {
-        var trucks = 'e352';
-
-        const xhr = new XMLHttpRequest();
-        xhr.open('POST', 'http://localhost:8080/trucks/ids');
-        xhr.onloadend = function() {
-            if(xhr.status == 200) {
-                if(xhr.responseText == "") {
-                    console.log("could not find trucks");
-                } else {
-                    console.log(xhr.responseText);
-                }
-            }
-        }
-        xhr.send(trucks);
     }
 
     getNearby(){
@@ -180,66 +162,22 @@ class TruckTable extends Component {
         });
     }
 
-    searchTrucks() {
-        let name = document.getElementById("searchtruckname").value;
-
-        if (name !== null) {
-            this.setState({search: true}, () => {
-                console.log(this.state.search);
-            });
-            this.setState({loading: true}, () => {
-                console.log(this.state.loading);
-            });
-
-        console.log("got name: " + name);
-
-
-
-            console.log("Went into searchtrucks");
-            this.componentDidMount().then(() => {
-                //this.renderTableHeader();
-                //this.renderTableData();
-                this.forceUpdate();
-            });
-        }
-    };
-    
     render() {
-        let searched = this.state.search;
         return (
             <div>
-                <div style={{textAlign: 'center'}}>
-                    <input id="searchtruckname" type="text" placeholder="Truck Name"/><br/>
 
-                    <p style={{display: 'inline', color: 'red'}} id="truck_found_result"><br/></p>
-                    <button onClick={this.searchTrucks}>Search</button><br/><br/>
-                    <button onClick={this.getNearby}>Get Nearby</button><br/>
-                    <button onClick={this.getTrucksByIDList}>Find By ID List</button><br/>
-                </div>
-                {!this.state.search && <div>
-                { /* loaging gif, probably want a different one later */ }
-                {this.state.loading && <img id='loading' src="http://i.stack.imgur.com/SBv4T.gif" alt="loading..." width='250'></img>}
-
-                <table id='trucks'>
-                    <thead>
-                        <tr>{!this.state.loading && this.renderTableHeader()}</tr>
-                    </thead>
-                    <tbody id='table'>
-                        {!this.state.loading && this.renderTableData()}
-                    </tbody>
-                </table>
-                </div>}
-                {this.state.search && <div>
+                    { /* loaging gif, probably want a different one later */ }
                     {this.state.loading && <img id='loading' src="http://i.stack.imgur.com/SBv4T.gif" alt="loading..." width='250'></img>}
 
                     <table id='trucks'>
-                        {!this.state.loading && this.renderTableHeader()}
+                        <thead>
+                        <tr>{!this.state.loading && this.renderTableHeader()}</tr>
+                        </thead>
                         <tbody id='table'>
                         {!this.state.loading && this.renderTableData()}
                         </tbody>
                     </table>
-                </div>
-                }
+
             </div>
         );
     }
