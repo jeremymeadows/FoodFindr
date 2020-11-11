@@ -93,7 +93,7 @@ public class TruckEndpoint {
 
         return null;
     }
-
+    /*
     @CrossOrigin(origins="*")
     @GetMapping("/truck/{name}")
     public String findTruckByName(@PathVariable String name) {
@@ -113,8 +113,7 @@ public class TruckEndpoint {
         } catch (SQLException ex) {
             logger.log(Level.WARNING, ex.toString(), "truck " + name + " not found");
         }
-        return "";
-    }
+    }*/
 
 
     // this method has the same signature as the one below it, and didn't look like it was being used
@@ -143,6 +142,44 @@ public class TruckEndpoint {
             logger.log(Level.WARNING, ex.toString());
             return "";
         }
+    }
+
+    @CrossOrigin(origins="*")
+    @PostMapping("/trucks/review")
+    public String review(@RequestBody String review) {
+        logger.log(Level.INFO, review);
+        String[] fields = review.split(";");
+
+        String user_id = fields[0];
+        String truck_name = fields[1];
+        int rating = Integer.parseInt(fields[2]);
+        String rev = fields[3];
+
+        try {
+            ResultSet r = Database.query("SELECT truck_id FROM trucks WHERE name = '" + truck_name + "';");
+
+            String truck_id;
+            if(r.next()) {
+                truck_id = r.getString("truck_id");
+            } else return "";
+            if(r.next()) return "";
+
+            Database.update("INSERT INTO reviews VALUES ('" +
+                    user_id + "','" +
+                    truck_id + "','" +
+                    rating + "','" +
+                    rev + "');");
+            logger.log(Level.INFO, "INSERT INTO reviews VALUES ('" +
+                    user_id + "','" +
+                    truck_id + "','" +
+                    rating + "','" +
+                    rev + "');");
+
+        } catch(SQLException ex) {
+            logger.log(Level.WARNING, ex.toString());
+            return "";
+        }
+        return truck_name;
     }
 
     @CrossOrigin(origins="*")
@@ -214,6 +251,24 @@ public class TruckEndpoint {
             Database.update(qry);
 
             return name + '_' + Integer.toHexString((id).hashCode()) + '_' + description + '_' + rating;
+        } catch (SQLException ex) {
+            logger.log(Level.WARNING, ex.toString());
+            return "";
+        }
+    }
+
+    @CrossOrigin(origins="*")
+    @PostMapping("/trucks/subscribe")
+    public String subscribeToTruck(@RequestBody String subscriptionInfo) {
+        String[] fields = subscriptionInfo.split(";");
+        String userid = fields[0];
+        String truckid = fields[1];
+        logger.log(Level.INFO, userid + " subscribing to " + truckid);
+        try {
+            String query = "INSERT INTO subscriptions(user_id, truck_id) VALUES (" + userid + "," + truckid + ");";
+            logger.log(Level.INFO, query);
+            Database.update(query);
+            return Integer.toHexString((userid).hashCode()) + '_' + truckid;
         } catch (SQLException ex) {
             logger.log(Level.WARNING, ex.toString());
             return "";
