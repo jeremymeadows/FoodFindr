@@ -14,6 +14,7 @@ class TruckTable extends Component {
             subs: [],
             search: 0,
         };
+        this.searchTrucks = this.searchTrucks.bind(this);
 
     }
 
@@ -65,28 +66,21 @@ class TruckTable extends Component {
 
     async componentDidMount() {
         this.state.user = JSON.parse(localStorage.getItem('user'));
-        if (this.search === 0) {
-            this.getTrucks().then(() => {
-                this.getSubscriptions().then(() => {
-                    this.state.trucks.forEach(truck => truck.favourite = this.state.subs.includes(truck.id));
-                    this.state.loading = false;
-                    this.forceUpdate();
-                })
-            });
-        } else {
-            this.getTrucks().then(() => {
-                this.getSubscriptions().then(() => {
-                    this.state.trucks.forEach(truck => truck.favourite = this.state.subs.includes(truck.id));
-                    this.state.loading = false;
-                    this.forceUpdate();
-                })
-            });
-        }
+
+        this.getTrucks().then(() => {
+            this.getSubscriptions().then(() => {
+                this.state.trucks.forEach(truck => truck.favourite = this.state.subs.includes(truck.id));
+                this.state.loading = false;
+                this.forceUpdate();
+            })
+        });
     }
 
     searchTrucks() {
-        this.state.search = 1;
-    }
+
+        this.setState({search: 1});
+        componentDidMount();
+    };
 
 
 
