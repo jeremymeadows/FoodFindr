@@ -30,9 +30,16 @@ class TruckTable extends Component {
                 .then(res => {console.log(res);return res.json();})
                 .then(trucks => this.state.trucks = trucks);
 
+        console.log("getting preferences");
         await fetch('http://localhost:8080/dashboard/getpreferences')
             .then(res => {console.log(res);return res.json();})
-            .then(preferences => this.state.preferences = preferences);
+            .then(function(preferences) {
+                let list = res.split(';');
+                this.state.preferences[0] = list[0];
+                this.state.preferences[1] = list[1];
+                this.state.preferences[2] = list[2];
+            });
+
 
         let temptrucks = [];
         this.state.trucks.forEach(function(truck) {

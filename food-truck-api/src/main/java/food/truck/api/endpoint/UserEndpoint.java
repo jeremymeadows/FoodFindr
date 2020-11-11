@@ -292,10 +292,15 @@ public class UserEndpoint {
     @CrossOrigin(origins="*")
     @GetMapping("/dashboard/getpreferences")
     public String getPreferences(@RequestBody String user_id) {
+        String json = "[";
         try {
             ResultSet r = Database.query("SELECT * FROM preferences WHERE userID='" + user_id + "';");
             if (r.next()) {
+                String price = r.getString("price");
                 String rating = r.getString("rating");
+                String type = r.getString("menu");
+                String concat = price + ";" + rating + ";" + type;
+                json = json + concat + ",";
                 return rating;
             } else {
                 return "";
@@ -304,8 +309,9 @@ public class UserEndpoint {
             logger.log(Level.WARNING, "getting preferences failed");
             logger.log(Level.WARNING, ex.toString());
         }
-
-        return "";
+        json = json.substring(0, json.length() - 1) + "]";
+        logger.log(Level.INFO, json);
+        return json;
     }
 
     @CrossOrigin(origins="*")
