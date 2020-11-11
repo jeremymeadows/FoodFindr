@@ -171,27 +171,31 @@ class Trucks extends Component {
     }
 
     render() {
-        const isOwner = this.findOwnership();
+        const user = this.state.user;
         return (
             <div>
-                <NavMenu></NavMenu>
-                <h2 style={{textAlign: 'center'}}>Trucks</h2>
 
+                <NavMenu></NavMenu>
+                {user !== null && <div>
+                <h2 style={{textAlign: 'center'}}>Trucks</h2>
 
 
                 <TruckTable></TruckTable>
 
                 <div style={{textAlign: 'center', marginTop: '10vh'}}>
-                    { isOwner &&
-                        <>
+                    {user.owner &&
+                    <>
                         <input id="truckname" type="text" placeholder="Truck Name"/><br/>
                         <input id="truckdescription" type="text" placeholder="Truck Description"/><br/>
                         <input id="rating" type="text" placeholder="Rating"/><br/>
                         <p style={{display: 'inline', color: 'red'}} id="create_truck_result"><br/></p>
-                        <button onClick={this.createFoodTruck}>Create Food Truck</button><br/>
-                        </>
+                        <button onClick={this.createFoodTruck}>Create Food Truck</button>
+                        <br/>
+                    </>
                     }
                 </div>
+            </div>
+            }
             </div>
         );
     }
