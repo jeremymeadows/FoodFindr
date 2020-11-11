@@ -12,7 +12,6 @@ class TruckTable extends Component {
             ],
             subs: [],
             search: "",
-            nearby: null,
         };
         this.searchTrucks = this.searchTrucks.bind(this);
         this.getNearby = this.getNearby.bind(this);
@@ -47,10 +46,6 @@ class TruckTable extends Component {
             const url = 'truckDetails?id=' + id;
 
             if (name.toLowerCase().includes(this.state.search.toLowerCase())) {
-                if (this.state.nearby !== null && !this.state.nearby.contains(id)) {
-                    return;
-                }
-
                 return (
                     <tr key={id}>
                         <td><a href={url}>{name}</a></td>
@@ -64,6 +59,14 @@ class TruckTable extends Component {
     }
 
     getNearby(){
+        // If geolocation is supported
+        if (navigator.geolocation) {
+            // Attempt to get current position, if it is got it is sent to evaluatePosition
+            navigator.geolocation.getCurrentPosition(evaluatePosition);
+        } else {
+            console.log("Geolocation not supported");
+        }
+
         // Function evaluating based on current position
         function evaluatePosition(position) {
             // Store the user's coordinates and the key value to access mapquest's API,
@@ -74,7 +77,7 @@ class TruckTable extends Component {
                 + '&location=' + user_coord;
 
             let physicalAddress = "";
-            this.state.nearby = [];
+            let nearbyArray = [];
 
             // Launch a new XMLHttp request which returns a json object
             const userLocReq = new XMLHttpRequest();
@@ -132,7 +135,7 @@ class TruckTable extends Component {
                                 // If the distance is within 10 km
                                 if(distanceVal < 10){
                                     // Add the truck's ID to the list of nearby trucks
-                                    this.state.nearby.push(truckID);
+                                    nearbyArray.push(truckID);
                                 }
                             }
                             i++;
@@ -140,8 +143,7 @@ class TruckTable extends Component {
 
                         // AT THIS POINT WE HAVE THE FULL ARRAY OF NEARBY TRUCKS,
                         // YOU CAN UPDATE THE TRUCK TABLE AND EXIT OUT OF THE FUNCTION
-                        console.log(this.state.nearby);
-                        this.state.nearby.forEach( truckIDval => console.log(truckIDval) );
+                        nearbyArray.forEach( truckIDval => console.log(truckIDval) );
                     }
                     else{
                         console.log("no trucks have locations");
@@ -150,14 +152,6 @@ class TruckTable extends Component {
                 truckLocReq.send();
             }
             userLocReq.send();
-        }
-        // If geolocation is supported
-        if (navigator.geolocation) {
-            console.log(navigator.geolocation);
-            // Attempt to get current position, if it is got it is sent to evaluatePosition
-            navigator.geolocation.getCurrentPosition(evaluatePosition);
-        } else {
-            console.log("Geolocation not supported");
         }
     }
 
@@ -174,16 +168,29 @@ class TruckTable extends Component {
     }
 
     searchTrucks() {
-        this.state.search = document.getElementById("searchtruckname").value;
-        this.forceUpdate();
-    }
+        let name = document.getElementById("searchtruckname").value;
+        console.log("got name: " + name);
+
+        if (name !== null) {
+            this.setState({search: true});
+            this.setState({loading: true});
+
+            console.log("Went into searchtrucks");
+            this.componentDidMount().then(() => {
+                //this.renderTableHeader();
+                //this.renderTableData();
+                this.forceUpdate();
+            });
+        }
+    };
 
     render() {
         return (
             <div>
                 <div style={{textAlign: 'center'}}>
-                    <input id="searchtruckname" type="text" onInput={this.searchTrucks} placeholder="Truck Name"/><br/>
+                    <input id="searchtruckname" type="text" placeholder="Truck Name"/><br/>
 
+                    <button onClick={this.searchTrucks}>Search</button><br/><br/>
                     <button onClick={this.getNearby}>Get Nearby</button><br/>
                 </div>
                 { true && <div>
