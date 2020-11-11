@@ -95,6 +95,7 @@ class TruckTable extends Component {
                 + '&location=' + user_coord;
 
             let physicalAddress = "";
+            let nearbyArray = [];
 
             // Launch a new XMLHttp request which returns a json object
             const userLocReq = new XMLHttpRequest();
@@ -110,26 +111,58 @@ class TruckTable extends Component {
                 physicalAddress = userAddress.street + ", " + userAddress.adminArea5 + ' '
                     + userAddress.adminArea3 + ", " + userAddress.postalCode;
 
-                console.log(physicalAddress);
-
                 // Launch an XMLHttp request which returns every truck whose location isn't null
                 const truckLocReq = new XMLHttpRequest();
                 truckLocReq.open('GET', 'http://localhost:8080/trucks/locations', true);
 
                 truckLocReq.onloadend = function(){
                     // Get the pairs of truck id's and addresses returned
-                    let res = truckLocReq.response;
+                    let res = JSON.parse(truckLocReq.response);
                     if(res) {
                         // For every pair returned
-                        console.log(res);
-                        let array = res.split(/(",")/);
-                        console.log(array.length);
-                        console.log(array);
-                        array.forEach(function(pair){
-                            console.log(pair);
-                        });
-                    }
+                        let i = 0;
+                        let truckID = "", truckLoc = "";
+                        res.forEach(function(value){
+                            if(i%2 === 0){
+                                truckID = value;
+                            }
+                            else{
+                                truckLoc = value;
 
+                                // Find the coordinates for the truck's address
+                                const truckCoordReq = new XMLHttpRequest();
+
+                                truckCoordReq.open('GET', 'http://open.mapquestapi.com/geocoding/v1/address?key=' +
+                                    keyVal + '&location=' + truckLoc.trim(), false);
+                                truckCoordReq.send();
+                                let result = JSON.parse(truckCoordReq.response);
+                                let truckLatCoord = result.results[0].locations[0].latLng.lat.toString();
+                                let truckLngCoord = result.results[0].locations[0].latLng.lng.toString();
+
+                                console.log("truckID: " + truckID + "\n\tlatitude: " + truckLatCoord
+                                                + "\n\tlongitude: " + truckLngCoord);
+
+                                let distanceReq = new XMLHttpRequest();
+                                distanceReq.open('GET', 'http://www.mapquestapi.com/directions/v2/route?key='
+                                    + keyVal + '&from=' + user_coord + '&to=' + truckLatCoord + ',' + truckLngCoord, false);
+                                distanceReq.send();
+                                let distanceResult = JSON.parse(distanceReq.response);
+                                let distanceVal = distanceResult.route.distance;
+
+                                console.log("distance: " + distanceVal);
+                                // If the distance is within 10 km
+                                if(distanceVal < 10){
+                                    // Add the truck's ID to the list of nearby trucks
+                                    nearbyArray.push(truckID);
+                                }
+                            }
+                            i++;
+                        });
+
+                        // AT THIS POINT WE HAVE THE FULL ARRAY OF NEARBY TRUCKS,
+                        // YOU CAN UPDATE THE TRUCK TABLE AND EXIT OUT OF THE FUNCTION
+                        nearbyArray.forEach( truckIDval => console.log(truckIDval) );
+                    }
                     else{
                         console.log("no trucks have locations");
                     }
