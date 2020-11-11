@@ -14,6 +14,7 @@ class TruckTable extends Component {
             search: "",
         };
         this.searchTrucks = this.searchTrucks.bind(this);
+        this.getNearby = this.getNearby.bind(this);
     }
 
     async getTrucks() {
@@ -57,6 +58,70 @@ class TruckTable extends Component {
         });
     }
 
+    getNearby(){
+        // If geolocation is supported
+        if (navigator.geolocation) {
+            // Attempt to get current position, if it is got it is sent to evaluatePosition
+            navigator.geolocation.getCurrentPosition(evaluatePosition);
+        } else {
+            console.log("Geolocation not supported");
+        }
+
+        // Function evaluating based on current position
+        function evaluatePosition(position) {
+            // Store the user's coordinates and the key value to access mapquest's API,
+            // as well as the web address reached by the xmlhttp request
+            let user_coord = position.coords.latitude + ',' + position.coords.longitude;
+            let keyVal = "HvhBy6rdLPqZkmPnsEa4fMS95IDRRo2K";
+            let url = 'http://open.mapquestapi.com/geocoding/v1/reverse?key=' + keyVal
+                + '&location=' + user_coord;
+
+            let physicalAddress = "";
+
+            // Launch a new XMLHttp request which returns a json object
+            const userLocReq = new XMLHttpRequest();
+            userLocReq.responseType = 'json';
+
+            // Get from the mapquest API the address of the user
+            userLocReq.open('GET', url, true);
+
+            // After getting the address of the user
+            userLocReq.onloadend = function(){
+                // Store the user's address
+                let userAddress = userLocReq.response.results[0].locations[0];
+                physicalAddress = userAddress.street + ", " + userAddress.adminArea5 + ' '
+                    + userAddress.adminArea3 + ", " + userAddress.postalCode;
+
+                console.log(physicalAddress);
+
+                // Launch an XMLHttp request which returns every truck whose location isn't null
+                const truckLocReq = new XMLHttpRequest();
+                truckLocReq.open('GET', 'http://localhost:8080/trucks/locations', true);
+
+                truckLocReq.onloadend = function(){
+                    // Get the pairs of truck id's and addresses returned
+                    let res = truckLocReq.response;
+                    if(res) {
+                        // For every pair returned
+                        console.log(res);
+                        let array = res.split(/(",")/);
+                        console.log(array.length);
+                        console.log(array);
+                        array.forEach(function(pair){
+                            console.log(pair);
+                        });
+                    }
+
+                    else{
+                        console.log("no trucks have locations");
+                    }
+                }
+                truckLocReq.send();
+            }
+            userLocReq.send();
+        }
+    }
+
     async componentDidMount() {
         this.state.user = JSON.parse(localStorage.getItem('user'));
 
@@ -70,16 +135,30 @@ class TruckTable extends Component {
     }
 
     searchTrucks() {
-        this.state.search = document.getElementById("searchtruckname").value;
-        this.forceUpdate();
+        let name = document.getElementById("searchtruckname").value;
+        console.log("got name: " + name);
+
+        if (name !== null) {
+            this.setState({search: true});
+            this.setState({loading: true});
+
+            console.log("Went into searchtrucks");
+            this.componentDidMount().then(() => {
+                //this.renderTableHeader();
+                //this.renderTableData();
+                this.forceUpdate();
+            });
+        }
     };
 
     render() {
         return (
             <div>
                 <div style={{textAlign: 'center'}}>
-                    <input id="searchtruckname" type="text" onInput={this.searchTrucks} placeholder="Truck Name"/><br/>
-                    <p style={{display: 'inline', color: 'red'}} id="truck_found_result"><br/></p>
+                    <input id="searchtruckname" type="text" placeholder="Truck Name"/><br/>
+
+                    <button onClick={this.searchTrucks}>Search</button><br/><br/>
+                    <button onClick={this.getNearby}>Get Nearby</button><br/>
                 </div>
                 { true && <div>
                 { /* loaging gif, probably want a different one later */ }

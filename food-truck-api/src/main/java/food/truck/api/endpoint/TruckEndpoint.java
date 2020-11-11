@@ -3,6 +3,7 @@ package food.truck.api.endpoint;
 import static food.truck.api.FoodTruckApplication.logger;
 import food.truck.api.Database;
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.logging.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,6 +70,48 @@ public class TruckEndpoint {
         return json;
     }
 
+    @CrossOrigin(origins="*")
+    @GetMapping("/trucks/locations")
+    public ArrayList<String[]> getTrucksWithLocations() {
+        ArrayList<String[]> PairArray = new ArrayList<String[]>();
+        try {
+            ResultSet rs = Database.query("SELECT truck_id, location FROM trucks WHERE location IS NOT NULL;");
+            while(rs.next()){
+                String Pair[] = new String[2];
+                Pair[0] = rs.getString("truck_id");
+                Pair[1] = rs.getString("location");
+
+                PairArray.add(Pair);
+            }
+
+            return PairArray;
+        }
+        catch(SQLException ex){
+            logger.log(Level.WARNING, ex.toString());
+        }
+
+        return null;
+    }
+
+    @CrossOrigin(origins="*")
+    @GetMapping("/truck/{name}")
+    public String findTruckByName(@PathVariable String name) {
+        String json = "[";
+        try {
+            ResultSet r = Database.query("SELECT * FROM trucks WHERE name='" + name + "';");
+            while (r.next()) {
+                String description = r.getString("description");
+                Float rating = r.getFloat("rating");
+                String id = r.getString("truck_id");
+
+                Truck t = new Truck(id, name, description, rating);
+
+                logger.log(Level.INFO, t.toString());
+                json = json + t.toString() + ",";
+            }
+        } catch (SQLException ex) {
+            logger.log(Level.WARNING, ex.toString(), "truck " + name + " not found");
+        }
 
 
     // this method has the same signature as the one below it, and didn't look like it was being used
