@@ -94,12 +94,6 @@ class Dashboard extends Component {
                 { user !== null && <div>
                     <h2 style={{textAlign: 'center'}}>Welcome, { user.name }!</h2>
 
-                    <p>
-                        username: { user.name }<br/>
-                        email: { user.email }<br/>
-                        id: { user.id }<br/>
-                        owner: { user.owner ? 'true' : 'false' }<br/>
-                    </p>
                     { user.owner && <div>
                         <h3>My Trucks:(TODO)</h3>
                     </div> }

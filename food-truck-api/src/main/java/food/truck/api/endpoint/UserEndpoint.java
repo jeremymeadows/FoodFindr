@@ -130,7 +130,6 @@ public class UserEndpoint {
     @CrossOrigin(origins="*")
     @PostMapping("/manageaccount/username")
     public String editUsername(@RequestBody String new_username) {
-
         String[] fields = new_username.split(";");
         String email = fields[0];
         String newUsername = fields[1];
@@ -187,6 +186,45 @@ public class UserEndpoint {
 
         }catch(SQLException ex){
             logger.log(Level.WARNING, "database query failed");
+            return "";
+        }
+    }
+
+    @CrossOrigin(origins="*")
+    @PostMapping("/subscribe")
+    public String subscribe(@RequestBody String str) {
+        String[] fields = str.split(";");
+        String user = fields[0];
+        String truck = fields[1];
+
+        try {
+            Database.update("INSERT INTO subscriptions (user_id, truck_id) VALUES(" +
+                "'" + user + "'," +
+                "'" + truck + "');"
+            );
+            return "ok";
+        } catch(SQLException ex) {
+            logger.log(Level.WARNING, "failed to subscribe");
+            return "";
+        }
+    }
+
+    @CrossOrigin(origins="*")
+    @PostMapping("/unsubscribe")
+    public String unsubscribe(@RequestBody String str) {
+        String[] fields = str.split(";");
+        String user = fields[0];
+        String truck = fields[1];
+
+        try {
+            Database.update("DELETE FROM subscriptions WHERE " +
+                "user_id='" + user + "'" +
+                " AND " +
+                "truck_id='" + truck + "';"
+            );
+            return "ok";
+        } catch(SQLException ex) {
+            logger.log(Level.WARNING, "failed to unsubscribe");
             return "";
         }
     }

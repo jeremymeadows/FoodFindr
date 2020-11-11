@@ -105,25 +105,25 @@ public class TruckEndpoint {
          //var truck_cred = truck.name + ';' + description + ';' + rating;
 
 
-         String[] fields = truck_cred.split(";");
-         String name = fields[0]; //truck.getName()
-         String description = fields[1]; //truck.getDescription()
-         String rating = fields[2]; //truck.getRating();
-         String id = fields[3];
+        String[] fields = truck_cred.split(";");
+        String name = fields[0]; //truck.getName()
+        String description = fields[1]; //truck.getDescription()
+        String rating = fields[2]; //truck.getRating();
+        String id = fields[3];
 
-         logger.log(Level.INFO, "updating truck " + name);
-         try {
-             String qry = "UPDATE trucks SET name='" + name + "', description='" + description +
+        logger.log(Level.INFO, "updating truck " + name);
+        try {
+            String qry = "UPDATE trucks SET name='" + name + "', description='" + description +
                      "', rating='" + rating + "' WHERE truck_id='" + id + "';";
-             logger.log(Level.INFO, qry);
-             Database.update(qry);
-             return name + '_' + Integer.toHexString((id).hashCode()) + '_' + description + '_' + rating;
+            logger.log(Level.INFO, qry);
+            Database.update(qry);
+            return name + '_' + Integer.toHexString((id).hashCode()) + '_' + description + '_' + rating;
 
-         } catch (SQLException ex) {
-             logger.log(Level.WARNING, ex.toString());
-             return "";
-         }
-     }
+        } catch (SQLException ex) {
+            logger.log(Level.WARNING, ex.toString());
+            return "";
+        }
+    }
 
     @CrossOrigin(origins="*")
     @PostMapping("/trucks/searchTrucks")
