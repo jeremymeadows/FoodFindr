@@ -94,28 +94,32 @@ class TruckTable extends Component {
             xhr.responseType = 'json';
 
             // Log the request made for the user's address
-            var url = 'http://open.mapquestapi.com/geocoding/v1/reverse?key=KEY&location=' +
+            var url = 'http://open.mapquestapi.com/geocoding/v1/reverse?key=HvhBy6rdLPqZkmPnsEa4fMS95IDRRo2K&location=' +
                 user_lat + ',' + user_long;
 
             // Request for the user's address
-            fetch(url)
-                .then(function(response) {
-                    return response.json();
-                })
-                .then(function(jsonResponse){
-                    console.log(jsonResponse.street);
-                });
-
             /**
-            xhr.open('GET', 'http://open.mapquestapi.com/geocoding/v1/reverse?key=KEY&location=' +
+            fetch(url)
+
+                .then(res => res.json())
+
+                .then(function(json){
+                    console.log(json.street);
+                });
+            **/
+
+            xhr.open('GET', 'http://open.mapquestapi.com/geocoding/v1/reverse?key=HvhBy6rdLPqZkmPnsEa4fMS95IDRRo2K&location=' +
                 user_lat + ',' + user_long, true);
             xhr.onload = function(){
-                var userAddress = xhr.response;
-
-                console.log(userAddress.street);
-            };
+                if(xhr.responseType.includes("json")){
+                    let userAddress = xhr.response.results[0].locations[0];
+                    let physicalAddress = userAddress.street + ", " + userAddress.adminArea5 + ' '
+                        + userAddress.adminArea3 + ", " + userAddress.postalCode;
+                    console.log(physicalAddress);
+                }
+            }
             xhr.send(null);
-             **/
+
         }
     }
 
