@@ -7,7 +7,8 @@ class Trucks extends Component {
         super();
 
         this.state = {
-            user: null
+            user: null,
+            isOwner: 0
         };
         this.createFoodTruck = this.createFoodTruck.bind(this);
         this.manageTruck = this.manageTruck.bind(this);
@@ -146,7 +147,7 @@ class Trucks extends Component {
         xhr.send(truck_cred);
     };
 
-    var isOwner = "1";
+
 
     findOwnership() {
         // Find out if the user navigating the page is a truck owner
@@ -159,17 +160,18 @@ class Trucks extends Component {
                     console.log("Could not find the current user");
                 } else {
                     console.log("Found user status: " + ownerRequest.responseText);
-                    isOwner = ownerRequest.responseText;
+                    this.setState({isOwner: ownerRequest.responseText});
                 }
             }
         };
         ownerRequest.send("johnr.harrison@att.net");
 
-        if(isOwner === "1"){return 1;}
+        if(this.state.isOwner === "1"){return 1;}
         return 0;
     }
 
     render() {
+        const isOwner = this.findOwnership();
         return (
             <div>
                 <NavMenu></NavMenu>
@@ -180,13 +182,13 @@ class Trucks extends Component {
                 <TruckTable></TruckTable>
 
                 <div style={{textAlign: 'center', marginTop: '10vh'}}>
-                    { findOwnership() &&
+                    { isOwner &&
                         <>
                         <input id="truckname" type="text" placeholder="Truck Name"/><br/>
                         <input id="truckdescription" type="text" placeholder="Truck Description"/><br/>
                         <input id="rating" type="text" placeholder="Rating"/><br/>
                         <p style={{display: 'inline', color: 'red'}} id="create_truck_result"><br/></p>
-                        <button onClick={createFoodTruck}>Create Food Truck</button><br/>
+                        <button onClick={this.createFoodTruck}>Create Food Truck</button><br/>
                         </>
                     }
                 </div>
