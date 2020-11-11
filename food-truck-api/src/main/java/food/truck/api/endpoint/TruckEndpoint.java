@@ -75,7 +75,7 @@ public class TruckEndpoint {
         String json = "[";
         try {
             ResultSet r = Database.query("SELECT * FROM trucks WHERE name='" + name + "';");
-            if (r.next()) {
+            while (r.next()) {
                 String description = r.getString("description");
                 Float rating = r.getFloat("rating");
                 String id = r.getString("truck_id");
