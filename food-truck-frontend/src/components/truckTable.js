@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 
 class TruckTable extends Component {
-
     constructor(props) {
         super(props);
 
@@ -12,35 +11,15 @@ class TruckTable extends Component {
                 { id: '', name: '', description: '', rating: 0, subscribed: false }
             ],
             subs: [],
-            search: false,
+            search: "",
         };
         this.searchTrucks = this.searchTrucks.bind(this);
-
     }
 
     async getTrucks() {
-        if (this.state.search === false) {
-            console.log("false passed");
-
-            await fetch('http://localhost:8080/trucks')
-                .then(res => {console.log(res);return res.json();})
-                .then(trucks => this.state.trucks = trucks);
-
-        } else {
-            console.log("Passed through");
-            let tname = document.getElementById("searchtruckname").value;
-            const tempTrucks = this.state.trucks;
-            let tempList = [];
-            tempTrucks.forEach(function(trucks){
-                if (trucks.name === tname) {
-                    tempList.push(trucks);
-                }
-            });
-            if (tempList.length) {
-                this.setState({trucks: tempList});
-            }
-            this.setState({search: false});
-        }
+        await fetch('http://localhost:8080/trucks')
+            .then(res => res.json())
+            .then(trucks => this.state.trucks = trucks);
     }
 
     async getSubscriptions() {
@@ -65,14 +44,16 @@ class TruckTable extends Component {
             const { id, name, description, rating } = truck;
             const url = 'truckDetails?id=' + id;
 
-            return (
-                <tr key={id}>
-                    <td><a href={url}>{name}</a></td>
-                    <td><a href={url}>{description}</a></td>
-                    <td><a href={url}>{rating}</a></td>
-                    {this.state.user !== null && <td><a href={url}>{truck.subscribed ? '♥' : '-️'}</a></td>}
-                </tr>
-            );
+            if (name.toLowerCase().includes(this.state.search.toLowerCase())) {
+                return (
+                    <tr key={id}>
+                        <td><a href={url}>{name}</a></td>
+                        <td><a href={url}>{description}</a></td>
+                        <td><a href={url}>{rating}</a></td>
+                        {this.state.user !== null && <td><a href={url}>{truck.subscribed ? '♥' : '-️'}</a></td>}
+                    </tr>
+                );
+            }
         });
     }
 
@@ -89,55 +70,30 @@ class TruckTable extends Component {
     }
 
     searchTrucks() {
-        let name = document.getElementById("searchtruckname").value;
-        if (name !== null) {
-            this.setState({search: true});
-            this.setState({loading: true});
-
-            console.log("Went into searchtrucks");
-            this.componentDidMount().then(() => {
-                //this.renderTableHeader();
-                //this.renderTableData();
-                this.forceUpdate();
-            });
-        }
+        this.state.search = document.getElementById("searchtruckname").value;
+        this.forceUpdate();
     };
 
-
-
     render() {
-        let searched = this.state.search;
         return (
             <div>
                 <div style={{textAlign: 'center'}}>
-                    <input id="searchtruckname" type="text" placeholder="Truck Name"/><br/>
+                    <input id="searchtruckname" type="text" onKeyUp={this.searchTrucks} placeholder="Truck Name"/><br/>
                     <p style={{display: 'inline', color: 'red'}} id="truck_found_result"><br/></p>
-                    <button onClick={this.searchTrucks}>Search</button>
                 </div>
-                {!this.state.search && <div>
+                { true && <div>
                 { /* loaging gif, probably want a different one later */ }
-                {this.state.loading && <img id='loading' src="http://i.stack.imgur.com/SBv4T.gif" alt="loading..." width='250'></img>}
+                { this.state.loading && <img id='loading' src="http://i.stack.imgur.com/SBv4T.gif" alt="loading..." width='250'></img> }
 
                 <table id='trucks'>
                     <thead>
-                        <tr>{!this.state.loading && this.renderTableHeader()}</tr>
+                        <tr>{ !this.state.loading && this.renderTableHeader() }</tr>
                     </thead>
                     <tbody id='table'>
-                        {!this.state.loading && this.renderTableData()}
+                        { !this.state.loading && this.renderTableData() }
                     </tbody>
                 </table>
-                </div>}
-                {this.state.search && <div>
-                    {this.state.loading && <img id='loading' src="http://i.stack.imgur.com/SBv4T.gif" alt="loading..." width='250'></img>}
-
-                    <table id='trucks'>
-                        {!this.state.loading && this.renderTableHeader()}
-                        <tbody id='table'>
-                        {!this.state.loading && this.renderTableData()}
-                        </tbody>
-                    </table>
-                </div>
-                }
+                </div> }
             </div>
         );
     }
