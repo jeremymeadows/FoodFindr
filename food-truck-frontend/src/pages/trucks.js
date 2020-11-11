@@ -1,9 +1,28 @@
-import React from 'react';
+import React, { Component } from 'react';
 import NavMenu from "../components/navmenu";
 import TruckTable from '../components/truckTable';
 
-function Trucks() {
-    function createFoodTruck() {
+class Trucks extends Component {
+    constructor() {
+        super();
+
+        this.state = {
+            user: null
+        };
+        this.createFoodTruck = this.createFoodTruck.bind(this);
+        this.manageTruck = this.manageTruck.bind(this);
+        this.manageSchedule = this.manageSchedule.bind(this);
+    }
+
+    componentDidMount() {
+        this.state.user = JSON.parse(localStorage.getItem('user'));
+        if (this.state.user === null) {
+            window.location = 'auth/login';
+        }
+        this.forceUpdate();
+    }
+
+    createFoodTruck() {
         var name = document.getElementById("truckname").value;
         var description = document.getElementById("truckdescription").value;
         var rating = document.getElementById("rating").value;
@@ -16,7 +35,7 @@ function Trucks() {
         const xhr = new XMLHttpRequest();
         xhr.open('PUT', 'http://localhost:8080/trucks/create', true);
 
-        xhr.onloadend = function() {
+        xhr.onloadend = function () {
             var res = document.getElementById("create_truck_result");
             //Since POST return for create is 201, wouldn't we want the status to be 201?
             console.log(xhr.status);
@@ -34,8 +53,7 @@ function Trucks() {
             } else {
                 if (res === null) {
                     console.log("Res returned NULL");
-                }
-                else {
+                } else {
                     console.log("could not connect to server");
                     res.style = "color: red; display: block;";
                     res.innerHTML = "could not connect to server";
@@ -45,7 +63,7 @@ function Trucks() {
         xhr.send(truck_cred);
     };
 
-    function manageTruck() {
+    manageTruck() {
         var name = document.getElementById("oldtruckname").value;
         var description = document.getElementById("oldtruckdescription").value;
         var rating = document.getElementById("oldrating").value;
@@ -59,7 +77,7 @@ function Trucks() {
         const xhr = new XMLHttpRequest();
         xhr.open('POST', 'http://localhost:8080/trucks/manage', true);
 
-        xhr.onloadend = function() {
+        xhr.onloadend = function () {
             var res = document.getElementById("manage_truck_result");
             //Since POST return for create is 201, wouldn't we want the status to be 201?
             if (xhr.status === 200) {
@@ -76,8 +94,7 @@ function Trucks() {
             } else {
                 if (res === null) {
                     console.log("Res returned NULL");
-                }
-                else {
+                } else {
                     console.log("could not connect to server");
                     res.style = "color: red; display: block;";
                     res.innerHTML = "could not connect to server";
@@ -87,7 +104,7 @@ function Trucks() {
         xhr.send(truck_cred);
     };
 
-    function manageSchedule() {
+    manageSchedule() {
         var id = document.getElementById("truck_id").value;
         var schedule = document.getElementById("schedule").value;
 
@@ -99,7 +116,7 @@ function Trucks() {
         const xhr = new XMLHttpRequest();
         xhr.open('POST', 'http://localhost:8080/trucks/schedule', true);
 
-        xhr.onloadend = function() {
+        xhr.onloadend = function () {
             var res = document.getElementById("schedule_truck_result");
             //Since POST return for create is 201, wouldn't we want the status to be 201?
             if (xhr.status === 200) {
@@ -116,8 +133,7 @@ function Trucks() {
             } else {
                 if (res === null) {
                     console.log("Res returned NULL");
-                }
-                else {
+                } else {
                     console.log("could not connect to server");
                     res.style = "color: red; display: block;";
                     res.innerHTML = "could not connect to server";
@@ -171,22 +187,8 @@ function Trucks() {
                     </>
                 }
             </div>
-            <div style={{textAlign: 'center', marginTop: '10vh'}}>
-                <input id="oldtruckname" type="text" placeholder="Truck Name"/><br/>
-                <input id="oldtruckdescription" type="text" placeholder="Truck Description"/><br/>
-                <input id="oldrating" type="text" placeholder="Rating"/><br/>
-                <input id="truckid" type="text" placeholder="Truck ID"/><br/>
-                <p style={{display: 'inline', color: 'red'}} id="manage_truck_result"><br/></p>
-                <button onClick={manageTruck}>Edit Food Truck</button><br/>
-            </div>
-            <div style={{textAlign: 'center', marginTop: '10vh'}}>
-                <input id="truck_id" type="text" placeholder="Truck ID"/><br/>
-                <input id="schedule" type="text" placeholder="Truck Schedule"/><br/>
-                <p style={{display: 'inline', color: 'red'}} id="schedule_truck_result"><br/></p>
-                <button onClick={manageSchedule}>Edit Food Truck Schedule</button><br/>
-            </div>
-        </div>
-    );
+        );
+    }
 }
 
 export default Trucks
