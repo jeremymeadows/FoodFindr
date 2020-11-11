@@ -8,7 +8,7 @@ class TruckTable extends Component {
             user: null,
             loading: true,
             trucks: [
-                { id: '', name: '', description: '', rating: 0, favourite: false }
+                { id: '', name: '', description: '', rating: 0, subscribed: false }
             ],
             subs: [],
         };
@@ -47,7 +47,7 @@ class TruckTable extends Component {
                     <td><a href={url}>{name}</a></td>
                     <td><a href={url}>{description}</a></td>
                     <td><a href={url}>{rating}</a></td>
-                    {this.state.user !== null && <td><a href={url}>{truck.favourite ? '♥' : '-️'}</a></td>}
+                    {this.state.user !== null && <td><a href={url}>{truck.subscribed ? '♥' : '-️'}</a></td>}
                 </tr>
             );
         });
@@ -57,7 +57,7 @@ class TruckTable extends Component {
         this.state.user = JSON.parse(localStorage.getItem('user'));
         this.getTrucks().then(() => {
             this.getSubscriptions().then(() => {
-                this.state.trucks.forEach(truck => truck.favourite = this.state.subs.includes(truck.id));
+                this.state.trucks.forEach(truck => truck.subscribed = this.state.subs.includes(truck.id));
                 this.state.loading = false;
                 this.forceUpdate();
             });
