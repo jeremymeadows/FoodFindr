@@ -43,7 +43,6 @@ public class UserEndpoint {
     public String getUserSubscriptions(@PathVariable String id) {
         String json = "[";
         boolean empty = true;
-
         try {
             ResultSet r = Database.query("SELECT truck_id FROM subscriptions WHERE user_id='" + id + "';");
             while (r.next()) {
@@ -57,12 +56,51 @@ public class UserEndpoint {
 
             logger.log(Level.INFO, json);
             return json;
-        }
-        catch (SQLException ex) {
+        } catch (SQLException ex) {
             logger.log(Level.WARNING, ex.toString());
         }
 
         return "user not found";
+    }
+
+    @CrossOrigin(origins="*")
+    @PostMapping("/dashboard/messages")
+    public String getMessages(@RequestBody String email) {
+        try {
+
+            logger.log(Level.INFO, "UPDATE inbox, users SET messageRead=1 WHERE recipientID = users.user_id " +
+                    "and users.email = '" + email + "';");
+            Database.update("UPDATE inbox, users SET messageRead=1 WHERE recipientID = users.user_id " +
+                    "and users.email = '" + email + "';");
+
+            logger.log(Level.INFO, email);
+            logger.log(Level.INFO, "SELECT messageContent FROM inbox, users WHERE recipientID = users.user_id" +
+                    " and users.email = '" + email + "';");
+            ResultSet r = Database.query("SELECT messageContent FROM inbox, users WHERE recipientID = users.user_id" +
+                    " and users.email = '" + email + "';");
+            String message = "";
+            while (r.next()) {
+                message += r.getString("messageContent") + ";";
+            }
+            return message;
+        } catch (SQLException ex) {
+            logger.log(Level.WARNING, "database query failed");
+            return "";
+        }
+    }
+
+    @CrossOrigin(origins="*")
+    @PostMapping("/dashboard/delete")
+    public String deleteMessages(@RequestBody String user_id) {
+        logger.log(Level.INFO, user_id);
+
+        try {
+            Database.update("DELETE FROM inbox WHERE recipientID = '" + user_id + "' and messageRead=1;");
+            return "Success";
+        } catch(SQLException ex) {
+            logger.log(Level.WARNING, "database query failed");
+            return "";
+        }
     }
 
     @CrossOrigin(origins="*")
@@ -197,6 +235,7 @@ public class UserEndpoint {
         String user = fields[0];
         String truck = fields[1];
 
+        logger.log(Level.INFO, user + " " + truck);
         try {
             Database.update("INSERT INTO subscriptions (user_id, truck_id) VALUES(" +
                 "'" + user + "'," +
@@ -250,8 +289,8 @@ public class UserEndpoint {
             // For every recipient, store the recipient and message into the inbox table
             for(String r_ID : recipients){
                 Database.update("INSERT INTO inbox (recipientID, " +
-                        "messageContent) VALUES ('" + r_ID +
-                        "', '" + message + "');");
+                        "messageContent, messageRead) VALUES ('" + r_ID +
+                        "', '" + message + "', 0);");
             }
             return "Notification [" + message + "] sent.";
         } catch(SQLException ex) {

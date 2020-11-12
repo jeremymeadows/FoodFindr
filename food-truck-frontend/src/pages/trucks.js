@@ -13,6 +13,8 @@ class Trucks extends Component {
         this.createFoodTruck = this.createFoodTruck.bind(this);
         this.manageTruck = this.manageTruck.bind(this);
         this.manageSchedule = this.manageSchedule.bind(this);
+        this.subscribe = this.subscribe.bind(this);
+        this.review = this.review.bind(this);
     }
 
     componentDidMount() {
@@ -22,6 +24,27 @@ class Trucks extends Component {
         }
         this.forceUpdate();
     }
+
+    subscribe() {
+        var truck_id = document.getElementById("truck").value;
+        var subInfo = this.state.user.id + ';' + truck_id;
+
+        console.log(subInfo);
+
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', 'http://localhost:8080/subscribe');
+        xhr.onloadend = function () {
+            console.log(xhr.status);
+            if (xhr.status == 200) {
+                if (xhr.responseText == "") {
+                    console.log("could not subscribe to truck");
+                } else {
+                    console.log("Subscribed to truck " + xhr.responseText);
+                }
+            }
+        }
+        xhr.send(subInfo);
+    };
 
     createFoodTruck() {
         var name = document.getElementById("truckname").value;
@@ -36,7 +59,7 @@ class Trucks extends Component {
         const xhr = new XMLHttpRequest();
         xhr.open('PUT', 'http://localhost:8080/trucks/create', true);
 
-        xhr.onloadend = function() {
+        xhr.onloadend = function () {
             var res = document.getElementById("create_truck_result");
             //Since POST return for create is 201, wouldn't we want the status to be 201?
             console.log(xhr.status);
@@ -54,8 +77,7 @@ class Trucks extends Component {
             } else {
                 if (res === null) {
                     console.log("Res returned NULL");
-                }
-                else {
+                } else {
                     console.log("could not connect to server");
                     res.style = "color: red; display: block;";
                     res.innerHTML = "could not connect to server";
@@ -79,7 +101,7 @@ class Trucks extends Component {
         const xhr = new XMLHttpRequest();
         xhr.open('POST', 'http://localhost:8080/trucks/manage', true);
 
-        xhr.onloadend = function() {
+        xhr.onloadend = function () {
             var res = document.getElementById("manage_truck_result");
             //Since POST return for create is 201, wouldn't we want the status to be 201?
             if (xhr.status === 200) {
@@ -96,8 +118,7 @@ class Trucks extends Component {
             } else {
                 if (res === null) {
                     console.log("Res returned NULL");
-                }
-                else {
+                } else {
                     console.log("could not connect to server");
                     res.style = "color: red; display: block;";
                     res.innerHTML = "could not connect to server";
@@ -105,6 +126,34 @@ class Trucks extends Component {
             }
         };
         xhr.send(truck_cred);
+    };
+
+    review() {
+        var user_id = this.state.user.id;
+        var truck_name = document.getElementById("truck_name").value;
+        var rating = document.getElementById("rating").value;
+        var review = document.getElementById("review").value;
+
+        var review_cred = user_id + ';' + truck_name + ';' + rating + ';' + review;
+        console.log(review_cred);
+
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', 'http://localhost:8080/trucks/review', true);
+
+        xhr.onloadend = function() {
+            var res = document.getElementById("review_result");
+            if (xhr.responseText === "") {
+                console.log("could not write review");
+                res.style = "color: red; display: block;";
+                res.innerHTML = "could not write review";
+            } else {
+                console.log("create truck success");
+                res.style = "color: green, display: inline;";
+                res.innerHTML = "Rating for " + xhr.responseText + " was written successfully";
+                window.location = "../trucks";
+            }
+        };
+        xhr.send(review_cred);
     };
 
     manageSchedule() {
@@ -119,7 +168,7 @@ class Trucks extends Component {
         const xhr = new XMLHttpRequest();
         xhr.open('POST', 'http://localhost:8080/trucks/schedule', true);
 
-        xhr.onloadend = function() {
+        xhr.onloadend = function () {
             var res = document.getElementById("schedule_truck_result");
             //Since POST return for create is 201, wouldn't we want the status to be 201?
             if (xhr.status === 200) {
@@ -136,8 +185,7 @@ class Trucks extends Component {
             } else {
                 if (res === null) {
                     console.log("Res returned NULL");
-                }
-                else {
+                } else {
                     console.log("could not connect to server");
                     res.style = "color: red; display: block;";
                     res.innerHTML = "could not connect to server";
@@ -147,29 +195,6 @@ class Trucks extends Component {
         xhr.send(truck_cred);
     };
 
-
-
-    findOwnership() {
-        // Find out if the user navigating the page is a truck owner
-        const ownerRequest = new XMLHttpRequest();
-        ownerRequest.open('POST', 'http://localhost:8080/getOwnership/');
-        ownerRequest.onloadend = function () {
-            console.log(ownerRequest.status);
-            if (ownerRequest.status == 200) {
-                if (ownerRequest.responseText == "") {
-                    console.log("Could not find the current user");
-                } else {
-                    console.log("Found user status: " + ownerRequest.responseText);
-                    this.setState({isOwner: ownerRequest.responseText});
-                }
-            }
-        };
-        ownerRequest.send("johnr.harrison@att.net");
-
-        if(this.state.isOwner === "1"){return 1;}
-        return 0;
-    }
-
     render() {
         const user = this.state.user;
         return (
@@ -178,7 +203,6 @@ class Trucks extends Component {
                 <NavMenu></NavMenu>
                 {user !== null && <div>
                 <h2 style={{textAlign: 'center'}}>Trucks</h2>
-
 
                 <TruckTable></TruckTable>
 
@@ -196,6 +220,71 @@ class Trucks extends Component {
                 </div>
             </div>
             }
+
+                { user !== null && <div>
+                    <div style={{textAlign: 'center', marginTop: '10vh'}}>
+                        { this.state.user.owner &&
+                            <>
+                            <input id="truckname" type="text" placeholder="Truck Name"/><br/>
+                            <input id="truckdescription" type="text" placeholder="Truck Description"/><br/>
+                            <input id="rating" type="text" placeholder="Rating"/><br/>
+                            <p style={{display: 'inline', color: 'red'}} id="create_truck_result"><br/></p>
+                            <button onClick={this.createFoodTruck}>Create Food Truck</button><br/>
+                            </>
+                        }
+                    </div>
+                    <div style={{textAlign: 'center', marginTop: '10vh'}}>
+                        { this.state.user.owner &&
+                            <div>
+                            <input id="oldtruckname" type="text" placeholder="Truck Name"/><br/>
+                            <input id="oldtruckdescription" type="text" placeholder="Truck Description"/><br/>
+                            <input id="oldrating" type="text" placeholder="Rating"/><br/>
+                            <input id="truckid" type="text" placeholder="Truck ID"/><br/>
+                            <p style={{display: 'inline', color: 'red'}} id="manage_truck_result"><br/></p>
+                            <button onClick={this.manageTruck}>Edit Food Truck</button><br/>
+                            </div>
+                        }
+                    </div>
+                    {!this.state.user.owner &&
+                        <div style={{textAlign: 'center', marginTop: '10vh'}}>
+                        <input id="truck_name" type="text" placeholder="Truck Name"/><br/>
+                        <p style={{display: 'inline', color: 'red'}} id="rtg"><br/></p>
+                        <label htmlFor="cost">Rating: </label>
+                        <select id="rating" name="cost">
+                            <option value="nopref">None</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                        </select><br/>
+                        <textarea id="review" placeholder="Write your review here" rows="4" cols="50">
+                        </textarea>
+                        <p style={{display: 'inline', color: 'red'}} id="review_result"><br/></p>
+                        <button onClick={this.review}>Post Review</button>
+                        <br/>
+                        </div>
+                    }
+                    {!this.state.user.owner &&
+                        <div style={{textAlign: 'center', marginTop: '20vh'}}>
+                        <input id="truck" type="text" placeholder="Truck ID"/><br/>
+                        <p style={{display: 'inline', color: 'black'}} id="subscribe_to_truck"><br/></p>
+                        <button onClick={this.subscribe}>Subscribe</button>
+                        <br/>
+                        </div>
+                    }
+                    <div style={{textAlign: 'center', marginTop: '10vh'}}>
+                        {this.state.user.owner &&
+                            <div>
+                            <input id="truck_id" type="text" placeholder="Truck ID"/><br/>
+                            <input id="schedule" type="text" placeholder="Truck Schedule"/><br/>
+                            <p style={{display: 'inline', color: 'red'}} id="schedule_truck_result"><br/></p>
+                            <button onClick={this.manageSchedule}>Edit Food Truck Schedule</button><br/>
+                            </div>
+                        }
+                    </div>
+                </div> }
+
             </div>
         );
     }
