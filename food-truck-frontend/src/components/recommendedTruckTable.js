@@ -11,46 +11,47 @@ class TruckTable extends Component {
             trucks: [
                 { id: '', name: '', description: '', rating: 0, subscribed: false }
             ],
-            subs: [],
-            search: false,
+            preferences: [
+                {price: '', rating: '', type: ''}
+            ],
+            subs: []
+
         };
-        this.searchTrucks = this.searchTrucks.bind(this);
+
         this.getNearby = this.getNearby.bind(this);
+
     }
 
     async getTrucks() {
-        if (this.state.search === false) {
-            console.log("false passed");
+
+            console.log("getting trucks");
 
             await fetch('http://localhost:8080/trucks')
                 .then(res => {console.log(res);return res.json();})
                 .then(trucks => this.state.trucks = trucks);
-            let res = document.getElementById("truck_found_result");
-            res.innerHTML = "";
 
-        } else {
-            console.log("Passed through");
-            let tname = document.getElementById("searchtruckname").value;
-            const tempTrucks = this.state.trucks;
-            let tempList = [];
-            let res = document.getElementById("truck_found_result");
-            tempTrucks.forEach(function(trucks){
-                if (trucks.name === tname) {
-                    tempList.push(trucks);
-                }
+        console.log("getting preferences");
+        await fetch('http://localhost:8080/dashboard/getpreferences')
+            .then(res => {console.log(res);return res.json();})
+            .then(function(preferences) {
+                let list = res.split(';');
+                this.state.preferences[0] = list[0];
+                this.state.preferences[1] = list[1];
+                this.state.preferences[2] = list[2];
+                console.log(list);
             });
-            if (tempList.length) {
-                this.setState({trucks: tempList}, () => {
-                    console.log(this.state.trucks);
-                });
-            } else {
-                res.style = "color: red; display: block;";
-                res.innerHTML = "could not find truck '" + tname + "'";
+
+
+        let temptrucks = [];
+        this.state.trucks.forEach(function(truck) {
+            if(this.preferences.includes(truck.price)) {
+                temptrucks.push(truck);
             }
-            this.setState({search: false},
-                () => console.log(this.state.search)
-            );
-        }
+        });
+        this.setState({trucks: temptrucks});
+        this.forceUpdate();
+
+
     }
 
     async getSubscriptions() {
@@ -105,7 +106,6 @@ class TruckTable extends Component {
                 + '&location=' + user_coord;
 
             let physicalAddress = "";
-            let nearbyArray = [];
 
             // Launch a new XMLHttp request which returns a json object
             const userLocReq = new XMLHttpRequest();
@@ -121,58 +121,26 @@ class TruckTable extends Component {
                 physicalAddress = userAddress.street + ", " + userAddress.adminArea5 + ' '
                     + userAddress.adminArea3 + ", " + userAddress.postalCode;
 
+                console.log(physicalAddress);
+
                 // Launch an XMLHttp request which returns every truck whose location isn't null
                 const truckLocReq = new XMLHttpRequest();
                 truckLocReq.open('GET', 'http://localhost:8080/trucks/locations', true);
 
                 truckLocReq.onloadend = function(){
                     // Get the pairs of truck id's and addresses returned
-                    let res = JSON.parse(truckLocReq.response);
+                    let res = truckLocReq.response;
                     if(res) {
                         // For every pair returned
-                        let i = 0;
-                        let truckID = "", truckLoc = "";
-                        res.forEach(function(value){
-                            if(i%2 === 0){
-                                truckID = value;
-                            }
-                            else{
-                                truckLoc = value;
-
-                                // Find the coordinates for the truck's address
-                                const truckCoordReq = new XMLHttpRequest();
-
-                                truckCoordReq.open('GET', 'http://open.mapquestapi.com/geocoding/v1/address?key=' +
-                                    keyVal + '&location=' + truckLoc.trim(), false);
-                                truckCoordReq.send();
-                                let result = JSON.parse(truckCoordReq.response);
-                                let truckLatCoord = result.results[0].locations[0].latLng.lat.toString();
-                                let truckLngCoord = result.results[0].locations[0].latLng.lng.toString();
-
-                                console.log("truckID: " + truckID + "\n\tlatitude: " + truckLatCoord
-                                                + "\n\tlongitude: " + truckLngCoord);
-
-                                let distanceReq = new XMLHttpRequest();
-                                distanceReq.open('GET', 'http://www.mapquestapi.com/directions/v2/route?key='
-                                    + keyVal + '&from=' + user_coord + '&to=' + truckLatCoord + ',' + truckLngCoord, false);
-                                distanceReq.send();
-                                let distanceResult = JSON.parse(distanceReq.response);
-                                let distanceVal = distanceResult.route.distance;
-
-                                console.log("distance: " + distanceVal);
-                                // If the distance is within 10 km
-                                if(distanceVal < 10){
-                                    // Add the truck's ID to the list of nearby trucks
-                                    nearbyArray.push(truckID);
-                                }
-                            }
-                            i++;
+                        console.log(res);
+                        let array = res.split(/(",")/);
+                        console.log(array.length);
+                        console.log(array);
+                        array.forEach(function(pair){
+                            console.log(pair);
                         });
-
-                        // AT THIS POINT WE HAVE THE FULL ARRAY OF NEARBY TRUCKS,
-                        // YOU CAN UPDATE THE TRUCK TABLE AND EXIT OUT OF THE FUNCTION
-                        nearbyArray.forEach( truckIDval => console.log(truckIDval) );
                     }
+
                     else{
                         console.log("no trucks have locations");
                     }
@@ -195,43 +163,22 @@ class TruckTable extends Component {
         });
     }
 
-    searchTrucks() {
-        this.state.search = document.getElementById("searchtruckname").value;
-        this.forceUpdate();
-    };
-    
     render() {
-        let searched = this.state.search;
         return (
             <div>
-                <div style={{textAlign: 'center'}}>
-                    <input id="searchtruckname" type="text" onInput={this.searchTrucks} placeholder="Truck Name"/><br/>
-                    <button onClick={this.getNearby}>Get Nearby</button><br/>
-                </div>
-                {!this.state.search && <div>
-                { /* loaging gif, probably want a different one later */ }
-                {this.state.loading && <img id='loading' src="http://i.stack.imgur.com/SBv4T.gif" alt="loading..." width='250'></img>}
 
-                <table id='trucks'>
-                    <thead>
-                        <tr>{!this.state.loading && this.renderTableHeader()}</tr>
-                    </thead>
-                    <tbody id='table'>
-                        {!this.state.loading && this.renderTableData()}
-                    </tbody>
-                </table>
-                </div>}
-                {this.state.search && <div>
+                    { /* loaging gif, probably want a different one later */ }
                     {this.state.loading && <img id='loading' src="http://i.stack.imgur.com/SBv4T.gif" alt="loading..." width='250'></img>}
 
                     <table id='trucks'>
-                        {!this.state.loading && this.renderTableHeader()}
+                        <thead>
+                        <tr>{!this.state.loading && this.renderTableHeader()}</tr>
+                        </thead>
                         <tbody id='table'>
                         {!this.state.loading && this.renderTableData()}
                         </tbody>
                     </table>
-                </div>
-                }
+
             </div>
         );
     }

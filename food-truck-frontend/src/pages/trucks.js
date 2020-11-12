@@ -7,7 +7,8 @@ class Trucks extends Component {
         super();
 
         this.state = {
-            user: null
+            user: null,
+            isOwner: 0
         };
         this.createFoodTruck = this.createFoodTruck.bind(this);
         this.manageTruck = this.manageTruck.bind(this);
@@ -196,13 +197,11 @@ class Trucks extends Component {
 
     render() {
         const user = this.state.user;
-
         return (
             <div>
                 <NavMenu></NavMenu>
                 <h2 style={{textAlign: 'center'}}>Trucks</h2>
                 <TruckTable></TruckTable>
-
                 { user !== null && <div>
                     <div style={{textAlign: 'center', marginTop: '10vh'}}>
                         { this.state.user.owner &&
@@ -255,6 +254,7 @@ class Trucks extends Component {
             </div>
         );
     }
+
 }
 
 export default Trucks

@@ -69,15 +69,15 @@ public class UserEndpoint {
         try {
 
             logger.log(Level.INFO, "UPDATE inbox, users SET messageRead=1 WHERE recipientID = users.user_id " +
-                    "and users.email = '" + email + "';");
+                    "and users.username = '" + email + "';");
             Database.update("UPDATE inbox, users SET messageRead=1 WHERE recipientID = users.user_id " +
-                    "and users.email = '" + email + "';");
+                    "and users.username = '" + email + "';");
 
             logger.log(Level.INFO, email);
             logger.log(Level.INFO, "SELECT messageContent FROM inbox, users WHERE recipientID = users.user_id" +
-                    " and users.email = '" + email + "';");
+                    " and users.username = '" + email + "';");
             ResultSet r = Database.query("SELECT messageContent FROM inbox, users WHERE recipientID = users.user_id" +
-                    " and users.email = '" + email + "';");
+                    " and users.username = '" + email + "';");
             String message = "";
             while (r.next()) {
                 message += r.getString("messageContent") + ";";
@@ -326,6 +326,31 @@ public class UserEndpoint {
             logger.log(Level.WARNING, ex.toString());
             return "";
         }
+    }
+
+    @CrossOrigin(origins="*")
+    @GetMapping("/dashboard/getpreferences")
+    public String getPreferences(@RequestBody String user_id) {
+        String json = "[";
+        try {
+            ResultSet r = Database.query("SELECT * FROM preferences WHERE userID='" + user_id + "';");
+            if (r.next()) {
+                String price = r.getString("price");
+                String rating = r.getString("rating");
+                String type = r.getString("menu");
+                String concat = price + ";" + rating + ";" + type;
+                json = json + concat + ",";
+                return rating;
+            } else {
+                return "";
+            }
+        } catch(SQLException ex) {
+            logger.log(Level.WARNING, "getting preferences failed");
+            logger.log(Level.WARNING, ex.toString());
+        }
+        json = json.substring(0, json.length() - 1) + "]";
+        logger.log(Level.INFO, json);
+        return json;
     }
 
     @CrossOrigin(origins="*")
