@@ -168,16 +168,29 @@ class TruckTable extends Component {
     }
 
     searchTrucks() {
-        this.state.search = document.getElementById("searchtruckname").value;
-        this.forceUpdate();
-    }
+        let name = document.getElementById("searchtruckname").value;
+        console.log("got name: " + name);
+
+        if (name !== null) {
+            this.setState({search: true});
+            this.setState({loading: true});
+
+            console.log("Went into searchtrucks");
+            this.componentDidMount().then(() => {
+                //this.renderTableHeader();
+                //this.renderTableData();
+                this.forceUpdate();
+            });
+        }
+    };
 
     render() {
         return (
             <div>
                 <div style={{textAlign: 'center'}}>
-                    <input id="searchtruckname" type="text" onInput={this.searchTrucks} placeholder="Truck Name"/><br/>
+                    <input id="searchtruckname" type="text" placeholder="Truck Name"/><br/>
 
+                    <button onClick={this.searchTrucks}>Search</button><br/><br/>
                     <button onClick={this.getNearby}>Get Nearby</button><br/>
                 </div>
                 { true && <div>
