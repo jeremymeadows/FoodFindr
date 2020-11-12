@@ -237,8 +237,6 @@ class TruckTable extends Component {
                     <p style={{display: 'inline', color: 'red'}} id="truck_found_result"><br/></p>
                     <button onClick={this.searchTrucks}>Search</button><br/><br/>
 
-                    <input id="searchtruckname" type="text" onInput={this.searchTrucks} placeholder="Truck Name"/><br/>
-
                     <button onClick={this.getNearby}>Get Nearby</button><br/>
 
                 </div>
