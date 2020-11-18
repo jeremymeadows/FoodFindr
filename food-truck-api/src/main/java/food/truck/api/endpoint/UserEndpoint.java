@@ -69,15 +69,15 @@ public class UserEndpoint {
         try {
 
             logger.log(Level.INFO, "UPDATE inbox, users SET messageRead=1 WHERE recipientID = users.user_id " +
-                    "and users.email = '" + email + "';");
+                    "and users.username = '" + email + "';");
             Database.update("UPDATE inbox, users SET messageRead=1 WHERE recipientID = users.user_id " +
-                    "and users.email = '" + email + "';");
+                    "and users.username = '" + email + "';");
 
             logger.log(Level.INFO, email);
             logger.log(Level.INFO, "SELECT messageContent FROM inbox, users WHERE recipientID = users.user_id" +
-                    " and users.email = '" + email + "';");
+                    " and users.username = '" + email + "';");
             ResultSet r = Database.query("SELECT messageContent FROM inbox, users WHERE recipientID = users.user_id" +
-                    " and users.email = '" + email + "';");
+                    " and users.username = '" + email + "';");
             String message = "";
             while (r.next()) {
                 message += r.getString("messageContent") + ";";

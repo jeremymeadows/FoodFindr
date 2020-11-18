@@ -201,25 +201,8 @@ class Trucks extends Component {
             <div>
 
                 <NavMenu></NavMenu>
-                {user !== null && <div>
                 <h2 style={{textAlign: 'center'}}>Trucks</h2>
-
                 <TruckTable></TruckTable>
-
-                <div style={{textAlign: 'center', marginTop: '10vh'}}>
-                    {user.owner &&
-                    <>
-                        <input id="truckname" type="text" placeholder="Truck Name"/><br/>
-                        <input id="truckdescription" type="text" placeholder="Truck Description"/><br/>
-                        <input id="rating" type="text" placeholder="Rating"/><br/>
-                        <p style={{display: 'inline', color: 'red'}} id="create_truck_result"><br/></p>
-                        <button onClick={this.createFoodTruck}>Create Food Truck</button>
-                        <br/>
-                    </>
-                    }
-                </div>
-            </div>
-            }
 
                 { user !== null && <div>
                     <div style={{textAlign: 'center', marginTop: '10vh'}}>

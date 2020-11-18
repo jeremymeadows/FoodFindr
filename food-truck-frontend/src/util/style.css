@@ -29,3 +29,8 @@
     background-color: #4CAF50;
     color: white;
 }
+
+#navmenu a:hover {
+    background-color: #ddd;
+    padding: 22px;
+}

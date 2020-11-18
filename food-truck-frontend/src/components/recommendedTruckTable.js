@@ -38,6 +38,7 @@ class TruckTable extends Component {
                 this.state.preferences[0] = list[0];
                 this.state.preferences[1] = list[1];
                 this.state.preferences[2] = list[2];
+                console.log(list);
             });
 
 
