@@ -1,12 +1,26 @@
 import React, { Component } from 'react';
 import Link from 'next/link';
+import { TabMenu } from 'primereact/tabmenu';
 
 class NavMenu extends Component{
     constructor() {
         super();
 
         this.state = {
-            user: null
+            user: null,
+            items1: [
+                {label: 'Home', icon: 'pi pi-fw pi-home', url: '/'},
+                {label: 'Dashboard', icon: 'pi pi-fw pi-desktop', url: '/dashboard'},
+                {label: 'Trucks', icon: 'pi pi-fw pi-star', url: '/trucks'},
+                {label: 'Manage Account', icon: 'pi pi-fw pi-cog', url: '/manageaccount'},
+                {label: 'Logout', icon: 'pi pi-fw pi-sign-out', url: '/auth/logout'}
+            ],
+            items2: [
+                {label: 'Home', icon: 'pi pi-fw pi-home', url: '/'},
+                {label: 'Create Account', icon: 'pi pi-fw pi-user-plus', url: '/auth/register'},
+                {label: 'Login', icon: 'pi pi-fw pi-sign-in', url: '/auth/login'}
+            ],
+            item: null
         }
     }
 
