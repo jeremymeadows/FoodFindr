@@ -147,9 +147,11 @@ class Trucks extends Component {
         const user = this.state.user;
         return (
             <div>
+
                 <NavMenu></NavMenu>
                 <h2 style={{textAlign: 'center'}}>Trucks</h2>
                 <TruckTable></TruckTable>
+
                 { user !== null && <div>
                     <div style={{textAlign: 'center', marginTop: '10vh'}}>
                         { this.state.user.owner &&
