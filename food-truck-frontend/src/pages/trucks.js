@@ -215,14 +215,19 @@ class Trucks extends Component {
                         }
                     </div>
                     <div style={{textAlign: 'center', marginTop: '10vh'}}>
-                        <input id="oldtruckname" type="text" placeholder="Truck Name"/><br/>
-                        <input id="oldtruckdescription" type="text" placeholder="Truck Description"/><br/>
-                        <input id="oldrating" type="text" placeholder="Rating"/><br/>
-                        <input id="truckid" type="text" placeholder="Truck ID"/><br/>
-                        <p style={{display: 'inline', color: 'red'}} id="manage_truck_result"><br/></p>
-                        <button onClick={this.manageTruck}>Edit Food Truck</button><br/>
+                        { this.state.user.owner &&
+                            <div>
+                            <input id="oldtruckname" type="text" placeholder="Truck Name"/><br/>
+                            <input id="oldtruckdescription" type="text" placeholder="Truck Description"/><br/>
+                            <input id="oldrating" type="text" placeholder="Rating"/><br/>
+                            <input id="truckid" type="text" placeholder="Truck ID"/><br/>
+                            <p style={{display: 'inline', color: 'red'}} id="manage_truck_result"><br/></p>
+                            <button onClick={this.manageTruck}>Edit Food Truck</button><br/>
+                            </div>
+                        }
                     </div>
-                    <div style={{textAlign: 'center', marginTop: '10vh'}}>
+                    {!this.state.user.owner &&
+                        <div style={{textAlign: 'center', marginTop: '10vh'}}>
                         <input id="truck_name" type="text" placeholder="Truck Name"/><br/>
                         <p style={{display: 'inline', color: 'red'}} id="rtg"><br/></p>
                         <label htmlFor="cost">Rating: </label>
@@ -233,24 +238,34 @@ class Trucks extends Component {
                             <option value="3">3</option>
                             <option value="4">4</option>
                             <option value="5">5</option>
-                        </select><br />
+                        </select><br/>
                         <textarea id="review" placeholder="Write your review here" rows="4" cols="50">
                         </textarea>
                         <p style={{display: 'inline', color: 'red'}} id="review_result"><br/></p>
-                        <button onClick={this.review}>Post Review</button><br/>
-                    </div>
-                    <div style={{textAlign: 'center', marginTop: '20vh'}}>
+                        <button onClick={this.review}>Post Review</button>
+                        <br/>
+                        </div>
+                    }
+                    {!this.state.user.owner &&
+                        <div style={{textAlign: 'center', marginTop: '20vh'}}>
                         <input id="truck" type="text" placeholder="Truck ID"/><br/>
                         <p style={{display: 'inline', color: 'black'}} id="subscribe_to_truck"><br/></p>
-                        <button onClick={this.subscribe}>Subscribe</button><br/>
-                    </div>
+                        <button onClick={this.subscribe}>Subscribe</button>
+                        <br/>
+                        </div>
+                    }
                     <div style={{textAlign: 'center', marginTop: '10vh'}}>
-                        <input id="truck_id" type="text" placeholder="Truck ID"/><br/>
-                        <input id="schedule" type="text" placeholder="Truck Schedule"/><br/>
-                        <p style={{display: 'inline', color: 'red'}} id="schedule_truck_result"><br/></p>
-                        <button onClick={this.manageSchedule}>Edit Food Truck Schedule</button><br/>
+                        {this.state.user.owner &&
+                            <div>
+                            <input id="truck_id" type="text" placeholder="Truck ID"/><br/>
+                            <input id="schedule" type="text" placeholder="Truck Schedule"/><br/>
+                            <p style={{display: 'inline', color: 'red'}} id="schedule_truck_result"><br/></p>
+                            <button onClick={this.manageSchedule}>Edit Food Truck Schedule</button><br/>
+                            </div>
+                        }
                     </div>
                 </div> }
+
             </div>
         );
     }
