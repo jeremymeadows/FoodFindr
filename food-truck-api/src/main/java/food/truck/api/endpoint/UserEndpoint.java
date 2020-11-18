@@ -237,7 +237,6 @@ public class UserEndpoint {
         String truck = fields[1];
 
         logger.log(Level.INFO, user + " " + truck);
-
         try {
             Database.update("INSERT INTO subscriptions (user_id, truck_id) VALUES(" +
                 "'" + user + "'," +
