@@ -13,6 +13,7 @@ import food.truck.api.user.User;
 import food.truck.api.user.UserService;
 import lombok.extern.log4j.Log4j2;
 
+
 @Log4j2
 @RestController
 public class UserEndpoint {
@@ -236,7 +237,6 @@ public class UserEndpoint {
         String truck = fields[1];
 
         logger.log(Level.INFO, user + " " + truck);
-
         try {
             Database.update("INSERT INTO subscriptions (user_id, truck_id) VALUES(" +
                 "'" + user + "'," +
@@ -375,16 +375,18 @@ public class UserEndpoint {
             }
             // Otherwise update the preferences
             else{
+                logger.log(Level.INFO, "UPDATE preferences SET price=" + prefs[1] + ", rating=" + prefs[2] + ", type='" + prefs[3]
+                        + "' WHERE userID='" + prefs[0] + "';");
                 Database.update("UPDATE preferences SET price=" + prefs[1] + ", rating=" + prefs[2] + ", type='" + prefs[3]
                         + "' WHERE userID='" + prefs[0] + "';");
             }
+            return "success";
         }
         catch(SQLException ex) {
             logger.log(Level.WARNING, "updating preferences failed");
             logger.log(Level.WARNING, ex.toString());
+            return "";
         }
-
-        return "";
     }
 
     @CrossOrigin(origins="*")

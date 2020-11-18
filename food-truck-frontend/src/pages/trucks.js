@@ -168,7 +168,7 @@ class Trucks extends Component {
         const xhr = new XMLHttpRequest();
         xhr.open('POST', 'http://localhost:8080/trucks/schedule', true);
 
-        xhr.onloadend = function() {
+        xhr.onloadend = function () {
             var res = document.getElementById("schedule_truck_result");
             //Since POST return for create is 201, wouldn't we want the status to be 201?
             if (xhr.status === 200) {
@@ -185,8 +185,7 @@ class Trucks extends Component {
             } else {
                 if (res === null) {
                     console.log("Res returned NULL");
-                }
-                else {
+                } else {
                     console.log("could not connect to server");
                     res.style = "color: red; display: block;";
                     res.innerHTML = "could not connect to server";
