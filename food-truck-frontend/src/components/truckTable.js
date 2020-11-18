@@ -15,6 +15,7 @@ class TruckTable extends Component {
         };
         this.searchTrucks = this.searchTrucks.bind(this);
         this.getNearby = this.getNearby.bind(this);
+        this.sub = this.sub.bind(this);
     }
 
     async getTrucks() {
@@ -40,6 +41,28 @@ class TruckTable extends Component {
         });
     }
 
+    async sub(event) {
+        const target = event.target;
+
+        const options = {
+            method: 'POST',
+            body: this.state.user.id + ';' + target.id,
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }
+
+        if (target.checked) {
+            await fetch('http://localhost:8080/subscribe', options)
+                .then(res => this.state.subs.push(target.id))
+                .then(() => this.forceUpdate());
+        } else {
+            await fetch('http://localhost:8080/unsubscribe', options)
+                .then(res => this.state.subs = this.state.subs.filter(function(id) {return id !== target.id}))
+                .then(() => this.forceUpdate());
+        }
+    }
+
     renderTableData() {
         return this.state.trucks.map((truck) => {
             const { id, name, description, rating } = truck;
@@ -51,7 +74,9 @@ class TruckTable extends Component {
                         <td><a href={url}>{name}</a></td>
                         <td><a href={url}>{description}</a></td>
                         <td><a href={url}>{rating}</a></td>
-                        {this.state.user !== null && <td><a href={url}>{truck.subscribed ? '♥' : '-️'}</a></td>}
+                        {this.state.user !== null && <td>
+                            <input type="checkbox" id={id} onChange={this.sub} checked={this.state.subs.includes(id)}/>
+                        </td> }
                     </tr>
                 );
             }
