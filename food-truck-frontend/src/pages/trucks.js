@@ -8,12 +8,10 @@ class Trucks extends Component {
 
         this.state = {
             user: null,
-            isOwner: 0
         };
         this.createFoodTruck = this.createFoodTruck.bind(this);
         this.manageTruck = this.manageTruck.bind(this);
         this.manageSchedule = this.manageSchedule.bind(this);
-        this.subscribe = this.subscribe.bind(this);
     }
 
     componentDidMount() {
@@ -23,27 +21,6 @@ class Trucks extends Component {
         }
         this.forceUpdate();
     }
-
-    subscribe() {
-        var truck_id = document.getElementById("truck").value;
-        var subInfo = this.state.user.id + ';' + truck_id;
-
-        console.log(subInfo);
-
-        const xhr = new XMLHttpRequest();
-        xhr.open('POST', 'http://localhost:8080/subscribe');
-        xhr.onloadend = function () {
-            console.log(xhr.status);
-            if (xhr.status == 200) {
-                if (xhr.responseText == "") {
-                    console.log("could not subscribe to truck");
-                } else {
-                    console.log("Subscribed to truck " + xhr.responseText);
-                }
-            }
-        }
-        xhr.send(subInfo);
-    };
 
     createFoodTruck() {
         var name = document.getElementById("truckname").value;
@@ -197,14 +174,6 @@ class Trucks extends Component {
                             </div>
                         }
                     </div>
-                    {!this.state.user.owner &&
-                        <div style={{textAlign: 'center', marginTop: '20vh'}}>
-                        <input id="truck" type="text" placeholder="Truck ID"/><br/>
-                        <p style={{display: 'inline', color: 'black'}} id="subscribe_to_truck"><br/></p>
-                        <button onClick={this.subscribe}>Subscribe</button>
-                        <br/>
-                        </div>
-                    }
                     <div style={{textAlign: 'center', marginTop: '10vh'}}>
                         {this.state.user.owner &&
                             <div>
