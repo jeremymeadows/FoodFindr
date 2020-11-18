@@ -28,12 +28,8 @@
     "jss-rtl": "0.3.0",
     "msal": "^1.4.0",
     "next": "9.5.2",
-<<<<<<< HEAD
-    "primeicons": "^4.1.0",
-=======
     "primeflex": "^2.0.0",
     "primeicons": "^4.0.0",
->>>>>>> b8924f8f3e29d05e65c8bc1970eb028a95170517
     "primereact": "^5.0.1",
     "react": "16.13.1",
     "react-cookie": "^4.0.3",
