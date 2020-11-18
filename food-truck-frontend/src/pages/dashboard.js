@@ -1,19 +1,36 @@
 import React, { Component } from 'react';
+import { Button } from 'primereact/button';
 import NavMenu from "../components/navmenu";
 import RecTrucks from '../components/recommendedTruckTable';
+import PrimeReact from 'primereact/utils';
+import { SelectButton } from 'primereact/selectbutton';
+import { Rating } from 'primereact/rating';
+import { InputTextarea } from 'primereact/inputtextarea';
+import { InputText } from 'primereact/inputtext';
+PrimeReact.ripple = true;
 
 class Dashboard extends Component {
     constructor() {
         super();
 
         this.state = {
-            user: null
+            user: null,
+            price: null,
+            rtg: null,
+            food: null,
+            message: null,
+            truck: null
         }
         this.get_info = this.get_info.bind(this);
         this.get_message = this.get_message.bind(this);
         this.send_message = this.send_message.bind(this);
         this.update_preferences = this.update_preferences.bind(this);
         this.delete_message = this.delete_message.bind(this);
+        this.priceSelect = [
+            {name: '$', value: 1},
+            {name: '$$', value: 2},
+            {name: '$$$', value: 3}
+        ];
     }
 
     componentDidMount() {
@@ -77,8 +94,8 @@ class Dashboard extends Component {
     }
 
     send_message() {
-        var message = document.getElementById("message").value;
-        var id = document.getElementById("truck_id_message").value;
+        var message = this.state.message;
+        var id = this.state.truck;
 
         var owner_message = message + ';' + id;
         console.log(owner_message);
@@ -138,9 +155,9 @@ class Dashboard extends Component {
 
     update_preferences(){
         var id_passed = this.state.user.id;
-        var price = document.getElementById("cost").value;
-        var rating = document.getElementById("rating").value;
-        var foodtype = document.getElementById("food_type").value;
+        var price = this.state.price;
+        var rating = this.state.rtg;
+        var foodtype = this.state.food;
 
         var sendMessage = id_passed + ';' + price + ';' + rating + ';' + foodtype;
         console.log("updating price with " + price + "\nrating with " + rating
@@ -151,6 +168,17 @@ class Dashboard extends Component {
 
         xhr.onloadend = function() {
             var res = document.getElementById("update_preferences_result");
+            if(xhr.status == 200) {
+                if(xhr.responseText == "") {
+                    console.log("could not update preferences");
+                    res.style = "color: red; display: block;";
+                    res.innerHTML = "could not update preferences";
+                } else {
+                    console.log("preferences updated successfully");
+                    res.style = "color: green; display: block;";
+                    res.innerHTML = "preferences updated successfully";
+                }
+            }
             console.log("status returned: " + xhr.status);
         };
         xhr.send(sendMessage);
@@ -172,44 +200,30 @@ class Dashboard extends Component {
 
     				<p style={{display: 'inline', color: 'black'}} id="info_result"><br/></p>
     				<div style={{textAlign: 'center', marginTop: '20px'}}>
-    					<button onClick={this.get_info}>View Profile</button>
+    					<Button onClick={this.get_info} label="View Profile" className="p-button-text"/>
     				</div>
     				<div style={{textAlign: 'center', marginTop: '20px'}}>
     					<p style={{display: 'inline', color: 'black'}} id="message_result"><br/></p>
-    					<button onClick={this.get_message}>View Messages</button>
+                        <Button onClick={this.get_message} label="View Messages" className="p-button-text"/>
     				</div>
                     <div style={{textAlign: 'center', marginTop: '0px'}}>
                         <p style={{display: 'inline', color: 'black'}} id="delete_result"><br/></p>
-                        <button onClick={this.delete_message}>Delete Read Messages</button>
+                        <Button onClick={this.delete_message} label="Delete Read Messages" className="p-button-text"/>
                     </div>
                     { user.owner && <div style={{textAlign: 'center', marginTop: '20px'}}>
-                        <input id="message" type="text" placeholder="Type your message here."/><br/>
-                        <input id="truck_id_message" type="text" placeholder="Truck ID of subscribers you want to message."/><br/>
+                        <InputText id="truck_id_message" type="text" value={this.state.truck} onChange={(e) => this.setState({truck: e.target.value})} placeholder="Truck ID"/><br/>
                         <p style={{display: 'inline', color: 'red'}} id="send_message_result"><br/></p>
-                        <button onClick={this.send_message}>Send Message</button>
+                        <InputTextarea placeholder="Message" value={this.state.message} onChange={(e) => this.setState({message: e.target.value})} rows={1} cols={30} autoResize />
+                        <br/>
+                        <Button className="p-button-text" onClick={this.send_message}>Send Message</Button>
                     </div> }
-                    { !user.owner && <div style={{textAlign: 'center', marginTop: '20px'}}>
+                    { !user.owner && <div className="card" style={{textAlign: 'center', marginTop: '20px'}}>
                         <p style={{display: 'inline', color: 'red'}} id="pref_result"><br/></p>
-                        <label htmlFor="cost">Choose a price: </label>
-                        <select id="cost" name="cost">
-                            <option value="nopref">None</option>
-                            <option value="1">$</option>
-                            <option value="2">$$</option>
-                            <option value="3">$$$</option>
-                        </select><br />
-                        <label htmlFor="rating">Choose a star rating: </label>
-                        <select id="rating" name="rating">
-                            <option value="nopref">None</option>
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
-                            <option value="4">4</option>
-                            <option value="5">5</option>
-                        </select><br />
-                        <label htmlFor="food_type">Choose a food type: </label>
-                        <input id="food_type" type="text" placeholder="preferred food type here"/><br/>
+                        <SelectButton value={this.state.price} optionLabel="name" options={this.priceSelect} onChange={(e) => this.setState({price: e.value })}/>
+                        <Rating value={this.state.rtg} onChange={(e) => this.setState({rtg: e.value})}/>
+                        <InputText placeholder="Favorite Food" id="food_type" value={this.state.food} onChange={(e) => this.setState({food: e.target.value})} />
                         <p style={{display: 'inline', color: 'red'}} id="update_preferences_result"><br/></p>
-                        <button onClick={this.update_preferences}>Update Preferences</button><br/><br/>
+                        <Button className="p-button-text" onClick={this.update_preferences}>Update Preferences</Button><br/><br/>
                         <RecTrucks></RecTrucks>
                     </div> }
                 </div> }
