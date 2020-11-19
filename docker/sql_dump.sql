@@ -57,6 +57,24 @@ CREATE TABLE `ownerships` (
   CONSTRAINT `ownerships_ibfk_2` FOREIGN KEY (`truck_id`) REFERENCES `trucks` (`truck_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+DROP TABLE IF EXISTS `inbox`;
+CREATE TABLE `inbox` (
+    `recipientID` varchar(8),
+    `messageContent` varchar(255),
+    `messageRead` bit(1),
+    KEY `recipientID` (`recipientID`),
+    CONSTRAINT `inbox_ibfk_1` FOREIGN KEY (`recipientID`) REFERENCES `users` (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+DROP TABLE IF EXISTS `preferences`;
+CREATE TABLE `preferences` (
+    `userID` varchar(8),
+    `price` int DEFAULT NULL,
+    `rating` int DEFAULT NULL,
+    `type` varchar(20) DEFAULT NULL,
+    KEY `userID` (`userID`),
+    CONSTRAINT `inbox_ibfk_1` FOREIGN KEY (`userID`) REFERENCES `users` (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 DROP TABLE IF EXISTS `reviews`;
 CREATE TABLE `reviews` (
@@ -71,4 +89,4 @@ CREATE TABLE `reviews` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
--- 2020-09-27 18:18:58
+-- 2020-11-18 5:09

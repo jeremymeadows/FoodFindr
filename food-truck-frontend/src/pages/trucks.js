@@ -215,12 +215,16 @@ class Trucks extends Component {
                         }
                     </div>
                     <div style={{textAlign: 'center', marginTop: '10vh'}}>
-                        <input id="oldtruckname" type="text" placeholder="Truck Name"/><br/>
-                        <input id="oldtruckdescription" type="text" placeholder="Truck Description"/><br/>
-                        <input id="oldrating" type="text" placeholder="Rating"/><br/>
-                        <input id="truckid" type="text" placeholder="Truck ID"/><br/>
-                        <p style={{display: 'inline', color: 'red'}} id="manage_truck_result"><br/></p>
-                        <button onClick={this.manageTruck}>Edit Food Truck</button><br/>
+                        { this.state.user.owner &&
+                            <>
+                            <input id="oldtruckname" type="text" placeholder="Truck Name"/><br/>
+                            <input id="oldtruckdescription" type="text" placeholder="Truck Description"/><br/>
+                            <input id="oldrating" type="text" placeholder="Rating"/><br/>
+                            <input id="truckid" type="text" placeholder="Truck ID"/><br/>
+                            <p style={{display: 'inline', color: 'red'}} id="manage_truck_result"><br/></p>
+                            <button onClick={this.manageTruck}>Edit Food Truck</button><br/>
+                            </>
+                        }
                     </div>
                     <div style={{textAlign: 'center', marginTop: '10vh'}}>
                         <input id="truck_name" type="text" placeholder="Truck Name"/><br/>
@@ -245,10 +249,14 @@ class Trucks extends Component {
                         <button onClick={this.subscribe}>Subscribe</button><br/>
                     </div>
                     <div style={{textAlign: 'center', marginTop: '10vh'}}>
-                        <input id="truck_id" type="text" placeholder="Truck ID"/><br/>
-                        <input id="schedule" type="text" placeholder="Truck Schedule"/><br/>
-                        <p style={{display: 'inline', color: 'red'}} id="schedule_truck_result"><br/></p>
-                        <button onClick={this.manageSchedule}>Edit Food Truck Schedule</button><br/>
+                        { this.state.user.owner &&
+                            <>
+                            <input id="truck_id" type="text" placeholder="Truck ID"/><br/>
+                            <input id="schedule" type="text" placeholder="Truck Schedule"/><br/>
+                            <p style={{display: 'inline', color: 'red'}} id="schedule_truck_result"><br/></p>
+                            <button onClick={this.manageSchedule}>Edit Food Truck Schedule</button><br/>
+                            </>
+                        }
                     </div>
                 </div> }
             </div>
