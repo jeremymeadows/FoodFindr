@@ -201,7 +201,7 @@ class Trucks extends Component {
             <div>
 
                 <NavMenu></NavMenu>
-                <h2 style={{textAlign: 'center'}}>Trucks</h2>
+                <h2 style={{textAlign: 'center'}} id='topblock'>Trucks</h2>
                 <TruckTable></TruckTable>
 
                 { user !== null && <div>
