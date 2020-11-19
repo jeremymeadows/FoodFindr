@@ -7,6 +7,8 @@ class TruckTable extends Component {
         this.state = {
             user: null,
             loading: true,
+            updateUsingNearby: false,
+            nearby: [],
             trucks: [
                 { id: '', name: '', description: '', rating: 0, subscribed: false }
             ],
@@ -64,36 +66,64 @@ class TruckTable extends Component {
     }
 
     renderTableData() {
-        return this.state.trucks.map((truck) => {
-            const { id, name, description, rating } = truck;
-            const url = 'truckDetails?id=' + id;
+        if(this.state.updateUsingNearby){
+            this.state.updateUsingNearby = false;
+            return this.state.trucks.map((truck) => {
+                const { id, name, description, rating } = truck;
+                const url = 'truckDetails?id=' + id;
 
-            if (name.toLowerCase().includes(this.state.search.toLowerCase())) {
-                return (
-                    <tr key={id}>
-                        <td><a href={url}>{name}</a></td>
-                        <td><a href={url}>{description}</a></td>
-                        <td><a href={url}>{rating}</a></td>
-                        {this.state.user !== null && <td>
-                            <input type="checkbox" id={id} onChange={this.sub} checked={this.state.subs.includes(id)}/>
-                        </td> }
-                    </tr>
-                );
-            }
-        });
+                if( this.state.nearby.includes(id) ){
+                    return (
+                        <tr key={id}>
+                            <td><a href={url}>{name}</a></td>
+                            <td><a href={url}>{description}</a></td>
+                            <td><a href={url}>{rating}</a></td>
+                            {this.state.user !== null && <td>
+								<input type="checkbox" id={id} onChange={this.sub} checked={this.state.subs.includes(id)}/>
+							</td> }
+                        </tr>
+                    );
+                }
+            });
+        }
+
+        else {
+            return this.state.trucks.map((truck) => {
+                const {id, name, description, rating} = truck;
+                const url = 'truckDetails?id=' + id;
+
+                if (name.toLowerCase().includes(this.state.search.toLowerCase())) {
+                    return (
+                        <tr key={id}>
+                            <td>
+                                <a href={url}>{name}</a>
+                            </td>
+                            <td>
+                                <a href={url}>{description}</a>
+                            </td>
+                            <td>
+                                <a href={url}>{rating}</a>
+                            </td>
+                            {this.state.user !== null && <td>
+								<input type="checkbox" id={id} onChange={this.sub} checked={this.state.subs.includes(id)}/>
+							</td> }
+                        </tr>
+                    );
+                }
+            });
+        }
     }
 
     getNearby(){
-        // If geolocation is supported
-        if (navigator.geolocation) {
-            // Attempt to get current position, if it is got it is sent to evaluatePosition
-            navigator.geolocation.getCurrentPosition(evaluatePosition);
-        } else {
-            console.log("Geolocation not supported");
-        }
+
+        let realThis = this;
+        // Attempt to get current position, if it is got it is sent to evaluatePosition
+        navigator.geolocation.getCurrentPosition(function(position){
+            evaluatePosition(position, realThis);
+        });
 
         // Function evaluating based on current position
-        function evaluatePosition(position) {
+        function evaluatePosition(position, state) {
             // Store the user's coordinates and the key value to access mapquest's API,
             // as well as the web address reached by the xmlhttp request
             let user_coord = position.coords.latitude + ',' + position.coords.longitude;
@@ -168,7 +198,9 @@ class TruckTable extends Component {
 
                         // AT THIS POINT WE HAVE THE FULL ARRAY OF NEARBY TRUCKS,
                         // YOU CAN UPDATE THE TRUCK TABLE AND EXIT OUT OF THE FUNCTION
-                        nearbyArray.forEach( truckIDval => console.log(truckIDval) );
+                        realThis.state.updateUsingNearby = true;
+                        nearbyArray.forEach( truckIDval => realThis.state.nearby.push(truckIDval) );
+                        realThis.forceUpdate();
                     }
                     else{
                         console.log("no trucks have locations");
@@ -201,7 +233,7 @@ class TruckTable extends Component {
         return (
             <div>
                 <div style={{textAlign: 'center'}}>
-                    <input id="searchtruckname" type="text" onInput={this.searchTrucks} placeholder="Truck Name"/><br/>
+                    <input id="searchtruckname" type="text" onInput={this.searchTrucks}  placeholder="Search Truck Name"/><br/><br/>
                     <button onClick={this.getNearby}>Get Nearby</button><br/>
                 </div>
                 { true && <div>
