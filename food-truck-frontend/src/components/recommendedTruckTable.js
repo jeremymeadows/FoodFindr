@@ -36,7 +36,7 @@ class TruckTable extends Component {
 
         //{console.log(res);return res.json();}
 
-        let fetchData = {method:'post',body: this.state.user.email};
+        let fetchData = {method: 'post', body: this.state.user.email};
 
 
 
