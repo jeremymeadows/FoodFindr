@@ -36,11 +36,11 @@ class TruckTable extends Component {
 
         //{console.log(res);return res.json();}
 
-        let fetchData = {body: JSON.stringify(this.state.user.email)};
+        let fetchData = {method:'post',body: this.state.user.email};
 
 
 
-        /*console.log("getting preferences");
+        console.log("getting preferences");
         await fetch('http://localhost:8080/dashboard/getpreferences', fetchData)
             .then(res => {console.log(res);return res.json();})
             .then(function(preferences) {
@@ -50,14 +50,14 @@ class TruckTable extends Component {
                 this.state.preferences[1] = list[1];
                 this.state.preferences[2] = list[2];
                 console.log(list);
-            });*/
+            });
 
 
         let temptrucks = [];
         this.state.trucks.forEach(function(truck) {
-            //if(this.preferences.includes(truck.price)) {
+            if(this.preferences.includes(truck.price)) {
                 temptrucks.push(truck);
-           // }
+            }
         });
         this.setState({trucks: temptrucks});
         this.forceUpdate();
