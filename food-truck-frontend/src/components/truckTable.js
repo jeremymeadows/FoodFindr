@@ -17,7 +17,6 @@ class TruckTable extends Component {
         };
         this.searchTrucks = this.searchTrucks.bind(this);
         this.getNearby = this.getNearby.bind(this);
-        this.sub = this.sub.bind(this);
     }
 
     async getTrucks() {
@@ -41,28 +40,6 @@ class TruckTable extends Component {
                 return <th key={index}>{key.toUpperCase()}</th>;
             }
         });
-    }
-
-    async sub(event) {
-        const target = event.target;
-
-        const options = {
-            method: 'POST',
-            body: this.state.user.id + ';' + target.id,
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        }
-
-        if (target.checked) {
-            await fetch('http://localhost:8080/subscribe', options)
-                .then(res => this.state.subs.push(target.id))
-                .then(() => this.forceUpdate());
-        } else {
-            await fetch('http://localhost:8080/unsubscribe', options)
-                .then(res => this.state.subs = this.state.subs.filter(function(id) {return id !== target.id}))
-                .then(() => this.forceUpdate());
-        }
     }
 
     renderTableData() {

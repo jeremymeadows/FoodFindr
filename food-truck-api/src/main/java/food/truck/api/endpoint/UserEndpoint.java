@@ -333,7 +333,6 @@ public class UserEndpoint {
     @PostMapping("/dashboard/getpreferences")
     public String getPreferences(@RequestBody String user_email) {
         String json = "[";
-        logger.log(Level.INFO, " Getting preferences");
         try {
             ResultSet r = Database.query("SELECT * FROM preferences WHERE email='" + user_email + "';");
             if (r.next()) {

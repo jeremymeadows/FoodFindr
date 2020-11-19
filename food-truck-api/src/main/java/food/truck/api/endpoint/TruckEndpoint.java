@@ -151,24 +151,35 @@ public class TruckEndpoint {
         String[] fields = review.split(";");
 
         String user_id = fields[0];
-        String truck_id = fields[1];
+        String truck_name = fields[1];
         int rating = Integer.parseInt(fields[2]);
         String rev = fields[3];
 
         try {
-            String sql = "INSERT INTO reviews VALUES ('" +
+            ResultSet r = Database.query("SELECT truck_id FROM trucks WHERE name = '" + truck_name + "';");
+
+            String truck_id;
+            if(r.next()) {
+                truck_id = r.getString("truck_id");
+            } else return "";
+            if(r.next()) return "";
+
+            Database.update("INSERT INTO reviews VALUES ('" +
                     user_id + "','" +
                     truck_id + "','" +
                     rating + "','" +
-                    rev + "');";
+                    rev + "');");
+            logger.log(Level.INFO, "INSERT INTO reviews VALUES ('" +
+                    user_id + "','" +
+                    truck_id + "','" +
+                    rating + "','" +
+                    rev + "');");
 
-            Database.update(sql);
-            logger.log(Level.INFO, sql);
         } catch(SQLException ex) {
             logger.log(Level.WARNING, ex.toString());
             return "";
         }
-        return truck_id;
+        return truck_name;
     }
 
     @CrossOrigin(origins="*")

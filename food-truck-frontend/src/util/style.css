@@ -29,18 +29,3 @@
     background-color: #4CAF50;
     color: white;
 }
-
-#navmenu a {
-    padding: 22px;
-}
-
-#navmenu a:hover {
-    background-color: #ddd;
-    padding-top: 22px;
-    padding-bottom: 22px;
-}
-
-#topblock {
-    padding: 40px;
-    background-color: #ddd;
-}

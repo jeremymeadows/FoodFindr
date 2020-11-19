@@ -24,33 +24,22 @@ class TruckTable extends Component {
 
     async getTrucks() {
 
-        console.log("getting trucks");
+            console.log("getting trucks");
 
-        await fetch('http://localhost:8080/trucks')
-            .then(res => res.json())
-            .then(trucks => this.state.trucks = trucks);
+            await fetch('http://localhost:8080/trucks')
+                .then(res => {console.log(res);return res.json();})
+                .then(trucks => this.state.trucks = trucks);
 
-       /* await fetch('http://localhost:8080/trucks', {mode: 'no-cors'})
-            .then(res => {console.log(res);return res.json();})
-            .then(trucks => this.state.trucks = trucks);*/
-
-        //{console.log(res);return res.json();}
-
-        let fetchData = {body: JSON.stringify(this.state.user.email)};
-
-
-
-        /*console.log("getting preferences");
-        await fetch('http://localhost:8080/dashboard/getpreferences', fetchData)
+        console.log("getting preferences");
+        await fetch('http://localhost:8080/dashboard/getpreferences')
             .then(res => {console.log(res);return res.json();})
             .then(function(preferences) {
-                console.log(preferences);
-                let list = preferences.split(';');
+                let list = res.split(';');
                 this.state.preferences[0] = list[0];
                 this.state.preferences[1] = list[1];
                 this.state.preferences[2] = list[2];
                 console.log(list);
-            });*/
+            });
 
 
         let temptrucks = [];

@@ -33,7 +33,7 @@ class NavMenu extends Component{
         const sess = this.state.user === null;
 
         return (
-            <div id='navmenu' style={{backgroundColor: "#4CAF50"}}>
+            <div>
                 {sess && <span style={{float: 'left', textAlign: 'left', margin: '20px'}}>
                 <Link href={"/"}><a style={{marginLeft: 8, marginRight: 8, marginTop: 8,
                     marginBottom: 8, width: '181px', height: '48px'}}>Home</a></Link>
