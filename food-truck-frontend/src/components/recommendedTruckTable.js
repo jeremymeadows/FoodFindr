@@ -26,27 +26,38 @@ class TruckTable extends Component {
 
         console.log("getting trucks");
 
-        await fetch('http://localhost:8080/trucks', {mode: 'no-cors'})
-            .then(res => {console.log(res);return res.json();})
+        await fetch('http://localhost:8080/trucks')
+            .then(res => res.json())
             .then(trucks => this.state.trucks = trucks);
 
-        console.log("getting preferences");
-        await fetch('http://localhost:8080/dashboard/getpreferences', {mode: 'no-cors'})
+       /* await fetch('http://localhost:8080/trucks', {mode: 'no-cors'})
+            .then(res => {console.log(res);return res.json();})
+            .then(trucks => this.state.trucks = trucks);*/
+
+        //{console.log(res);return res.json();}
+
+        let fetchData = {body: JSON.stringify(this.state.user.email)};
+
+
+
+        /*console.log("getting preferences");
+        await fetch('http://localhost:8080/dashboard/getpreferences', fetchData)
             .then(res => {console.log(res);return res.json();})
             .then(function(preferences) {
+                console.log(preferences);
                 let list = preferences.split(';');
                 this.state.preferences[0] = list[0];
                 this.state.preferences[1] = list[1];
                 this.state.preferences[2] = list[2];
                 console.log(list);
-            });
+            });*/
 
 
         let temptrucks = [];
         this.state.trucks.forEach(function(truck) {
-            if(this.preferences.includes(truck.price)) {
+            //if(this.preferences.includes(truck.price)) {
                 temptrucks.push(truck);
-            }
+           // }
         });
         this.setState({trucks: temptrucks});
         this.forceUpdate();

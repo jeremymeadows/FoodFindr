@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import NavMenu from "../components/navmenu";
 import RecTrucks from '../components/recommendedTruckTable';
 
+
 class Dashboard extends Component {
     constructor() {
         super();
