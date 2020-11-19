@@ -40,6 +40,20 @@ public class UserEndpoint {
     }
 
     @CrossOrigin(origins="*")
+    @PostMapping("/dashboard/unread")
+    public String getUnread(@RequestBody String id) {
+        try {
+            ResultSet r = Database.query("SELECT COUNT(*) AS count FROM inbox WHERE recipientID='" + id + "' and messageRead=0;");
+            if(r.next()) {
+                return r.getString("count");
+            } else return "0";
+        } catch(SQLException ex) {
+            logger.log(Level.WARNING, ex.toString());
+        }
+        return "";
+    }
+
+    @CrossOrigin(origins="*")
     @GetMapping("/user/{id}")
     public String getUserSubscriptions(@PathVariable String id) {
         String json = "[";

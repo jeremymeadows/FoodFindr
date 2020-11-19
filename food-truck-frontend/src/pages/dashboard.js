@@ -19,13 +19,15 @@ class Dashboard extends Component {
             rtg: null,
             food: null,
             message: null,
-            truck: null
+            truck: null,
+            unread: 0
         }
         this.get_info = this.get_info.bind(this);
         this.get_message = this.get_message.bind(this);
         this.send_message = this.send_message.bind(this);
         this.update_preferences = this.update_preferences.bind(this);
         this.delete_message = this.delete_message.bind(this);
+        this.get_unread_count = this.get_unread_count.bind(this);
         this.priceSelect = [
             {name: '$', value: 1},
             {name: '$$', value: 2},
@@ -38,6 +40,7 @@ class Dashboard extends Component {
         if (this.state.user === null) {
             window.location = 'auth/login';
         }
+        this.get_unread_count();
         this.forceUpdate();
     }
 
@@ -67,6 +70,24 @@ class Dashboard extends Component {
             }
         };
         xhr.send(name);
+    }
+
+    get_unread_count() {
+        var id = this.state.user.id;
+
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', 'http://localhost:8080/dashboard/unread', true);
+        xhr.onloadend = function() {
+            if(xhr.status == 200) {
+                if(xhr.responseText == "") {
+                    console.log("could not retrieve message count");
+                } else {
+                    console.log("messages found: " + xhr.responseText);
+                    this.state.unread = xhr.responseText;
+                }
+            }
+        }
+        xhr.send(id);
     }
 
     send_message() {
@@ -180,7 +201,7 @@ class Dashboard extends Component {
     				</div>
     				<div style={{textAlign: 'center', marginTop: '20px'}}>
     					<p style={{display: 'inline', color: 'black'}} id="message_result"><br/></p>
-                        <Button onClick={this.get_message} label="View Messages" className="p-button-text"/>
+                        <Button id="view_messages" onload="document.badge=this.state.unread" onClick={this.get_message} label="View Messages" badgeClassName="p-badge-danger"/>
     				</div>
                     <div style={{textAlign: 'center', marginTop: '0px'}}>
                         <p style={{display: 'inline', color: 'black'}} id="delete_result"><br/></p>
