@@ -8,13 +8,10 @@ class Trucks extends Component {
 
         this.state = {
             user: null,
-            isOwner: 0
         };
         this.createFoodTruck = this.createFoodTruck.bind(this);
         this.manageTruck = this.manageTruck.bind(this);
         this.manageSchedule = this.manageSchedule.bind(this);
-        this.subscribe = this.subscribe.bind(this);
-        this.review = this.review.bind(this);
     }
 
     componentDidMount() {
@@ -24,27 +21,6 @@ class Trucks extends Component {
         }
         this.forceUpdate();
     }
-
-    subscribe() {
-        var truck_id = document.getElementById("truck").value;
-        var subInfo = this.state.user.id + ';' + truck_id;
-
-        console.log(subInfo);
-
-        const xhr = new XMLHttpRequest();
-        xhr.open('POST', 'http://localhost:8080/subscribe');
-        xhr.onloadend = function () {
-            console.log(xhr.status);
-            if (xhr.status == 200) {
-                if (xhr.responseText == "") {
-                    console.log("could not subscribe to truck");
-                } else {
-                    console.log("Subscribed to truck " + xhr.responseText);
-                }
-            }
-        }
-        xhr.send(subInfo);
-    };
 
     createFoodTruck() {
         var name = document.getElementById("truckname").value;
@@ -128,34 +104,6 @@ class Trucks extends Component {
         xhr.send(truck_cred);
     };
 
-    review() {
-        var user_id = this.state.user.id;
-        var truck_name = document.getElementById("truck_name").value;
-        var rating = document.getElementById("rating").value;
-        var review = document.getElementById("review").value;
-
-        var review_cred = user_id + ';' + truck_name + ';' + rating + ';' + review;
-        console.log(review_cred);
-
-        const xhr = new XMLHttpRequest();
-        xhr.open('POST', 'http://localhost:8080/trucks/review', true);
-
-        xhr.onloadend = function() {
-            var res = document.getElementById("review_result");
-            if (xhr.responseText === "") {
-                console.log("could not write review");
-                res.style = "color: red; display: block;";
-                res.innerHTML = "could not write review";
-            } else {
-                console.log("create truck success");
-                res.style = "color: green, display: inline;";
-                res.innerHTML = "Rating for " + xhr.responseText + " was written successfully";
-                window.location = "../trucks";
-            }
-        };
-        xhr.send(review_cred);
-    };
-
     manageSchedule() {
         var id = document.getElementById("truck_id").value;
         var schedule = document.getElementById("schedule").value;
@@ -199,9 +147,11 @@ class Trucks extends Component {
         const user = this.state.user;
         return (
             <div>
+
                 <NavMenu></NavMenu>
                 <h2 style={{textAlign: 'center'}}>Trucks</h2>
                 <TruckTable></TruckTable>
+
                 { user !== null && <div>
                     <div style={{textAlign: 'center', marginTop: '10vh'}}>
                         { this.state.user.owner &&
@@ -227,28 +177,6 @@ class Trucks extends Component {
                         }
                     </div>
                     <div style={{textAlign: 'center', marginTop: '10vh'}}>
-                        <input id="truck_name" type="text" placeholder="Truck Name"/><br/>
-                        <p style={{display: 'inline', color: 'red'}} id="rtg"><br/></p>
-                        <label htmlFor="cost">Rating: </label>
-                        <select id="rating" name="cost">
-                            <option value="nopref">None</option>
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
-                            <option value="4">4</option>
-                            <option value="5">5</option>
-                        </select><br />
-                        <textarea id="review" placeholder="Write your review here" rows="4" cols="50">
-                        </textarea>
-                        <p style={{display: 'inline', color: 'red'}} id="review_result"><br/></p>
-                        <button onClick={this.review}>Post Review</button><br/>
-                    </div>
-                    <div style={{textAlign: 'center', marginTop: '20vh'}}>
-                        <input id="truck" type="text" placeholder="Truck ID"/><br/>
-                        <p style={{display: 'inline', color: 'black'}} id="subscribe_to_truck"><br/></p>
-                        <button onClick={this.subscribe}>Subscribe</button><br/>
-                    </div>
-                    <div style={{textAlign: 'center', marginTop: '10vh'}}>
                         { this.state.user.owner &&
                             <>
                             <input id="truck_id" type="text" placeholder="Truck ID"/><br/>
@@ -259,6 +187,7 @@ class Trucks extends Component {
                         }
                     </div>
                 </div> }
+
             </div>
         );
     }

@@ -42,6 +42,30 @@ class Dashboard extends Component {
     }
 
     get_info() {
+        var email = this.state.user.email;
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', 'http://localhost:8080/dashboard', true);
+
+        xhr.onloadend = function(){
+            var res = document.getElementById("info_result");
+            if(xhr.responseText == "") {
+                console.log("No info to display");
+                res.style = "color: black; display: block;";
+                res.innerHTML = "No info to display";
+            } else {
+                console.log(xhr.responseText)
+                //username + ';' + email_address + ';' + owner;
+                res.innerHTML = "";
+                for(var i = 0; i < xhr.responseText.split(';').length-1; i++) {
+                    res.innerHTML += xhr.responseText.split(';')[i]
+                        + "<br />";
+                }
+                if (xhr.responseText.split(';')[2] === 1) {
+                    res.innerHTML += "User is an Owner" + "<br />";
+                }
+            }
+        };
+        xhr.send(email);
     }
 
     get_message() {

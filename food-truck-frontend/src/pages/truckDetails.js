@@ -11,6 +11,7 @@ class TruckDetails extends Component {
         };
         this.sub = this.sub.bind(this);
         this.unsub = this.unsub.bind(this);
+        this.review = this.review.bind(this);
     }
 
     async sub() {
@@ -58,6 +59,34 @@ class TruckDetails extends Component {
         this.forceUpdate();
     }
 
+    review() {
+        var user_id = this.state.user.id;
+        var truck_id = this.state.truck.id;
+        var rating = document.getElementById("rating").value;
+        var review = document.getElementById("review").value;
+
+        var review_cred = user_id + ';' + truck_id + ';' + rating + ';' + review;
+        console.log(review_cred);
+
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', 'http://localhost:8080/trucks/review', true);
+
+        xhr.onloadend = function() {
+            var res = document.getElementById("review_result");
+            if (xhr.responseText === "") {
+                console.log("could not write review");
+                res.style = "color: red; display: block;";
+                res.innerHTML = "could not write review";
+            } else {
+                console.log("create truck success");
+                res.style = "color: green, display: inline;";
+                res.innerHTML = "Rating for " + xhr.responseText + " was written successfully";
+                window.location = "../trucks";
+            }
+        };
+        xhr.send(review_cred);
+    };
+
     render() {
         const user = this.state.user;
         const truck = this.state.truck;
@@ -80,6 +109,25 @@ class TruckDetails extends Component {
                         <p>Todo:
                         map, menu, schedule
                         </p>
+                    </div> }
+
+                    {!this.state.user.owner &&
+                        <div style={{textAlign: 'center', marginTop: '10vh'}}>
+                        <p style={{display: 'inline', color: 'red'}} id="rtg"><br/></p>
+                        <label htmlFor="cost">Rating: </label>
+                        <select id="rating" name="cost">
+                            <option value="nopref">None</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                        </select><br/>
+                        <textarea id="review" placeholder="Write your review here" rows="4" cols="50">
+                        </textarea>
+                        <p style={{display: 'inline', color: 'red'}} id="review_result"><br/></p>
+                        <button onClick={this.review}>Post Review</button>
+                        <br/>
                     </div> }
                 </div> }
             </div>
