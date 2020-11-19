@@ -15,6 +15,7 @@ class TruckTable extends Component {
         };
         this.searchTrucks = this.searchTrucks.bind(this);
         this.getNearby = this.getNearby.bind(this);
+        this.sub = this.sub.bind(this);
     }
 
     async getTrucks() {
@@ -40,6 +41,28 @@ class TruckTable extends Component {
         });
     }
 
+    async sub(event) {
+        const target = event.target;
+
+        const options = {
+            method: 'POST',
+            body: this.state.user.id + ';' + target.id,
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }
+
+        if (target.checked) {
+            await fetch('http://localhost:8080/subscribe', options)
+                .then(res => this.state.subs.push(target.id))
+                .then(() => this.forceUpdate());
+        } else {
+            await fetch('http://localhost:8080/unsubscribe', options)
+                .then(res => this.state.subs = this.state.subs.filter(function(id) {return id !== target.id}))
+                .then(() => this.forceUpdate());
+        }
+    }
+
     renderTableData() {
         return this.state.trucks.map((truck) => {
             const { id, name, description, rating } = truck;
@@ -51,7 +74,9 @@ class TruckTable extends Component {
                         <td><a href={url}>{name}</a></td>
                         <td><a href={url}>{description}</a></td>
                         <td><a href={url}>{rating}</a></td>
-                        {this.state.user !== null && <td><a href={url}>{truck.subscribed ? '♥' : '-️'}</a></td>}
+                        {this.state.user !== null && <td>
+                            <input type="checkbox" id={id} onChange={this.sub} checked={this.state.subs.includes(id)}/>
+                        </td> }
                     </tr>
                 );
             }
@@ -168,29 +193,6 @@ class TruckTable extends Component {
     }
 
     searchTrucks() {
-
-        let name = document.getElementById("searchtruckname").value;
-
-        if (name !== null) {
-            this.setState({search: true}, () => {
-                console.log(this.state.search);
-            });
-            this.setState({loading: true}, () => {
-                console.log(this.state.loading);
-            });
-
-        console.log("got name: " + name);
-
-
-
-            console.log("Went into searchtrucks");
-            this.componentDidMount().then(() => {
-                //this.renderTableHeader();
-                //this.renderTableData();
-                this.forceUpdate();
-            });
-        }
-
         this.state.search = document.getElementById("searchtruckname").value;
         this.forceUpdate();
     };
@@ -199,9 +201,7 @@ class TruckTable extends Component {
         return (
             <div>
                 <div style={{textAlign: 'center'}}>
-
                     <input id="searchtruckname" type="text" onInput={this.searchTrucks} placeholder="Truck Name"/><br/>
-
                     <button onClick={this.getNearby}>Get Nearby</button><br/>
                 </div>
                 { true && <div>
