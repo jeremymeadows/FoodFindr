@@ -68,7 +68,7 @@ public class TruckEndpoint {
         } catch (SQLException ex) {
             logger.log(Level.WARNING, ex.toString());
         }
-        json = json.substring(0, json.length() - 1) + "]";
+        json = json.substring(0, json.length() > 1 ? json.length() - 1 : json.length()) + "]";
         logger.log(Level.INFO, json);
         return json;
     }

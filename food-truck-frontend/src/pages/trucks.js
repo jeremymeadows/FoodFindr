@@ -15,11 +15,11 @@ class Trucks extends Component {
     }
 
     componentDidMount() {
-        this.state.user = JSON.parse(localStorage.getItem('user'));
-        if (this.state.user === null) {
-            window.location = 'auth/login';
+        let json = localStorage.getItem('user');
+        if (json !== null) {
+            this.state.user = JSON.parse(localStorage.getItem('user'));
+            this.forceUpdate();
         }
-        this.forceUpdate();
     }
 
     createFoodTruck() {
