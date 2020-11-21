@@ -13,9 +13,11 @@ class TruckTable extends Component {
                 { id: '', name: '', description: '', rating: 0, subscribed: false }
             ],
             subs: [],
-            search: "",
+            search: '',
         };
         this.searchTrucks = this.searchTrucks.bind(this);
+        this.sortTrucks = this.sortTrucks.bind(this);
+        this.filterTrucks = this.filterTrucks.bind(this);
         this.getNearby = this.getNearby.bind(this);
         this.sub = this.sub.bind(this);
     }
@@ -27,7 +29,8 @@ class TruckTable extends Component {
                 if (trucks.length > 0) {
                     this.state.trucks = trucks;
                 }
-            });
+            })
+            .then(() => this.sortTrucks());
     }
 
     async getSubscriptions() {
@@ -70,7 +73,7 @@ class TruckTable extends Component {
     }
 
     renderTableData() {
-        if(this.state.updateUsingNearby){
+        if (this.state.updateUsingNearby) {
             this.state.updateUsingNearby = false;
             return this.state.trucks.map((truck) => {
                 const { id, name, description, rating } = truck;
@@ -229,6 +232,27 @@ class TruckTable extends Component {
         this.forceUpdate();
     };
 
+    sortTrucks() {
+        switch (document.getElementById('sort').value) {
+            case 'rating_d':
+                this.state.trucks.sort(function(a, b) { return a.rating < b.rating });
+                break;
+            case 'name_d':
+                this.state.trucks.sort(function(a, b) { return a.name.toLowerCase() > b.name.toLowerCase() });
+                break;
+            case 'name_a':
+                this.state.trucks.sort(function(a, b) { return a.name.toLowerCase() < b.name.toLowerCase() });
+                break;
+            case 'rating_a':
+                this.state.trucks.sort(function(a, b) { return a.rating > b.rating });
+                break;
+        }
+        this.forceUpdate();
+    }
+
+    filterTrucks() {
+    }
+
     render() {
         let loading = this.state.loading;
         let empty = this.state.trucks[0].id === '';
@@ -237,6 +261,13 @@ class TruckTable extends Component {
             <div>
                 <div style={{textAlign: 'center'}}>
                     <input id="search" type="text" onInput={this.searchTrucks} placeholder="Search Truck Name"/><br/><br/>
+                    <label>Sort by: </label>
+                    <select name="sort" id="sort" defaultValue="rating_d" onChange={this.sortTrucks}>
+                        <option value="rating_d">rating ▼</option>
+                        <option value="name_d">name ▼</option>
+                        <option value="name_a">name ▲</option>
+                        <option value="rating_a">rating ▲</option>
+                    </select><br/><br/>
                     <button onClick={this.getNearby}>Get Nearby</button><br/>
                 </div>
                 { /* loaging gif */ }
