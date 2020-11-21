@@ -83,8 +83,9 @@ public class TruckEndpoint {
                 list = list.concat("\"" + rs.getString("truck_id") + "\",\"");
                 list = list.concat(rs.getString("location") + "\",");
             }
-            list = list.substring(0, list.length()-1);
-            list = list.concat("]");
+            list = list.substring(0, list.length() > 1 ? list.length() - 1 : list.length()) + "]";
+            // list = list.substring(0, list.length()-1);
+            // list = list.concat("]");
             return list;
         }
         catch(SQLException ex){
