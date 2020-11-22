@@ -147,7 +147,6 @@ class Trucks extends Component {
         const user = this.state.user;
         return (
             <div>
-
                 <NavMenu></NavMenu>
                 <h2 style={{textAlign: 'center'}}>Trucks</h2>
                 <TruckTable></TruckTable>
@@ -187,11 +186,9 @@ class Trucks extends Component {
                         }
                     </div>
                 </div> }
-
             </div>
         );
     }
-
 }
 
 export default Trucks

@@ -10,14 +10,7 @@ import java.util.logging.*;
 import org.h2.util.json.JSONString;
 import org.h2.util.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import food.truck.api.user.Truck;
 import lombok.extern.log4j.Log4j2;
@@ -25,8 +18,6 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 @RestController
 public class TruckEndpoint {
-    // TODO: CrossOrigin * is not secure, but it is easy to configure. It should be changed to the react server when it is running up on Heroku
-
     @CrossOrigin(origins="*")
     @GetMapping("/truck/{id}")
     public String findTruckById(@PathVariable String id) {
@@ -76,55 +67,26 @@ public class TruckEndpoint {
     @CrossOrigin(origins="*")
     @GetMapping("/trucks/locations")
     public String getTrucksWithLocations() {
-        String list = "[";
+        String json = "[";
         try {
-            ResultSet rs = Database.query("SELECT truck_id, location FROM trucks WHERE location IS NOT NULL;");
-            while(rs.next()){
-                list = list.concat("\"" + rs.getString("truck_id") + "\",\"");
-                list = list.concat(rs.getString("location") + "\",");
+            ResultSet r = Database.query("SELECT truck_id, location FROM trucks WHERE location IS NOT NULL;");
+            while (r.next()) {
+                json = json.concat("{\"id\":\"" + r.getString("truck_id") + "\",");
+                json = json.concat("\"loc\":\"" + r.getString("location") + "\"},");
             }
-            list = list.substring(0, list.length() > 1 ? list.length() - 1 : list.length()) + "]";
-            // list = list.substring(0, list.length()-1);
-            // list = list.concat("]");
-            return list;
+            json = json.substring(0, json.length() > 1 ? json.length() - 1 : json.length()) + "]";
+            return json;
         }
-        catch(SQLException ex){
+        catch (SQLException ex) {
             logger.log(Level.WARNING, ex.toString());
         }
 
         return null;
     }
-    /*
-    @CrossOrigin(origins="*")
-    @GetMapping("/truck/{name}")
-    public String findTruckByName(@PathVariable String name) {
-        String json = "[";
-        try {
-            ResultSet r = Database.query("SELECT * FROM trucks WHERE name='" + name + "';");
-            while (r.next()) {
-                String description = r.getString("description");
-                Float rating = r.getFloat("rating");
-                String id = r.getString("truck_id");
-
-                Truck t = new Truck(id, name, description, rating);
-
-                logger.log(Level.INFO, t.toString());
-                json = json + t.toString() + ",";
-            }
-        } catch (SQLException ex) {
-            logger.log(Level.WARNING, ex.toString(), "truck " + name + " not found");
-        }
-    }*/
-
-
-    // this method has the same signature as the one below it, and didn't look like it was being used
 
      @CrossOrigin(origins="*")
      @PostMapping("/trucks/manage")
      public String manageTruck(@RequestBody String truck_cred) {
-         //var truck_cred = truck.name + ';' + description + ';' + rating;
-
-
         String[] fields = truck_cred.split(";");
         String name = fields[0]; //truck.getName()
         String description = fields[1]; //truck.getDescription()
@@ -175,13 +137,10 @@ public class TruckEndpoint {
     @CrossOrigin(origins="*")
     @PostMapping("/trucks/searchTrucks")
     public String searchTruck(@RequestBody String search_cred) {
-        //var truck_cred = truck.name + ';' + description + ';' + rating;
-
         String json = "[";
         String[] fields = search_cred.split(";");
         String name = fields[0]; //truck.getName()
         String range = fields[1]; //truck.getDescription()
-
 
         logger.log(Level.INFO, "searching truck " + name);
         try {
@@ -268,9 +227,6 @@ public class TruckEndpoint {
     @CrossOrigin(origins="*")
     @PostMapping("/trucks/schedule")
     public String manageSchedule(@RequestBody String truck_cred) {
-        //var truck_cred = truck.name + ';' + description + ';' + rating;
-
-
         String[] fields = truck_cred.split(";");
         String id = fields[0]; //truck.getName()
         String schedule = fields[1]; //truck.getDescription()
@@ -287,9 +243,4 @@ public class TruckEndpoint {
             return "";
         }
     }
-    // @CrossOrigin(origins="*")
-    // @PostMapping("/truck")
-    // public Truck saveTruck(@RequestBody Truck user) {
-    //     return null;
-    // }
 }
