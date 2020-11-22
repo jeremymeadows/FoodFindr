@@ -315,11 +315,11 @@ public class UserEndpoint {
 
     @CrossOrigin(origins="*")
     @PostMapping("/dashboard/getpreferences")
-    public String getPreferences(@RequestBody String user_email) {
+    public String getPreferences(@RequestBody String user_id) {
         String json = "[";
         logger.log(Level.INFO, " Getting preferences");
         try {
-            ResultSet r = Database.query("SELECT * FROM preferences WHERE email='" + user_email + "';");
+            ResultSet r = Database.query("SELECT * FROM preferences WHERE userID='" + user_id + "';");
             if (r.next()) {
                 String price = r.getString("price");
                 String rating = r.getString("rating");
