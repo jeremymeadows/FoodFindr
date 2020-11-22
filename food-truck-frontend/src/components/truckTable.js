@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Link from 'next/link';
 
 class TruckTable extends Component {
     constructor(props) {
@@ -83,22 +84,22 @@ class TruckTable extends Component {
 
             if (name.toLowerCase().includes(this.state.search.toLowerCase())) {
                 return (
-                    <tr key={id}>
-                        <td><a href={url}>{name}</a></td>
-                        <td><a href={url}>{description}</a></td>
-                        <td><a href={url}>{rating}</a></td>
+                    <Link href={url}><tr key={id} style={{cursor: 'pointer'}}>
+                        <td>{name}</td>
+                        <td>{description}</td>
+                        <td>{rating}</td>
                         { this.state.updateUsingNearby && <td>
                             { distance > 0 &&
-    							<a href={url}>{distance}</a>
+    							<a>{distance}</a>
                             }
                             { distance < 0 &&
-                                <a href={url}>no location provided</a>
+                                <a>no location provided</a>
                             }
 						</td> }
                         { this.state.user !== null && <td>
 							<input type="checkbox" id={id} onChange={this.sub} checked={this.state.subs.includes(id)}/>
 						</td> }
-                    </tr>
+                    </tr></Link>
                 );
             }
         });
