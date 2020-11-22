@@ -58,6 +58,10 @@ class TruckTable extends Component {
             this.state.trucks.forEach(function (truck) {
                 if (this.preferences.includes(truck.price) && this.preferences.includes(truck.rating)) {
                     temptrucks.unshift(truck);
+                } else if (this.preferences.includes(truck.price)) {
+                    temptrucks.push(truck);
+                } else if (this.preferences.includes(truck.rating)) {
+                    temptrucks.push(truck);
                 }
             });
             this.state.trucks.forEach(function (truck) {
