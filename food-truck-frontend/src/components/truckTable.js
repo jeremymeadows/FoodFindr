@@ -7,6 +7,8 @@ class TruckTable extends Component {
         this.state = {
             user: null,
             loading: true,
+            updateUsingNearby: false,
+            nearby: [],
             trucks: [
                 { id: '', name: '', description: '', rating: 0, subscribed: false }
             ],
@@ -21,7 +23,11 @@ class TruckTable extends Component {
     async getTrucks() {
         await fetch('http://localhost:8080/trucks')
             .then(res => res.json())
-            .then(trucks => this.state.trucks = trucks);
+            .then(trucks => {
+                if (trucks.length > 0) {
+                    this.state.trucks = trucks;
+                }
+            });
     }
 
     async getSubscriptions() {
@@ -35,7 +41,7 @@ class TruckTable extends Component {
     renderTableHeader() {
         let header = Object.keys(this.state.trucks[0]).filter(key => key !== 'id');
         return header.map((key, index) => {
-            if (key !== "favourite" || this.state.user !== null) {
+            if (key !== "subscribed" || this.state.user !== null) {
                 return <th key={index}>{key.toUpperCase()}</th>;
             }
         });
@@ -64,36 +70,57 @@ class TruckTable extends Component {
     }
 
     renderTableData() {
-        return this.state.trucks.map((truck) => {
-            const { id, name, description, rating } = truck;
-            const url = 'truckDetails?id=' + id;
+        if(this.state.updateUsingNearby){
+            this.state.updateUsingNearby = false;
+            return this.state.trucks.map((truck) => {
+                const { id, name, description, rating } = truck;
+                const url = 'truckDetails?id=' + id;
 
-            if (name.toLowerCase().includes(this.state.search.toLowerCase())) {
-                return (
-                    <tr key={id}>
-                        <td><a href={url}>{name}</a></td>
-                        <td><a href={url}>{description}</a></td>
-                        <td><a href={url}>{rating}</a></td>
-                        {this.state.user !== null && <td>
-                            <input type="checkbox" id={id} onChange={this.sub} checked={this.state.subs.includes(id)}/>
-                        </td> }
-                    </tr>
-                );
-            }
-        });
+                if (this.state.nearby.includes(id)) {
+                    return (
+                        <tr key={id}>
+                            <td><a href={url}>{name}</a></td>
+                            <td><a href={url}>{description}</a></td>
+                            <td><a href={url}>{rating}</a></td>
+                            {this.state.user !== null && <td>
+								<input type="checkbox" id={id} onChange={this.sub} checked={this.state.subs.includes(id)}/>
+							</td> }
+                        </tr>
+                    );
+                }
+            });
+        }
+
+        else {
+            return this.state.trucks.map((truck) => {
+                const {id, name, description, rating} = truck;
+                const url = 'truckDetails?id=' + id;
+
+                if (name.toLowerCase().includes(this.state.search.toLowerCase())) {
+                    return (
+                        <tr key={id}>
+                            <td><a href={url}>{name}</a></td>
+                            <td><a href={url}>{description}</a></td>
+                            <td><a href={url}>{rating}</a></td>
+                            {this.state.user !== null && <td>
+								<input type="checkbox" id={id} onChange={this.sub} checked={this.state.subs.includes(id)}/>
+							</td> }
+                        </tr>
+                    );
+                }
+            });
+        }
     }
 
     getNearby(){
-        // If geolocation is supported
-        if (navigator.geolocation) {
-            // Attempt to get current position, if it is got it is sent to evaluatePosition
-            navigator.geolocation.getCurrentPosition(evaluatePosition);
-        } else {
-            console.log("Geolocation not supported");
-        }
+        let realThis = this;
+        // Attempt to get current position, if it is got it is sent to evaluatePosition
+        navigator.geolocation.getCurrentPosition(function(position){
+            evaluatePosition(position, realThis);
+        });
 
         // Function evaluating based on current position
-        function evaluatePosition(position) {
+        function evaluatePosition(position, state) {
             // Store the user's coordinates and the key value to access mapquest's API,
             // as well as the web address reached by the xmlhttp request
             let user_coord = position.coords.latitude + ',' + position.coords.longitude;
@@ -168,7 +195,9 @@ class TruckTable extends Component {
 
                         // AT THIS POINT WE HAVE THE FULL ARRAY OF NEARBY TRUCKS,
                         // YOU CAN UPDATE THE TRUCK TABLE AND EXIT OUT OF THE FUNCTION
-                        nearbyArray.forEach( truckIDval => console.log(truckIDval) );
+                        realThis.state.updateUsingNearby = true;
+                        nearbyArray.forEach( truckIDval => realThis.state.nearby.push(truckIDval) );
+                        realThis.forceUpdate();
                     }
                     else{
                         console.log("no trucks have locations");
@@ -181,7 +210,10 @@ class TruckTable extends Component {
     }
 
     async componentDidMount() {
-        this.state.user = JSON.parse(localStorage.getItem('user'));
+        let json = localStorage.getItem('user');
+        if (json !== null) {
+            this.state.user = JSON.parse(localStorage.getItem('user'));
+        }
 
         this.getTrucks().then(() => {
             this.getSubscriptions().then(() => {
@@ -193,30 +225,32 @@ class TruckTable extends Component {
     }
 
     searchTrucks() {
-        this.state.search = document.getElementById("searchtruckname").value;
+        this.state.search = document.getElementById("search").value;
         this.forceUpdate();
     };
 
     render() {
+        let loading = this.state.loading;
+        let empty = this.state.trucks[0].id === '';
+
         return (
             <div>
                 <div style={{textAlign: 'center'}}>
-                    <input id="searchtruckname" type="text" onInput={this.searchTrucks} placeholder="Truck Name"/><br/>
+                    <input id="search" type="text" onInput={this.searchTrucks} placeholder="Search Truck Name"/><br/><br/>
                     <button onClick={this.getNearby}>Get Nearby</button><br/>
                 </div>
-                { true && <div>
-                { /* loaging gif, probably want a different one later */ }
-                { this.state.loading && <img id='loading' src="http://i.stack.imgur.com/SBv4T.gif" alt="loading..." width='250'></img> }
+                { /* loaging gif */ }
+                { loading && <img id='loading' src="http://i.stack.imgur.com/SBv4T.gif" alt="loading..." width='250'></img> }
 
                 <table id='trucks'>
                     <thead>
-                        <tr>{ !this.state.loading && this.renderTableHeader() }</tr>
+                        <tr>{ !loading && this.renderTableHeader() }</tr>
                     </thead>
                     <tbody id='table'>
-                        { !this.state.loading && this.renderTableData() }
+                        { !loading && empty && <tr><td colSpan={this.state.user === null ? 3 : 4}>no trucks found</td></tr> }
+                        { !loading && !empty && this.renderTableData() }
                     </tbody>
                 </table>
-                </div> }
             </div>
         );
     }
