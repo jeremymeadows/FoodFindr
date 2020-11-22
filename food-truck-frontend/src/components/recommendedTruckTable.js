@@ -19,7 +19,7 @@ class TruckTable extends Component {
         };
 
         this.getNearby = this.getNearby.bind(this);
-
+        this.sub = this.sub.bind(this);
     }
 
     async getTrucks() {
@@ -36,7 +36,7 @@ class TruckTable extends Component {
 
         //{console.log(res);return res.json();}
 
-        let fetchData = {method: 'post', body: this.state.user.email};
+        let fetchData = {method: 'post', body: this.state.user.id};
 
 
 
@@ -50,15 +50,27 @@ class TruckTable extends Component {
                 this.state.preferences[1] = list[1];
                 this.state.preferences[2] = list[2];
                 console.log(list);
-            });
+            }).catch(error => console.log(error));
 
 
         let temptrucks = [];
-        this.state.trucks.forEach(function(truck) {
-            if(this.preferences.includes(truck.price)) {
+        if(this.preferences !== undefined && this.preferences.length > 0) {
+            this.state.trucks.forEach(function (truck) {
+                if (this.preferences.includes(truck.price) && this.preferences.includes(truck.rating)) {
+                    temptrucks.unshift(truck);
+                }
+            });
+            this.state.trucks.forEach(function (truck) {
+                if (!temptrucks.includes(truck)) {
+                    temptrucks.unshift(truck);
+                }
+            });
+        } else {
+            this.state.trucks.forEach(function (truck) {
                 temptrucks.push(truck);
-            }
-        });
+
+            });
+        }
         this.setState({trucks: temptrucks});
         this.forceUpdate();
 
@@ -82,6 +94,28 @@ class TruckTable extends Component {
         });
     }
 
+    async sub(event) {
+        const target = event.target;
+
+        const options = {
+            method: 'POST',
+            body: this.state.user.id + ';' + target.id,
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }
+
+        if (target.checked) {
+            await fetch('http://localhost:8080/subscribe', options)
+                .then(res => this.state.subs.push(target.id))
+                .then(() => this.forceUpdate());
+        } else {
+            await fetch('http://localhost:8080/unsubscribe', options)
+                .then(res => this.state.subs = this.state.subs.filter(function(id) {return id !== target.id}))
+                .then(() => this.forceUpdate());
+        }
+    }
+
     renderTableData() {
         return this.state.trucks.map((truck) => {
             const { id, name, description, rating } = truck;
@@ -92,7 +126,9 @@ class TruckTable extends Component {
                     <td><a href={url}>{name}</a></td>
                     <td><a href={url}>{description}</a></td>
                     <td><a href={url}>{rating}</a></td>
-                    {this.state.user !== null && <td><a href={url}>{truck.subscribed ? '♥' : '-️'}</a></td>}
+                    {this.state.user !== null && <td>
+                        <input type="checkbox" id={id} onChange={this.sub} checked={this.state.subs.includes(id)}/>
+                    </td> }
                 </tr>
             );
         });
@@ -175,20 +211,22 @@ class TruckTable extends Component {
     }
 
     render() {
+        let loading = this.state.loading;
+        let empty = this.state.trucks[0].id === '';
         return (
             <div>
 
-                    { /* loaging gif, probably want a different one later */ }
-                    {this.state.loading && <img id='loading' src="http://i.stack.imgur.com/SBv4T.gif" alt="loading..." width='250'></img>}
+                { loading && <img id='loading' src="http://i.stack.imgur.com/SBv4T.gif" alt="loading..." width='250'></img> }
 
-                    <table id='trucks'>
-                        <thead>
-                        <tr>{!this.state.loading && this.renderTableHeader()}</tr>
-                        </thead>
-                        <tbody id='table'>
-                        {!this.state.loading && this.renderTableData()}
-                        </tbody>
-                    </table>
+                <table id='trucks'>
+                    <thead>
+                    <tr>{ !loading && this.renderTableHeader() }</tr>
+                    </thead>
+                    <tbody id='table'>
+                    { !loading && empty && <tr><td colSpan={this.state.user === null ? 3 : 4}>no trucks found</td></tr> }
+                    { !loading && !empty && this.renderTableData() }
+                    </tbody>
+                </table>
 
             </div>
         );
