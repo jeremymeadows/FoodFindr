@@ -105,122 +105,43 @@ class TruckTable extends Component {
     }
 
     async getNearby() {
-        let realThis = this;
+        let table = this;
         // Attempt to get current position, if it is got it is sent to evaluatePosition
-        navigator.geolocation.getCurrentPosition(function(position) {
-            evaluatePosition(position, realThis.state);
+        await navigator.geolocation.getCurrentPosition(async function(position) {
+            await evaluatePosition(position, table.state);
         });
 
         // Function evaluating based on current position
         async function evaluatePosition(position, state) {
-            // Store the user's coordinates and the key value to access mapquest's API,
-            // as well as the web address reached by the xmlhttp request
-            const user_coord = position.coords.latitude + ',' + position.coords.longitude;
+            // Store the key value to access MapQuest's API and the user's coordinates
+            const key = 'HvhBy6rdLPqZkmPnsEa4fMS95IDRRo2K';
+            const coords = position.coords.latitude + ',' + position.coords.longitude;
 
-            const keyVal = 'HvhBy6rdLPqZkmPnsEa4fMS95IDRRo2K';
-            const url = 'http://open.mapquestapi.com/geocoding/v1/reverse?key=' + keyVal +
-              '&location=' + user_coord;
-            let physicalAddress = '';
-
-            // Launch a new XMLHttp request which returns a json object
-            // const userLocReq = new XMLHttpRequest();
-            // userLocReq.responseType = 'json';
-
-            await fetch(url).then(res => res.json())
+            await fetch('http://open.mapquestapi.com/geocoding/v1/reverse?key=' + key +
+              '&location=' + coords).then(res => res.json())
                 .then(res => {
-                    let loc = res.results[0].locations[0];
-                    let address = loc.street + ', ' + loc.adminArea5 + ' ' + loc.adminArea3 + ', ' + loc.postalCode;
-                    console.log(address);
+                    const loc = res.results[0].locations[0];
+                    const address = loc.street + ', ' + loc.adminArea5 + ' ' + loc.adminArea3 + ', ' + loc.postalCode;
 
-                    return fetch('http://localhost:8080/trucks/locations').then(res => {console.log('hi'); return res.json()})
-                        .then(res => res.forEach(truck => {
-                            return fetch('http://open.mapquestapi.com/geocoding/v1/address?key=' + keyVal +
-                              '&location=' + truck.loc.trim()).then(res => res.json())
-                                .then(res => {
-                                    let ll = res.results[0].locations[0].latLng;
-                                    return fetch('http://www.mapquestapi.com/directions/v2/route?key=' + keyVal +
-                                      '&from=' + user_coord + '&to=' + ll.lat + ',' + ll.lng).then(res => res.json())
-                                        .then(res => {
-                                            console.log(truck.id);
-                                            console.log(state.trucks);
-                                            state.trucks.find(t => t.id === truck.id).distance = res.route.distance;
-                                            console.log(state.trucks);
-                                            console.log(res.route.distance);
-                                            return 'hi';
-                                        });
-                                });
-                        }));
+                    return fetch('http://localhost:8080/trucks/locations').then(res => res.json())
+                        .then(async res => {
+                            await Promise.all(res.map(truck => {
+                                return fetch('http://open.mapquestapi.com/geocoding/v1/address?key=' + key +
+                                  '&location=' + truck.loc.trim()).then(res => res.json())
+                                    .then(res => {
+                                        const ll = res.results[0].locations[0].latLng;
+                                        return fetch('http://www.mapquestapi.com/directions/v2/route?key=' + key +
+                                          '&from=' + coords + '&to=' + ll.lat + ',' + ll.lng).then(res => res.json())
+                                            .then(res => {
+                                                state.trucks.find(t => t.id === truck.id).distance = res.route.distance;
+                                            });
+                                    });
+                            }));
+                        });
                 })
                 .then(() => {
-                    console.log(realThis.state.trucks);
-
-                    realThis.sortTrucks();
-                    realThis.forceUpdate();
+                    table.sortTrucks();
                 });
-
-            // Get from the mapquest API the address of the user
-            // userLocReq.open('GET', url, true);
-
-            // After getting the address of the user
-            // userLocReq.onloadend = function() {
-            //     // Store the user's address
-            //     let userAddress = userLocReq.response.results[0].locations[0];
-            //     physicalAddress = userAddress.street + ", " + userAddress.adminArea5 + ' '
-            //         + userAddress.adminArea3 + ", " + userAddress.postalCode;
-            //
-            //     // Launch an XMLHttp request which returns every truck whose location isn't null
-            //     const truckLocReq = new XMLHttpRequest();
-            //     truckLocReq.open('GET', 'http://localhost:8080/trucks/locations', true);
-            //
-            //     truckLocReq.onloadend = function() {
-            //         // Get the pairs of truck id's and addresses returned
-            //         let res = JSON.parse(truckLocReq.response);
-            //         if (res) {
-            //             // For every pair returned
-            //             let i = 0;
-            //             let truckID = "", truckLoc = "";
-            //             res.forEach(function(value) {
-            //                 if (i%2 === 0) {
-            //                     truckID = value;
-            //                 }
-            //                 else {
-            //                     truckLoc = value;
-            //
-            //                     // Find the coordinates for the truck's address
-            //                     const truckCoordReq = new XMLHttpRequest();
-            //
-            //                     truckCoordReq.open('GET', 'http://open.mapquestapi.com/geocoding/v1/address?key=' +
-            //                         keyVal + '&location=' + truckLoc.trim(), false);
-            //                     truckCoordReq.send();
-            //                     let result = JSON.parse(truckCoordReq.response);
-            //                     let truckLatCoord = result.results[0].locations[0].latLng.lat.toString();
-            //                     let truckLngCoord = result.results[0].locations[0].latLng.lng.toString();
-            //
-            //                     let distanceReq = new XMLHttpRequest();
-            //                     distanceReq.open('GET', 'http://www.mapquestapi.com/directions/v2/route?key='
-            //                         + keyVal + '&from=' + user_coord + '&to=' + truckLatCoord + ',' + truckLngCoord, false);
-            //                     distanceReq.send();
-            //                     let distanceResult = JSON.parse(distanceReq.response);
-            //                     let distanceVal = distanceResult.route.distance;
-            //
-            //                     // console.log("truckID: " + truckID +
-            //                     //     "\n\tlatitude: " + truckLatCoord +
-            //                     //     "\n\tlongitude: " + truckLngCoord +
-            //                     //     "\n\tdistance: " + distanceVal
-            //                     // );
-            //
-            //                     // sets distance of truck
-            //                     realThis.state.trucks.find(truck => truck.id === truckID).distance = distanceVal;
-            //                 }
-            //                 i++;
-            //             });
-            //             realThis.sortTrucks();
-            //             realThis.forceUpdate();
-            //         }
-            //     }
-            //     truckLocReq.send();
-            // }
-            // userLocReq.send();
         }
     }
 
@@ -281,7 +202,6 @@ class TruckTable extends Component {
         if (checked) {
             this.getNearby();
         }
-        this.forceUpdate();
     }
 
     render() {
