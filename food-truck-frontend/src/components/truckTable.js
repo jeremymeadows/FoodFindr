@@ -90,15 +90,15 @@ class TruckTable extends Component {
                         <td>{rating}</td>
                         { this.state.updateUsingNearby && <td>
                             { distance > 0 &&
-    							<a>{distance}</a>
+                                <a>{distance}</a>
                             }
                             { distance < 0 &&
                                 <a>no location provided</a>
                             }
-						</td> }
+                        </td> }
                         { this.state.user !== null && <td>
-							<input type="checkbox" id={id} onChange={this.sub} checked={this.state.subs.includes(id)}/>
-						</td> }
+                            <input type="checkbox" id={id} onChange={this.sub} checked={this.state.subs.includes(id)}/>
+                        </td> }
                     </tr></Link>
                 );
             }
@@ -121,8 +121,8 @@ class TruckTable extends Component {
             await fetch('http://open.mapquestapi.com/geocoding/v1/reverse?key=' + key +
               '&location=' + coords).then(res => res.json())
                 .then(res => {
-                    const loc = res.results[0].locations[0];
-                    const address = loc.street + ', ' + loc.adminArea5 + ' ' + loc.adminArea3 + ', ' + loc.postalCode;
+                    // const loc = res.results[0].locations[0];
+                    //const address = loc.street + ', ' + loc.adminArea5 + ' ' + loc.adminArea3 + ', ' + loc.postalCode;
 
                     return fetch('http://localhost:8080/trucks/locations').then(res => res.json())
                         .then(async res => {
@@ -229,7 +229,7 @@ class TruckTable extends Component {
                         { /* a dropdown might not be the best for this and maybe we do something else */ }
                     </select><br/><br/>
                     <label>Use location? </label>
-					<input type="checkbox" id="nearby" onChange={this.enableLocation}/>
+                    <input type="checkbox" id="nearby" onChange={this.enableLocation}/>
                     <p id="locationError" style={{color: 'red'}}></p>
                 </div>
                 { /* loaging gif */ }

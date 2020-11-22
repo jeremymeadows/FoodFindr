@@ -7,6 +7,7 @@ import { SelectButton } from 'primereact/selectbutton';
 import { Rating } from 'primereact/rating';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { InputText } from 'primereact/inputtext';
+
 PrimeReact.ripple = true;
 
 class Dashboard extends Component {
@@ -198,14 +199,14 @@ class Dashboard extends Component {
                         <h3>My Trucks:(TODO)</h3>
                     </div> }
 
-    				<p style={{display: 'inline', color: 'black'}} id="info_result"><br/></p>
-    				<div style={{textAlign: 'center', marginTop: '20px'}}>
-    					<Button onClick={this.get_info} label="View Profile" className="p-button-text"/>
-    				</div>
-    				<div style={{textAlign: 'center', marginTop: '20px'}}>
-    					<p style={{display: 'inline', color: 'black'}} id="message_result"><br/></p>
+                    <p style={{display: 'inline', color: 'black'}} id="info_result"><br/></p>
+                    <div style={{textAlign: 'center', marginTop: '20px'}}>
+                        <Button onClick={this.get_info} label="View Profile" className="p-button-text"/>
+                    </div>
+                    <div style={{textAlign: 'center', marginTop: '20px'}}>
+                        <p style={{display: 'inline', color: 'black'}} id="message_result"><br/></p>
                         <Button onClick={this.get_message} label="View Messages" className="p-button-text"/>
-    				</div>
+                    </div>
                     <div style={{textAlign: 'center', marginTop: '0px'}}>
                         <p style={{display: 'inline', color: 'black'}} id="delete_result"><br/></p>
                         <Button onClick={this.delete_message} label="Delete Read Messages" className="p-button-text"/>

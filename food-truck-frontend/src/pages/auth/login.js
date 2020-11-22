@@ -2,10 +2,11 @@ import React, { Component } from 'react';
 import sha256 from 'js-sha256';
 import NavMenu from "../../components/navmenu";
 import host from '../../util/network';
-import { Button } from 'primereact/button';
 import PrimeReact from 'primereact/utils';
-import {InputText} from "primereact/inputtext";
-import {Checkbox} from 'primereact/checkbox';
+import { Button } from 'primereact/button';
+import { InputText } from "primereact/inputtext";
+import { Checkbox } from 'primereact/checkbox';
+
 PrimeReact.ripple = true;
 
 class Login extends Component {
@@ -13,8 +14,8 @@ class Login extends Component {
         super();
 
         this.state = {
-            email: null,
-            password: null,
+            email: '',
+            password: '',
             remember: false
         }
 
@@ -78,9 +79,8 @@ class Login extends Component {
     render() {
         return (
             <div>
-                <div>
-                    <NavMenu></NavMenu>
-                </div>
+                <NavMenu></NavMenu>
+
                 <div style={{textAlign: 'center', marginTop: '30vh'}}>
                     <h1>Food Truck Finder</h1>
 
