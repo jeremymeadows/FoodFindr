@@ -69,9 +69,8 @@ class Register extends Component {
     render() {
         return (
             <div>
-                <div>
-                    <NavMenu></NavMenu>
-                </div>
+                <NavMenu></NavMenu>
+
                 <div style={{textAlign: 'center', marginTop: '30vh'}}>
                     <h1>Food Truck Finder</h1>
                     <input id="email" type="text" placeholder="email"/><br/>
@@ -80,12 +79,8 @@ class Register extends Component {
                     <input id="passw" type="password" placeholder="password"/><br/>
                     <input id="conf" type="password" placeholder="confirm password"/><br/>
 
-                <input id="truck" type="checkbox"/>
-                <label for="truck">I am a truck owner</label><br/>
-
                     <input id="owner" type="checkbox"/>
                     <label htmlFor="owner">I am a truck owner</label><br/>
-
 
                     <p style={{display: 'inline', color: 'red'}} id="login_result"><br/></p>
                     <button onClick={this.register}>create account</button>

@@ -18,11 +18,11 @@ class Trucks extends Component {
     }
 
     componentDidMount() {
-        this.state.user = JSON.parse(localStorage.getItem('user'));
-        if (this.state.user === null) {
-            window.location = 'auth/login';
+        let json = localStorage.getItem('user');
+        if (json !== null) {
+            this.state.user = JSON.parse(localStorage.getItem('user'));
+            this.forceUpdate();
         }
-        this.forceUpdate();
     }
 
     subscribe() {
@@ -53,9 +53,7 @@ class Trucks extends Component {
 
         var truck_cred = name + ';' + description + ';' + rating;
         console.log(truck_cred);
-        //var id = Integer.toHexString(truck_cred.hashCode()).substring(0, 8);
 
-        //var truck = new Truck(id, name, description, rating);
         const xhr = new XMLHttpRequest();
         xhr.open('PUT', 'http://localhost:8080/trucks/create', true);
 
@@ -95,9 +93,7 @@ class Trucks extends Component {
 
         var truck_cred = name + ';' + description + ';' + rating + ';' + id;
         console.log(truck_cred);
-        //var id = Integer.toHexString(truck_cred.hashCode()).substring(0, 8);
 
-        //var truck = new Truck(id, name, description, rating);
         const xhr = new XMLHttpRequest();
         xhr.open('POST', 'http://localhost:8080/trucks/manage', true);
 
@@ -162,9 +158,7 @@ class Trucks extends Component {
 
         var truck_cred = id + ';' + schedule;
         console.log(truck_cred);
-        //var id = Integer.toHexString(truck_cred.hashCode()).substring(0, 8);
 
-        //var truck = new Truck(id, name, description, rating);
         const xhr = new XMLHttpRequest();
         xhr.open('POST', 'http://localhost:8080/trucks/schedule', true);
 
@@ -197,6 +191,7 @@ class Trucks extends Component {
 
     render() {
         const user = this.state.user;
+
         return (
             <div>
                 <NavMenu></NavMenu>
@@ -204,65 +199,36 @@ class Trucks extends Component {
                 <TruckTable></TruckTable>
                 { user !== null && <div>
                     <div style={{textAlign: 'center', marginTop: '10vh'}}>
-                        { this.state.user.owner &&
-                            <>
+                        { this.state.user.owner && <div>
                             <input id="truckname" type="text" placeholder="Truck Name"/><br/>
                             <input id="truckdescription" type="text" placeholder="Truck Description"/><br/>
                             <input id="rating" type="text" placeholder="Rating"/><br/>
                             <p style={{display: 'inline', color: 'red'}} id="create_truck_result"><br/></p>
                             <button onClick={this.createFoodTruck}>Create Food Truck</button><br/>
-                            </>
-                        }
+                        </div> }
                     </div>
                     <div style={{textAlign: 'center', marginTop: '10vh'}}>
-                        { this.state.user.owner &&
-                            <>
+                        { this.state.user.owner && <div>
                             <input id="oldtruckname" type="text" placeholder="Truck Name"/><br/>
                             <input id="oldtruckdescription" type="text" placeholder="Truck Description"/><br/>
                             <input id="oldrating" type="text" placeholder="Rating"/><br/>
                             <input id="truckid" type="text" placeholder="Truck ID"/><br/>
                             <p style={{display: 'inline', color: 'red'}} id="manage_truck_result"><br/></p>
                             <button onClick={this.manageTruck}>Edit Food Truck</button><br/>
-                            </>
-                        }
+                        </div> }
                     </div>
                     <div style={{textAlign: 'center', marginTop: '10vh'}}>
-                        <input id="truck_name" type="text" placeholder="Truck Name"/><br/>
-                        <p style={{display: 'inline', color: 'red'}} id="rtg"><br/></p>
-                        <label htmlFor="cost">Rating: </label>
-                        <select id="rating" name="cost">
-                            <option value="nopref">None</option>
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
-                            <option value="4">4</option>
-                            <option value="5">5</option>
-                        </select><br />
-                        <textarea id="review" placeholder="Write your review here" rows="4" cols="50">
-                        </textarea>
-                        <p style={{display: 'inline', color: 'red'}} id="review_result"><br/></p>
-                        <button onClick={this.review}>Post Review</button><br/>
-                    </div>
-                    <div style={{textAlign: 'center', marginTop: '20vh'}}>
-                        <input id="truck" type="text" placeholder="Truck ID"/><br/>
-                        <p style={{display: 'inline', color: 'black'}} id="subscribe_to_truck"><br/></p>
-                        <button onClick={this.subscribe}>Subscribe</button><br/>
-                    </div>
-                    <div style={{textAlign: 'center', marginTop: '10vh'}}>
-                        { this.state.user.owner &&
-                            <>
+                        { this.state.user.owner && <div>
                             <input id="truck_id" type="text" placeholder="Truck ID"/><br/>
                             <input id="schedule" type="text" placeholder="Truck Schedule"/><br/>
                             <p style={{display: 'inline', color: 'red'}} id="schedule_truck_result"><br/></p>
                             <button onClick={this.manageSchedule}>Edit Food Truck Schedule</button><br/>
-                            </>
-                        }
+                        </div> }
                     </div>
                 </div> }
             </div>
         );
     }
-
 }
 
 export default Trucks

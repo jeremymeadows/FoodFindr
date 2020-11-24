@@ -1,18 +1,27 @@
-import React from 'react';
+import React, { Component } from 'react';
 import NavMenu from "../../components/navmenu";
+import Link from 'next/link';
 
-function Logout() {
-    localStorage.removeItem('user');
+class Logout extends Component {
+    constructor() {
+        super();
+    }
 
-    return (
-        <div>
-            <NavMenu></NavMenu>
-            <div style={{textAlign: 'center', marginTop: '10vh'}}>
-            <h1>You have successfully logged out.</h1>
-            <a href='/'>return to the home page</a>
+    componentDidMount() {
+        localStorage.removeItem('user');
+    }
+
+    render() {
+        return (
+            <div>
+                <NavMenu></NavMenu>
+                <div style={{textAlign: 'center', marginTop: '10vh'}}>
+                <h1>You have successfully logged out.</h1>
+                <Link href='/'><a>return to the home page</a></Link>
+                </div>
             </div>
-        </div>
-    );
+        );
+    }
 }
 
 export default Logout

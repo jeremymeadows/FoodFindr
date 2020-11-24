@@ -48,13 +48,12 @@ class TruckDetails extends Component {
             .then(res => res.json())
             .then(json => this.state.truck = json);
 
-        await fetch('http://localhost:8080/user/' + this.state.user.id)
-            .then(res => res.json())
-            .then(json => this.state.truck.sub = json.includes(this.state.truck.id));
-
-        if (this.state.user === null) {
-            window.location = 'auth/login';
+        if (this.state.user !== null) {
+            await fetch('http://localhost:8080/user/' + this.state.user.id)
+                .then(res => res.json())
+                .then(json => this.state.truck.sub = json.includes(this.state.truck.id));
         }
+
         this.forceUpdate();
     }
 
@@ -68,18 +67,36 @@ class TruckDetails extends Component {
                 { truck !== null && <div>
                     <h2 style={{textAlign: 'center'}}>{truck.name}</h2>
                     <h3 style={{textAlign: 'center'}}>{truck.description}</h3>
+                    { user !== null && <span>
+                        { truck.sub && <div style={{textAlign: 'center'}}>
+                            <button onClick={this.unsub}>unsubscribe</button>
+                        </div> }
+                        { !truck.sub && <div style={{textAlign: 'center'}}>
+                            <button onClick={this.sub}>subscribe</button>
+                        </div>}
+                    </span> }
 
-                    { truck.sub && <div style={{textAlign: 'center'}}>
-                        <button onClick={this.unsub}>unsubscribe</button>
-                    </div> }
-                    { !truck.sub && <div style={{textAlign: 'center'}}>
-                        <button onClick={this.sub}>subscribe</button>
-                    </div>}
+                    <p>Todo:
+                    map, menu, schedule
+                    </p>
 
-                    { user !== null && <div>
-                        <p>Todo:
-                        map, menu, schedule
-                        </p>
+                    { user !== null && !user.owner &&
+                        <div style={{textAlign: 'center', marginTop: '10vh'}}>
+                        <p style={{display: 'inline', color: 'red'}} id="rtg"><br/></p>
+                        <label htmlFor="cost">Rating: </label>
+                        <select id="rating" name="cost">
+                            <option value="nopref">None</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                        </select><br/>
+                        <textarea id="review" placeholder="Write your review here" rows="4" cols="50">
+                        </textarea>
+                        <p style={{display: 'inline', color: 'red'}} id="review_result"><br/></p>
+                        <button onClick={this.review}>Post Review</button>
+                        <br/>
                     </div> }
                 </div> }
             </div>
