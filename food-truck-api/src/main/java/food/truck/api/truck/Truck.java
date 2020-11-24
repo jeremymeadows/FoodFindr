@@ -5,12 +5,21 @@ public class Truck {
     private String name;
     private String description;
     private Float rating;
+    private String menu;
 
     public Truck(String id, String name, String description, Float rating) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.rating = rating;
+        this.menu = "";
+    }
+    public Truck(String id, String name, String description, Float rating, String menu) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.rating = rating;
+        this.menu = menu;
     }
 
     public String getId() {
@@ -33,7 +42,8 @@ public class Truck {
         return ("{\"id\":\"" + this.id + "\"," +
             "\"name\":\"" + this.name + "\"," +
             "\"description\":\"" + this.description + "\"," +
-            "\"rating\":" + this.rating + "}"
+            "\"rating\":" + this.rating + "," +
+            "\"menu\":\"" + this.menu + "\"}"
         );
     }
 }

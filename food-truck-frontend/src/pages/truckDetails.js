@@ -109,6 +109,12 @@ class TruckDetails extends Component {
                     <p>Todo:
                     map, menu, schedule
                     </p>
+                    { truck.menu !== 'null' &&
+                        <embed src={truck.menu} width="800px" height="800px"/>
+                    }
+                    { truck.menu === 'null' &&
+                        <p>no menu provided</p>
+                    }
 
                     { user !== null && !user.owner &&
                         <div style={{textAlign: 'center', marginTop: '10vh'}}>

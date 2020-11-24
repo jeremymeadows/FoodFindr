@@ -27,14 +27,15 @@ public class TruckEndpoint {
                 String name = r.getString("name");
                 String description = r.getString("description");
                 Float rating = r.getFloat("rating");
+                String menu = r.getString("menu");
 
-                Truck t = new Truck(id, name, description, rating);
+                Truck t = new Truck(id, name, description, rating, menu);
 
                 logger.log(Level.INFO, t.toString());
                 return t.toString();
             }
         } catch (SQLException ex) {
-            logger.log(Level.WARNING, "user #" + id + " not found");
+            logger.log(Level.WARNING, "truck # " + id + " not found");
         }
 
         return "truck not found";
@@ -242,5 +243,22 @@ public class TruckEndpoint {
             logger.log(Level.WARNING, ex.toString());
             return "";
         }
+    }
+
+    @CrossOrigin(origins="*")
+    @GetMapping("/truck/{id}/menu")
+    public String getTruckMenu(@PathVariable String id) {
+        try {
+            ResultSet r = Database.query("SELECT menu FROM trucks WHERE truck_id='" + id + "';");
+            if (r.next()) {
+                String menu = r.getString("menu");
+                logger.log(Level.INFO, menu);
+                return menu;
+            }
+        } catch (SQLException ex) {
+            logger.log(Level.WARNING, "truck # " + id + " not found");
+        }
+
+        return "truck not found";
     }
 }
