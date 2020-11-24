@@ -52,8 +52,8 @@ class TruckTable extends Component {
             .then(pref => {
                 console.log("PREF: " + pref);
                 if (pref.length > 0) {
-                    let f = '2';
-                    this.state.preferences[0] = f;
+
+                    this.state.preferences[0] = pref[0];
                     console.log("YES " + this.state.preferences[0]);
                 }
                 /*console.log(preferences);
