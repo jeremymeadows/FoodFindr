@@ -7,6 +7,7 @@ import { SelectButton } from 'primereact/selectbutton';
 import { Rating } from 'primereact/rating';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { InputText } from 'primereact/inputtext';
+
 PrimeReact.ripple = true;
 
 class Dashboard extends Component {
@@ -45,6 +46,30 @@ class Dashboard extends Component {
     }
 
     get_info() {
+        var email = this.state.user.email;
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', 'http://localhost:8080/dashboard', true);
+
+        xhr.onloadend = function(){
+            var res = document.getElementById("info_result");
+            if(xhr.responseText == "") {
+                console.log("No info to display");
+                res.style = "color: black; display: block;";
+                res.innerHTML = "No info to display";
+            } else {
+                console.log(xhr.responseText)
+                //username + ';' + email_address + ';' + owner;
+                res.innerHTML = "";
+                for(var i = 0; i < xhr.responseText.split(';').length-1; i++) {
+                    res.innerHTML += xhr.responseText.split(';')[i]
+                        + "<br />";
+                }
+                if (xhr.responseText.split(';')[2] === 1) {
+                    res.innerHTML += "User is an Owner" + "<br />";
+                }
+            }
+        };
+        xhr.send(email);
     }
 
     get_message() {
@@ -195,14 +220,15 @@ class Dashboard extends Component {
                         <h3>My Trucks:(TODO)</h3>
                     </div> }
 
-    				<p style={{display: 'inline', color: 'black'}} id="info_result"><br/></p>
-    				<div style={{textAlign: 'center', marginTop: '20px'}}>
-    					<Button onClick={this.get_info} label="View Profile" className="p-button-text"/>
-    				</div>
-    				<div style={{textAlign: 'center', marginTop: '20px'}}>
-    					<p style={{display: 'inline', color: 'black'}} id="message_result"><br/></p>
-                        <Button id="view_messages" onload="document.badge=this.state.unread" onClick={this.get_message} label="View Messages" badgeClassName="p-badge-danger"/>
-    				</div>
+
+                    <p style={{display: 'inline', color: 'black'}} id="info_result"><br/></p>
+                    <div style={{textAlign: 'center', marginTop: '20px'}}>
+                        <Button onClick={this.get_info} label="View Profile" className="p-button-text"/>
+                    </div>
+                    <div style={{textAlign: 'center', marginTop: '20px'}}>
+                        <p style={{display: 'inline', color: 'black'}} id="message_result"><br/></p>
+                        <Button onClick={this.get_message} label="View Messages" className="p-button-text"/>
+                    </div>
                     <div style={{textAlign: 'center', marginTop: '0px'}}>
                         <p style={{display: 'inline', color: 'black'}} id="delete_result"><br/></p>
                         <Button onClick={this.delete_message} label="Delete Read Messages" className="p-button-text"/>

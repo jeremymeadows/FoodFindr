@@ -13,15 +13,9 @@ import food.truck.api.user.User;
 import food.truck.api.user.UserService;
 import lombok.extern.log4j.Log4j2;
 
-
 @Log4j2
 @RestController
 public class UserEndpoint {
-    @Autowired
-    private UserService userService;
-
-    // TODO: CrossOrigin * is not secure, but it is easy to configure. It should be changed to the react server when it is running up on Heroku
-
     @CrossOrigin(origins="*")
     @PostMapping("/test/user/{id}")
     public String userIdTest(@PathVariable Long id) {
@@ -82,7 +76,6 @@ public class UserEndpoint {
     @PostMapping("/dashboard/messages")
     public String getMessages(@RequestBody String email) {
         try {
-
             logger.log(Level.INFO, "UPDATE inbox, users SET messageRead=1 WHERE recipientID = users.user_id " +
                     "and users.username = '" + email + "';");
             Database.update("UPDATE inbox, users SET messageRead=1 WHERE recipientID = users.user_id " +
@@ -120,13 +113,13 @@ public class UserEndpoint {
 
     @CrossOrigin(origins="*")
     @PostMapping("/dashboard")
-    public String getInfo(@RequestBody String email){
-        try{
+    public String getInfo(@RequestBody String email) {
+        try {
             // Query the database for the username and user_id of the associated email
             ResultSet r = Database.query("SELECT username, email, owner FROM users WHERE email='" + email + "';");
 
             // Look at the only result from the result set
-            if(r.next()){
+            if (r.next()) {
                 // Assign the result's values for username and user_id to strings
                 String username = r.getString("username");
                 String email_address = r.getString("email");
@@ -136,13 +129,13 @@ public class UserEndpoint {
                 return username + ';' + email_address + ';' + owner;
             }
             // If there was no result in the set
-            else{
+            else {
                 // Log that there was no user associated to the email
                 logger.log(Level.INFO, "no user associated to " + email);
                 return "";
             }
 
-        }catch(SQLException ex){
+        } catch (SQLException ex) {
             logger.log(Level.WARNING, "database query failed");
             return "";
         }
@@ -168,9 +161,6 @@ public class UserEndpoint {
             String qry = "UPDATE users SET password='" + newPassword + "' WHERE email='" + email + "';";
             logger.log(Level.INFO, qry);
             Database.update(qry);
-            //return email + '_' + Integer.toHexString((id + passw).hashCode());
-
-          //  ResultSet r = Database.query("SELECT username, user_id FROM users WHERE email='" + email + "';");
 
             return email + '_' + Integer.toHexString((newPassword).hashCode());
         } catch (SQLException ex) {
@@ -193,7 +183,7 @@ public class UserEndpoint {
             String qry = "UPDATE users SET username='" + newUsername + "' WHERE email='" + email + "';";
             logger.log(Level.INFO, qry);
             Database.update(qry);
-            
+
             ResultSet r = Database.query("SELECT * FROM users WHERE email='" + email + "';");
             if (r.next()) {
                 String id = r.getString("user_id");
@@ -205,11 +195,6 @@ public class UserEndpoint {
             } else {
                 return "user not found";
             }
-            //return email + '_' + Integer.toHexString((id + passw).hashCode());
-
-            //  ResultSet r = Database.query("SELECT username, user_id FROM users WHERE email='" + email + "';");
-
-            //return email + '_' + Integer.toHexString((newUsername).hashCode());
         } catch (SQLException ex) {
             logger.log(Level.WARNING, "database update failed");
             logger.log(Level.WARNING, ex.toString());
@@ -219,25 +204,25 @@ public class UserEndpoint {
 
     @CrossOrigin(origins="*")
     @PostMapping("/dashboard/ownercheck")
-    public String isOwner(@RequestBody String email){
-        try{
+    public String isOwner(@RequestBody String email) {
+        try {
             // Query the database for if email is owner
             ResultSet r = Database.query("SELECT owner FROM users WHERE email='" + email + "';");
 
-            if(r.next()){
+            if (r.next()) {
                 String owner = r.getString("owner");
 
                 // Return if owner
                 return owner;
             }
             // If there was no result in the set
-            else{
+            else {
                 // Log that there was no user associated to the email
                 logger.log(Level.INFO, "no user associated to " + email);
                 return "";
             }
 
-        }catch(SQLException ex){
+        } catch (SQLException ex) {
             logger.log(Level.WARNING, "database query failed");
             return "";
         }
@@ -318,7 +303,6 @@ public class UserEndpoint {
     @CrossOrigin(origins="*")
     @PatchMapping("/dashboard/getmessage")
     public String showmessage(@RequestBody String email) {
-
         logger.log(Level.INFO, "getting message for " + email + " subscriber");
         try {
             ResultSet rid = Database.query("SELECT user_id FROM users WHERE email='" + email + "';");
@@ -344,11 +328,12 @@ public class UserEndpoint {
     }
 
     @CrossOrigin(origins="*")
-    @GetMapping("/dashboard/getpreferences")
-    public String getPreferences(@RequestBody String user_id) {
+    @PostMapping("/dashboard/getpreferences")
+    public String getPreferences(@RequestBody String user_email) {
         String json = "[";
+        logger.log(Level.INFO, " Getting preferences");
         try {
-            ResultSet r = Database.query("SELECT * FROM preferences WHERE userID='" + user_id + "';");
+            ResultSet r = Database.query("SELECT * FROM preferences WHERE email='" + user_email + "';");
             if (r.next()) {
                 String price = r.getString("price");
                 String rating = r.getString("rating");
@@ -359,7 +344,7 @@ public class UserEndpoint {
             } else {
                 return "";
             }
-        } catch(SQLException ex) {
+        } catch (SQLException ex) {
             logger.log(Level.WARNING, "getting preferences failed");
             logger.log(Level.WARNING, ex.toString());
         }
@@ -370,7 +355,7 @@ public class UserEndpoint {
 
     @CrossOrigin(origins="*")
     @PostMapping("/dashboard/preferences")
-    public String updatePreferences(@RequestBody String preferences){
+    public String updatePreferences(@RequestBody String preferences) {
         // Separate the preferences according to their values
         String[] prefs = preferences.split(";");
         logger.log(Level.INFO,"price given: " + prefs[1]);
@@ -388,25 +373,18 @@ public class UserEndpoint {
                         + ", '" + prefs[3] + "');");
             }
             // Otherwise update the preferences
-            else{
+            else {
                 logger.log(Level.INFO, "UPDATE preferences SET price=" + prefs[1] + ", rating=" + prefs[2] + ", type='" + prefs[3]
                         + "' WHERE userID='" + prefs[0] + "';");
                 Database.update("UPDATE preferences SET price=" + prefs[1] + ", rating=" + prefs[2] + ", type='" + prefs[3]
                         + "' WHERE userID='" + prefs[0] + "';");
             }
             return "success";
-        }
-        catch(SQLException ex) {
+        } catch (SQLException ex) {
             logger.log(Level.WARNING, "updating preferences failed");
             logger.log(Level.WARNING, ex.toString());
             return "";
         }
-    }
-
-    @CrossOrigin(origins="*")
-    @PostMapping("/user")
-    public User saveUser(@RequestBody User user) {
-        return userService.saveUser(user);
     }
 
     @CrossOrigin(origins="*")
@@ -469,47 +447,6 @@ public class UserEndpoint {
         } catch (SQLException ex) {
             logger.log(Level.WARNING, "database update failed");
             logger.log(Level.WARNING, ex.toString());
-            return "";
-        }
-    }
-
-
-    @CrossOrigin(origins="*")
-    @PostMapping("/getOwnership/")
-    public String getOwnership(@RequestBody String email){
-        try{
-            logger.log(Level.INFO, "email is: " + email);
-            ResultSet r = Database.query("SELECT owner FROM users WHERE email='" + email + "';");
-            if(r.next()) {
-                String isOwner = r.getString("owner");
-                logger.log(Level.INFO, isOwner);
-                return isOwner;
-            }
-        }
-        catch(SQLException ex){
-            logger.log(Level.WARNING, "fetching from database failed");
-            logger.log(Level.WARNING, ex.toString());
-            return "";
-        }
-        return "";
-    }
-
-    @CrossOrigin(origins="*")
-    @PostMapping("/autologin")
-    public String autologin(@RequestBody String cookie) {
-        String[] fields = cookie.split("_");
-        String email = fields[0];
-        String hash = fields[1];
-
-        try {
-            ResultSet r = Database.query("SELECT * FROM users WHERE email='" + email + "';");
-            if (r.next()) {
-                if (Integer.toHexString((r.getString("id") + r.getString("password")).hashCode()).equals(hash)) {
-                    return hash;
-                }
-            }
-        } catch (SQLException ex) {
-        } finally {
             return "";
         }
     }

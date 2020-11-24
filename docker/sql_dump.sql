@@ -73,7 +73,7 @@ CREATE TABLE `preferences` (
     `rating` int DEFAULT NULL,
     `type` varchar(20) DEFAULT NULL,
     KEY `userID` (`userID`),
-    CONSTRAINT `inbox_ibfk_1` FOREIGN KEY (`userID`) REFERENCES `users` (`user_id`)
+    CONSTRAINT `preferences_ibfk_1` FOREIGN KEY (`userID`) REFERENCES `users` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 DROP TABLE IF EXISTS `reviews`;
