@@ -77,10 +77,9 @@ class TruckDetails extends Component {
                 res.style = "color: red; display: block;";
                 res.innerHTML = "could not write review";
             } else {
-                console.log("create truck success");
+                console.log("review success");
                 res.style = "color: green, display: inline;";
                 res.innerHTML = "Rating for " + xhr.responseText + " was written successfully";
-                window.location = "../trucks";
             }
         };
         xhr.send(review_cred);
@@ -91,11 +90,11 @@ class TruckDetails extends Component {
         const truck = this.state.truck;
 
         return (
-            <div>
+            <div style={{marginBottom: '60px'}}>
                 <NavMenu></NavMenu>
                 { truck !== null && <div>
                     <h2 style={{textAlign: 'center'}}>{truck.name}</h2>
-                    <h3 style={{textAlign: 'center'}}>{truck.description}</h3>
+                    <h3 style={{textAlign: 'center', marginLeft: 'auto', marginRight: 'auto', maxWidth: '1000px'}}>{truck.description}</h3>
 
                     { user !== null && <span>
                         { truck.sub && <div style={{textAlign: 'center'}}>

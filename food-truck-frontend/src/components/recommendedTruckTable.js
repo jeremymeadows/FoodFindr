@@ -90,7 +90,7 @@ class TruckTable extends Component {
     }
 
     renderTableHeader() {
-        let header = Object.keys(this.state.trucks[0]).filter(key => key !== 'id');
+        let header = Object.keys(this.state.trucks[0]).filter(key => key !== 'id' && key !== 'menu');
         return header.map((key, index) => {
             if (key !== "favourite" || this.state.user !== null) {
                 return <th key={index}>{key.toUpperCase()}</th>;
@@ -222,7 +222,7 @@ class TruckTable extends Component {
 
                 { loading && <img id='loading' src="http://i.stack.imgur.com/SBv4T.gif" alt="loading..." width='250'></img> }
 
-                <table id='trucks'>
+                <table id='trucks' style={{marginLeft: 'auto', marginRight: 'auto', maxWidth: '1000px'}}>
                     <thead>
                     <tr>{ !loading && this.renderTableHeader() }</tr>
                     </thead>

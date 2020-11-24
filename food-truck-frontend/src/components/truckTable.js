@@ -85,7 +85,7 @@ class TruckTable extends Component {
             if (name.toLowerCase().includes(this.state.search.toLowerCase())) {
                 return (
                     <Link href={url}><tr key={id} style={{cursor: 'pointer'}}>
-                        <td>{name}</td>
+                        <td style={{textAlign: 'center'}}>{name}</td>
                         <td>{description}</td>
                         <td>{rating}</td>
                         { this.state.updateUsingNearby && <td>
@@ -235,7 +235,7 @@ class TruckTable extends Component {
                 { /* loaging gif */ }
                 { loading && <img id='loading' src="http://i.stack.imgur.com/SBv4T.gif" alt="loading..." width='250'></img> }
 
-                <table id='trucks'>
+                <table id='trucks' style={{marginLeft: 'auto', marginRight: 'auto', maxWidth: '1000px'}}>
                     <thead>
                         <tr>{ !loading && this.renderTableHeader() }</tr>
                     </thead>

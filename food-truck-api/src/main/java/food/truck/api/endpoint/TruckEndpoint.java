@@ -128,7 +128,15 @@ public class TruckEndpoint {
 
             Database.update(sql);
             logger.log(Level.INFO, sql);
-        } catch(SQLException ex) {
+
+            sql = "UPDATE trucks SET " +
+                    "ratings = ratings + 1, " +
+                    "rating = ((rating * (ratings - 1)) + " + rating + ") / ratings " +
+                  "WHERE truck_id = '" + truck_id + "';";
+
+            Database.update(sql);
+            logger.log(Level.INFO, sql);
+        } catch (SQLException ex) {
             logger.log(Level.WARNING, ex.toString());
             return "";
         }

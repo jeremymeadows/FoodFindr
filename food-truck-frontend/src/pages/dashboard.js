@@ -189,7 +189,7 @@ class Dashboard extends Component {
         const user = this.state.user;
 
         return (
-            <div>
+            <div style={{marginBottom: '60px'}}>
                 <NavMenu></NavMenu>
 
                 { user !== null && <div>
