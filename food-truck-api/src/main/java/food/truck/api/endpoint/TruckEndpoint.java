@@ -244,21 +244,4 @@ public class TruckEndpoint {
             return "";
         }
     }
-
-    @CrossOrigin(origins="*")
-    @GetMapping("/truck/{id}/menu")
-    public String getTruckMenu(@PathVariable String id) {
-        try {
-            ResultSet r = Database.query("SELECT menu FROM trucks WHERE truck_id='" + id + "';");
-            if (r.next()) {
-                String menu = r.getString("menu");
-                logger.log(Level.INFO, menu);
-                return menu;
-            }
-        } catch (SQLException ex) {
-            logger.log(Level.WARNING, "truck # " + id + " not found");
-        }
-
-        return "truck not found";
-    }
 }

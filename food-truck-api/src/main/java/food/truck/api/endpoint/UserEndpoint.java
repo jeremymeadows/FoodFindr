@@ -27,7 +27,7 @@ public class UserEndpoint {
                 return email;
             }
         } catch (SQLException ex) {
-            logger.log(Level.WARNING, "user #" + id + " not found");
+            logger.log(Level.WARNING, "user # " + id + " not found");
         }
 
         return "user not found";

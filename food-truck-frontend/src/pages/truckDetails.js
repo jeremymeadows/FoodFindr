@@ -107,7 +107,7 @@ class TruckDetails extends Component {
                     </span> }
 
                     <p>Todo:
-                    map, menu, schedule
+                    map, schedule
                     </p>
                     { truck.menu !== 'null' &&
                         <embed src={truck.menu} width="800px" height="800px"/>

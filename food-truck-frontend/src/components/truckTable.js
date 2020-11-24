@@ -47,9 +47,9 @@ class TruckTable extends Component {
     }
 
     renderTableHeader() {
-        let header = Object.keys(this.state.trucks[0]).filter(key => key !== 'id');
+        let header = Object.keys(this.state.trucks[0]).filter(key => key !== 'id' && key !== 'menu');
         return header.map((key, index) => {
-            if (key !== "menu" && (key !== "subscribed" || this.state.user !== null) && (key !== "distance" || this.state.updateUsingNearby)) {
+            if ((key !== "subscribed" || this.state.user !== null) && (key !== "distance" || this.state.updateUsingNearby)) {
                 return <th key={index}>{key.toUpperCase()}</th>;
             }
         });

@@ -12,7 +12,7 @@ public class Truck {
         this.name = name;
         this.description = description;
         this.rating = rating;
-        this.menu = "";
+        this.menu = "null";
     }
     public Truck(String id, String name, String description, Float rating, String menu) {
         this.id = id;

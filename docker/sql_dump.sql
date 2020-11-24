@@ -29,7 +29,7 @@ CREATE TABLE `trucks` (
   `name` varchar(32) NOT NULL,
   `description` text NOT NULL,
   `rating` float unsigned NOT NULL,
-  `menu` blob DEFAULT NULL,
+  `menu` text DEFAULT NULL,
   `schedule` blob DEFAULT NULL,
   `location` blob DEFAULT NULL,
   PRIMARY KEY (`truck_id`)
