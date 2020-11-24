@@ -10,7 +10,7 @@ class TruckTable extends Component {
             updateUsingNearby: false,
             nearby: [],
             trucks: [
-                { id: '', name: '', description: '', rating: 0, subscribed: false }
+                { id: '', name: '', description: '', rating: 0, subscribed: false, price: '' }
             ],
             subs: [],
             search: "",
@@ -24,10 +24,12 @@ class TruckTable extends Component {
         await fetch('http://localhost:8080/trucks')
             .then(res => res.json())
             .then(trucks => {
+                console.log("got the trucks");
                 if (trucks.length > 0) {
                     this.state.trucks = trucks;
                 }
             });
+        console.log("OUT");
     }
 
     async getSubscriptions() {
@@ -73,7 +75,7 @@ class TruckTable extends Component {
         if(this.state.updateUsingNearby){
             this.state.updateUsingNearby = false;
             return this.state.trucks.map((truck) => {
-                const { id, name, description, rating } = truck;
+                const { id, name, description, rating, price } = truck;
                 const url = 'truckDetails?id=' + id;
 
                 if (this.state.nearby.includes(id)) {
@@ -82,6 +84,7 @@ class TruckTable extends Component {
                             <td><a href={url}>{name}</a></td>
                             <td><a href={url}>{description}</a></td>
                             <td><a href={url}>{rating}</a></td>
+                            <td><a href={url}>{price}</a></td>
                             {this.state.user !== null && <td>
 								<input type="checkbox" id={id} onChange={this.sub} checked={this.state.subs.includes(id)}/>
 							</td> }
@@ -93,7 +96,7 @@ class TruckTable extends Component {
 
         else {
             return this.state.trucks.map((truck) => {
-                const {id, name, description, rating} = truck;
+                const {id, name, description, rating, price } = truck;
                 const url = 'truckDetails?id=' + id;
 
                 if (name.toLowerCase().includes(this.state.search.toLowerCase())) {
@@ -102,6 +105,7 @@ class TruckTable extends Component {
                             <td><a href={url}>{name}</a></td>
                             <td><a href={url}>{description}</a></td>
                             <td><a href={url}>{rating}</a></td>
+                            <td><a href={url}>{price}</a></td>
                             {this.state.user !== null && <td>
 								<input type="checkbox" id={id} onChange={this.sub} checked={this.state.subs.includes(id)}/>
 							</td> }

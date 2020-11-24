@@ -9,7 +9,7 @@ class TruckTable extends Component {
             user: null,
             loading: true,
             trucks: [
-                { id: '', name: '', description: '', rating: 0, subscribed: false }
+                { id: '', name: '', description: '', rating: 0, subscribed: false, price: '' }
             ],
             preferences: [
                 {price: '', rating: '', type: ''}
@@ -17,7 +17,7 @@ class TruckTable extends Component {
             subs: []
 
         };
-
+        this.getTrucks = this.getTrucks.bind(this);
         this.getNearby = this.getNearby.bind(this);
         this.sub = this.sub.bind(this);
     }
@@ -28,7 +28,13 @@ class TruckTable extends Component {
 
         await fetch('http://localhost:8080/trucks')
             .then(res => res.json())
-            .then(trucks => this.state.trucks = trucks);
+            .then(trucks => {
+                console.log("got the trucks");
+                if (trucks.length > 0) {
+                    this.state.trucks = trucks;
+                }
+            });
+        console.log("OUT");
 
        /* await fetch('http://localhost:8080/trucks', {mode: 'no-cors'})
             .then(res => {console.log(res);return res.json();})
@@ -42,27 +48,42 @@ class TruckTable extends Component {
 
         console.log("getting preferences");
         await fetch('http://localhost:8080/dashboard/getpreferences', fetchData)
-            .then(res => {console.log(res);return res.json();})
-            .then(function(preferences) {
-                console.log(preferences);
-                let list = preferences.split(';');
-                this.state.preferences[0] = list[0];
-                this.state.preferences[1] = list[1];
-                this.state.preferences[2] = list[2];
-                console.log(list);
+            .then(res => res.json())
+            .then(pref => {
+                console.log("PREF: " + pref);
+                if (pref.length > 0) {
+                    let f = '2';
+                    this.state.preferences[0] = f;
+                    console.log("YES " + this.state.preferences[0]);
+                }
+                /*console.log(preferences);
+                console.log("Going to split");
+                //let list = preferences.split(';');
+                let str = preferences
+                console.log("Split pref " + str);
+                this.state.preferences[0] = str[0];
+                //this.state.preferences[1] = str[1];
+                //this.state.preferences[2] = list[2];
+                console.log("Made it!");*/
             }).catch(error => console.log(error));
 
-
+        console.log("Rec algorithm ");
         let temptrucks = [];
-        if(this.preferences !== undefined && this.preferences.length > 0) {
+        let pricep = this.state.preferences[0];
+        console.log(pricep);
+        if(this.state.preferences) {
+            console.log("ALG");
             this.state.trucks.forEach(function (truck) {
-                if (this.preferences.includes(truck.price) && this.preferences.includes(truck.rating)) {
+                console.log("TRUCK PRICE: " + truck.price);
+                if (pricep === truck.price /*&& this.state.preferences.includes(truck.rating)*/) {
+                    console.log("ONE");
                     temptrucks.unshift(truck);
-                } else if (this.preferences.includes(truck.price)) {
-                    temptrucks.push(truck);
-                } else if (this.preferences.includes(truck.rating)) {
+                } else if (pricep === truck.price) {
                     temptrucks.push(truck);
                 }
+                /*else if (this.state.preferences.includes(truck.rating)) {
+                    temptrucks.push(truck);
+                }*/
             });
             this.state.trucks.forEach(function (truck) {
                 if (!temptrucks.includes(truck)) {
@@ -122,7 +143,7 @@ class TruckTable extends Component {
 
     renderTableData() {
         return this.state.trucks.map((truck) => {
-            const { id, name, description, rating } = truck;
+            const { id, name, description, rating, price } = truck;
             const url = 'truckDetails?id=' + id;
 
             return (
@@ -130,6 +151,7 @@ class TruckTable extends Component {
                     <td><a href={url}>{name}</a></td>
                     <td><a href={url}>{description}</a></td>
                     <td><a href={url}>{rating}</a></td>
+                    <td><a href={url}>{price}</a></td>
                     {this.state.user !== null && <td>
                         <input type="checkbox" id={id} onChange={this.sub} checked={this.state.subs.includes(id)}/>
                     </td> }
