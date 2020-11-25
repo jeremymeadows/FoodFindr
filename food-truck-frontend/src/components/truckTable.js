@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Link from 'next/link';
 
 class TruckTable extends Component {
     constructor(props) {
@@ -8,14 +9,19 @@ class TruckTable extends Component {
             user: null,
             loading: true,
             updateUsingNearby: false,
-            nearby: [],
             trucks: [
-                { id: '', name: '', description: '', rating: 0, subscribed: false, price: '' }
+
+                { id: '', name: '', description: '', rating: 0, distance: -1, subscribed: false, price: '' }
+
             ],
             subs: [],
-            search: "",
+            search: '',
         };
+
         this.searchTrucks = this.searchTrucks.bind(this);
+        this.sortTrucks = this.sortTrucks.bind(this);
+        this.filterTrucks = this.filterTrucks.bind(this);
+        this.enableLocation = this.enableLocation.bind(this);
         this.getNearby = this.getNearby.bind(this);
         this.sub = this.sub.bind(this);
     }
@@ -28,8 +34,13 @@ class TruckTable extends Component {
                 if (trucks.length > 0) {
                     this.state.trucks = trucks;
                 }
-            });
-        console.log("OUT");
+
+                this.state.trucks.forEach((truck, _) => {
+                    truck.distance = -1;
+                });
+            })
+            .then(() => this.sortTrucks());
+
     }
 
     async getSubscriptions() {
@@ -43,7 +54,7 @@ class TruckTable extends Component {
     renderTableHeader() {
         let header = Object.keys(this.state.trucks[0]).filter(key => key !== 'id');
         return header.map((key, index) => {
-            if (key !== "subscribed" || this.state.user !== null) {
+            if ((key !== "subscribed" || this.state.user !== null) && (key !== "distance" || this.state.updateUsingNearby)) {
                 return <th key={index}>{key.toUpperCase()}</th>;
             }
         });
@@ -58,7 +69,7 @@ class TruckTable extends Component {
             headers: {
                 'Content-Type': 'application/json'
             }
-        }
+        };
 
         if (target.checked) {
             await fetch('http://localhost:8080/subscribe', options)
@@ -66,12 +77,13 @@ class TruckTable extends Component {
                 .then(() => this.forceUpdate());
         } else {
             await fetch('http://localhost:8080/unsubscribe', options)
-                .then(res => this.state.subs = this.state.subs.filter(function(id) {return id !== target.id}))
+                .then(res => this.state.subs = this.state.subs.filter(function(id) { return id !== target.id }))
                 .then(() => this.forceUpdate());
         }
     }
 
     renderTableData() {
+
         if(this.state.updateUsingNearby){
             this.state.updateUsingNearby = false;
             return this.state.trucks.map((truck) => {
@@ -114,102 +126,73 @@ class TruckTable extends Component {
                 }
             });
         }
+
+        return this.state.trucks.map((truck) => {
+            const { id, name, description, rating, distance } = truck;
+            const url = 'truckDetails?id=' + id;
+
+            if (name.toLowerCase().includes(this.state.search.toLowerCase())) {
+                return (
+                    <Link href={url}><tr key={id} style={{cursor: 'pointer'}}>
+                        <td>{name}</td>
+                        <td>{description}</td>
+                        <td>{rating}</td>
+                        { this.state.updateUsingNearby && <td>
+                            { distance > 0 &&
+                                <a>{distance}</a>
+                            }
+                            { distance < 0 &&
+                                <a>no location provided</a>
+                            }
+                        </td> }
+                        { this.state.user !== null && <td>
+                            <input type="checkbox" id={id} onChange={this.sub} checked={this.state.subs.includes(id)}/>
+                        </td> }
+                    </tr></Link>
+                );
+            }
+        });
+
     }
 
-    getNearby(){
-        let realThis = this;
+    async getNearby() {
+        let table = this;
         // Attempt to get current position, if it is got it is sent to evaluatePosition
-        navigator.geolocation.getCurrentPosition(function(position){
-            evaluatePosition(position, realThis);
+        await navigator.geolocation.getCurrentPosition(async function(position) {
+            await evaluatePosition(position, table.state);
         });
 
         // Function evaluating based on current position
-        function evaluatePosition(position, state) {
-            // Store the user's coordinates and the key value to access mapquest's API,
-            // as well as the web address reached by the xmlhttp request
-            let user_coord = position.coords.latitude + ',' + position.coords.longitude;
-            let keyVal = "HvhBy6rdLPqZkmPnsEa4fMS95IDRRo2K";
-            let url = 'http://open.mapquestapi.com/geocoding/v1/reverse?key=' + keyVal
-                + '&location=' + user_coord;
+        async function evaluatePosition(position, state) {
+            // Store the key value to access MapQuest's API and the user's coordinates
+            const key = 'HvhBy6rdLPqZkmPnsEa4fMS95IDRRo2K';
+            const coords = position.coords.latitude + ',' + position.coords.longitude;
 
-            let physicalAddress = "";
-            let nearbyArray = [];
+            await fetch('http://open.mapquestapi.com/geocoding/v1/reverse?key=' + key +
+              '&location=' + coords).then(res => res.json())
+                .then(res => {
+                    // const loc = res.results[0].locations[0];
+                    //const address = loc.street + ', ' + loc.adminArea5 + ' ' + loc.adminArea3 + ', ' + loc.postalCode;
 
-            // Launch a new XMLHttp request which returns a json object
-            const userLocReq = new XMLHttpRequest();
-            userLocReq.responseType = 'json';
-
-            // Get from the mapquest API the address of the user
-            userLocReq.open('GET', url, true);
-
-            // After getting the address of the user
-            userLocReq.onloadend = function(){
-                // Store the user's address
-                let userAddress = userLocReq.response.results[0].locations[0];
-                physicalAddress = userAddress.street + ", " + userAddress.adminArea5 + ' '
-                    + userAddress.adminArea3 + ", " + userAddress.postalCode;
-
-                // Launch an XMLHttp request which returns every truck whose location isn't null
-                const truckLocReq = new XMLHttpRequest();
-                truckLocReq.open('GET', 'http://localhost:8080/trucks/locations', true);
-
-                truckLocReq.onloadend = function(){
-                    // Get the pairs of truck id's and addresses returned
-                    let res = JSON.parse(truckLocReq.response);
-                    if(res) {
-                        // For every pair returned
-                        let i = 0;
-                        let truckID = "", truckLoc = "";
-                        res.forEach(function(value){
-                            if(i%2 === 0){
-                                truckID = value;
-                            }
-                            else{
-                                truckLoc = value;
-
-                                // Find the coordinates for the truck's address
-                                const truckCoordReq = new XMLHttpRequest();
-
-                                truckCoordReq.open('GET', 'http://open.mapquestapi.com/geocoding/v1/address?key=' +
-                                    keyVal + '&location=' + truckLoc.trim(), false);
-                                truckCoordReq.send();
-                                let result = JSON.parse(truckCoordReq.response);
-                                let truckLatCoord = result.results[0].locations[0].latLng.lat.toString();
-                                let truckLngCoord = result.results[0].locations[0].latLng.lng.toString();
-
-                                console.log("truckID: " + truckID + "\n\tlatitude: " + truckLatCoord
-                                                + "\n\tlongitude: " + truckLngCoord);
-
-                                let distanceReq = new XMLHttpRequest();
-                                distanceReq.open('GET', 'http://www.mapquestapi.com/directions/v2/route?key='
-                                    + keyVal + '&from=' + user_coord + '&to=' + truckLatCoord + ',' + truckLngCoord, false);
-                                distanceReq.send();
-                                let distanceResult = JSON.parse(distanceReq.response);
-                                let distanceVal = distanceResult.route.distance;
-
-                                console.log("distance: " + distanceVal);
-                                // If the distance is within 10 km
-                                if(distanceVal < 10){
-                                    // Add the truck's ID to the list of nearby trucks
-                                    nearbyArray.push(truckID);
-                                }
-                            }
-                            i++;
+                    return fetch('http://localhost:8080/trucks/locations').then(res => res.json())
+                        .then(async res => {
+                            await Promise.all(res.map(truck => {
+                                return fetch('http://open.mapquestapi.com/geocoding/v1/address?key=' + key +
+                                  '&location=' + truck.loc.trim()).then(res => res.json())
+                                    .then(res => {
+                                        const ll = res.results[0].locations[0].latLng;
+                                        return fetch('http://www.mapquestapi.com/directions/v2/route?key=' + key +
+                                          '&from=' + coords + '&to=' + ll.lat + ',' + ll.lng).then(res => res.json())
+                                            .then(res => {
+                                                state.trucks.find(t => t.id === truck.id).distance = res.route.distance;
+                                            });
+                                    });
+                            }));
                         });
-
-                        // AT THIS POINT WE HAVE THE FULL ARRAY OF NEARBY TRUCKS,
-                        // YOU CAN UPDATE THE TRUCK TABLE AND EXIT OUT OF THE FUNCTION
-                        realThis.state.updateUsingNearby = true;
-                        nearbyArray.forEach( truckIDval => realThis.state.nearby.push(truckIDval) );
-                        realThis.forceUpdate();
-                    }
-                    else{
-                        console.log("no trucks have locations");
-                    }
-                }
-                truckLocReq.send();
-            }
-            userLocReq.send();
+                })
+                .then(() => {
+                    table.sortTrucks();
+                });
         }
     }
 
@@ -233,6 +216,45 @@ class TruckTable extends Component {
         this.forceUpdate();
     };
 
+    sortTrucks() {
+        switch (document.getElementById('sort').value) {
+            case 'rating_d':
+                this.state.trucks.sort(function(a, b) { return a.rating < b.rating });
+                break;
+            case 'dist_a':
+                this.state.trucks.sort(function(a, b) {
+                    if (a.distance < 0) { return a.distance < b.distance; }  // puts -1 at the bottom
+                    return a.distance > b.distance;
+                });
+                break;
+            case 'name_d':
+                this.state.trucks.sort(function(a, b) { return a.name.toLowerCase() > b.name.toLowerCase() });
+                break;
+            case 'name_a':
+                this.state.trucks.sort(function(a, b) { return a.name.toLowerCase() < b.name.toLowerCase() });
+                break;
+            case 'rating_a':
+                this.state.trucks.sort(function(a, b) { return a.rating > b.rating });
+                break;
+            case 'dist_d':
+                this.state.trucks.sort(function(a, b) { return a.distance < b.distance });
+                break;
+        }
+        this.forceUpdate();
+    }
+
+    filterTrucks() {
+    }
+
+    enableLocation() {
+        let checked = document.getElementById('nearby').checked;
+        this.state.updateUsingNearby = checked;
+        document.getElementById('sort').value = checked ? 'dist_a' : 'rating_d';
+        if (checked) {
+            this.getNearby();
+        }
+    }
+
     render() {
         let loading = this.state.loading;
         let empty = this.state.trucks[0].id === '';
@@ -241,7 +263,24 @@ class TruckTable extends Component {
             <div>
                 <div style={{textAlign: 'center'}}>
                     <input id="search" type="text" onInput={this.searchTrucks} placeholder="Search Truck Name"/><br/><br/>
-                    <button onClick={this.getNearby}>Get Nearby</button><br/>
+                    <label>Sort by: </label>
+                    <select id="sort" defaultValue="rating_d" onChange={this.sortTrucks}>
+                        <option value="rating_d">rating ▼</option>
+                        <option value="dist_a">distance ▲</option>
+                        <option value="name_d">name ▼</option>
+                        <option value="name_a">name ▲</option>
+                        <option value="rating_a">rating ▲</option>
+                        <option value="dist_d">distance ▼</option>
+                    </select><br/><br/>
+                    <label>Filter by: </label>
+                    <select id="filter" defaultValue="none" onChange={this.filterTrucks}>
+                        <option value="none">*todo*</option>
+                        { /* add price, rating, and distance options */ }
+                        { /* a dropdown might not be the best for this and maybe we do something else */ }
+                    </select><br/><br/>
+                    <label>Use location? </label>
+                    <input type="checkbox" id="nearby" onChange={this.enableLocation}/>
+                    <p id="locationError" style={{color: 'red'}}></p>
                 </div>
                 { /* loaging gif */ }
                 { loading && <img id='loading' src="http://i.stack.imgur.com/SBv4T.gif" alt="loading..." width='250'></img> }
@@ -251,7 +290,7 @@ class TruckTable extends Component {
                         <tr>{ !loading && this.renderTableHeader() }</tr>
                     </thead>
                     <tbody id='table'>
-                        { !loading && empty && <tr><td colSpan={this.state.user === null ? 3 : 4}>no trucks found</td></tr> }
+                        { !loading && empty && <tr><td colSpan={3 + (this.state.user === null) + this.state.updateUsingNearby}>no trucks found</td></tr> }
                         { !loading && !empty && this.renderTableData() }
                     </tbody>
                 </table>

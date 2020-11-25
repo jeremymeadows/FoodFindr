@@ -22,7 +22,36 @@ class TruckTable extends Component {
         this.sub = this.sub.bind(this);
     }
 
+    /*async getPreferences() {
+        console.log("XML ");
+        let id = this.state.user.id
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', 'http://localhost:8080/dashboard/getpreferences', true);
+
+        xhr.onloadend = function(){
+            console.log("XML2 ");
+            var res = document.getElementById("lotsofstuff");
+            if(xhr.responseText == "") {
+                console.log("No info to display");
+
+            } else {
+                console.log("GOT IT: " + xhr.responseText)
+                //username + ';' + email_address + ';' + owner;
+
+                for(var i = 0; i < xhr.responseText.split(';').length-1; i++) {
+                    this.state.preferences.price = xhr.responseText.split(';')[i];
+                }
+
+            }
+        };
+        xhr.send(id);
+    }*/
+
     async getTrucks() {
+
+        /*this.getPreferences().then(() => {
+            this.forceUpdate();
+        });*/
 
         console.log("getting trucks");
 
@@ -52,9 +81,8 @@ class TruckTable extends Component {
             .then(pref => {
                 console.log("PREF: " + pref);
                 if (pref.length > 0) {
-
-                    this.state.preferences[0] = pref[0];
-                    console.log("YES " + this.state.preferences[0]);
+                    console.log("price found??: " + pref.price);
+                    this.state.preferences = pref;
                 }
                 /*console.log(preferences);
                 console.log("Going to split");
@@ -69,16 +97,16 @@ class TruckTable extends Component {
 
         console.log("Rec algorithm ");
         let temptrucks = [];
-        let pricep = this.state.preferences[0];
-        console.log(pricep);
+
+        console.log("PRICE: " + this.state.preferences.price);
         if(this.state.preferences) {
             console.log("ALG");
             this.state.trucks.forEach(function (truck) {
                 console.log("TRUCK PRICE: " + truck.price);
-                if (pricep === truck.price /*&& this.state.preferences.includes(truck.rating)*/) {
+                if (this.state.preferences.price === truck.price /*&& this.state.preferences.includes(truck.rating)*/) {
                     console.log("ONE");
                     temptrucks.unshift(truck);
-                } else if (pricep === truck.price) {
+                } else if (this.state.preferences.price === truck.price) {
                     temptrucks.push(truck);
                 }
                 /*else if (this.state.preferences.includes(truck.rating)) {

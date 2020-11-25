@@ -49,13 +49,12 @@ class TruckDetails extends Component {
             .then(res => res.json())
             .then(json => this.state.truck = json);
 
-        await fetch('http://localhost:8080/user/' + this.state.user.id)
-            .then(res => res.json())
-            .then(json => this.state.truck.sub = json.includes(this.state.truck.id));
-
-        if (this.state.user === null) {
-            window.location = 'auth/login';
+        if (this.state.user !== null) {
+            await fetch('http://localhost:8080/user/' + this.state.user.id)
+                .then(res => res.json())
+                .then(json => this.state.truck.sub = json.includes(this.state.truck.id));
         }
+
         this.forceUpdate();
     }
 
@@ -98,20 +97,20 @@ class TruckDetails extends Component {
                     <h2 style={{textAlign: 'center'}}>{truck.name}</h2>
                     <h3 style={{textAlign: 'center'}}>{truck.description}</h3>
 
-                    { truck.sub && <div style={{textAlign: 'center'}}>
-                        <button onClick={this.unsub}>unsubscribe</button>
-                    </div> }
-                    { !truck.sub && <div style={{textAlign: 'center'}}>
-                        <button onClick={this.sub}>subscribe</button>
-                    </div>}
+                    { user !== null && <span>
+                        { truck.sub && <div style={{textAlign: 'center'}}>
+                            <button onClick={this.unsub}>unsubscribe</button>
+                        </div> }
+                        { !truck.sub && <div style={{textAlign: 'center'}}>
+                            <button onClick={this.sub}>subscribe</button>
+                        </div>}
+                    </span> }
 
-                    { user !== null && <div>
-                        <p>Todo:
-                        map, menu, schedule
-                        </p>
-                    </div> }
+                    <p>Todo:
+                    map, menu, schedule
+                    </p>
 
-                    {!this.state.user.owner &&
+                    { user !== null && !user.owner &&
                         <div style={{textAlign: 'center', marginTop: '10vh'}}>
                         <p style={{display: 'inline', color: 'red'}} id="rtg"><br/></p>
                         <label htmlFor="cost">Rating: </label>
