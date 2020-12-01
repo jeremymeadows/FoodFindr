@@ -7,7 +7,8 @@ class TruckDetails extends Component {
 
         this.state = {
             user: null,
-            truck: null
+            truck: null,
+            map: null
         };
         this.sub = this.sub.bind(this);
         this.unsub = this.unsub.bind(this);
@@ -45,30 +46,23 @@ class TruckDetails extends Component {
     async getMap() {
         // Store the key to the mapquest api
         const key = 'HvhBy6rdLPqZkmPnsEa4fMS95IDRRo2K';
+        // Initialize the url
+        let url = "https://www.mapquestapi.com/staticmap/v5/map?key=" + key
+        let center_and_truck_loc = "&center="
 
-        // Perform a get request to get the food truck's location
-        const locationRequest = new XMLHttpRequest();
+        await fetch('http://localhost:8080/truck/location/'
+            + window.location.href.split('?')[1].split('=')[1])
+            .then( res => res.text())
+            .then( function(text){
+                    let address = text.replaceAll(" ","");
+                    center_and_truck_loc += address;
+                    center_and_truck_loc += '&locations=';
+                    center_and_truck_loc += address;
+            })
 
-        // Get the response to the get request to know the location of the truck
-        locationRequest.onloadend = function(){
-            let location = locationRequest.responseText;
-            console.log(location)
-
-            // Perform a second request, to get the map with the truck's pin in it
-            const mapRequest = new XMLHttpRequest();
-
-            mapRequest.onloadend = function(){
-                // Get the map returned from the request
-                console.log(mapRequest.responseType);
-                return mapRequest.response;
-            }
-            mapRequest.open('GET', 'https://www.mapquestapi.com/staticmap/v5/map?key=' + key + '&center=' + location, true)
-            mapRequest.send();
-        }
-
-        locationRequest.open("GET", 'http://localhost:8080/truck/location/'
-            + window.location.href.split('?')[1].split('=')[1], true);
-        locationRequest.send();
+        url = url + center_and_truck_loc;
+        console.log(url);
+        return url;
     }
 
     async componentDidMount() {
@@ -86,17 +80,21 @@ class TruckDetails extends Component {
                 .then(json => this.state.truck.sub = json.includes(this.state.truck.id));
         }
 
+        await(this.getMap())
+            .then(url => this.state.map = url);
+
         this.forceUpdate();
     }
 
     render() {
         const user = this.state.user;
         const truck = this.state.truck;
+        const map = this.state.map;
 
         return (
             <div>
                 <NavMenu></NavMenu>
-                <img src={this.getMap()} width={"100px"} height={"100px"}/>
+                <img src={map} width={"400px"} height={"400px"}/>
                 { truck !== null && <div>
                     <h2 style={{textAlign: 'center'}}>{truck.name}</h2>
                     <h3 style={{textAlign: 'center'}}>{truck.description}</h3>
