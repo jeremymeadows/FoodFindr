@@ -1,6 +1,12 @@
 import React, { Component } from 'react';
 import sha256 from "js-sha256";
 import NavMenu from "../components/navmenu";
+import { Button } from 'primereact/button';
+import PrimeReact from 'primereact/utils';
+import { SelectButton } from 'primereact/selectbutton';
+import { Rating } from 'primereact/rating';
+import { InputTextarea } from 'primereact/inputtextarea';
+import { InputText } from 'primereact/inputtext';
 import host from '../util/network.js'
 
 class ManageAccount extends Component {
@@ -116,16 +122,16 @@ class ManageAccount extends Component {
                     <h3 style={{textAlign: 'center'}}>You can edit your username and password here.</h3>
                 </div>
                 <div style={{textAlign: 'center', marginTop: '30vh'}}>
-                    <input id="oldusername" type="text" placeholder="Old Username"/><br/>
-                    <input id="newusername" type="text" placeholder="New Username"/><br/>
+                    <InputText id="oldusername" type="text" placeholder="Old Username"/><br/>
+                    <InputText id="newusername" type="text" placeholder="New Username"/><br/>
                     <p style={{display: 'inline', color: 'red'}} id="user_result"><br/></p>
-                    <button onClick={this.editUsername}>Edit Username</button><br/>
+                    <Button className="p-button-text" onClick={this.editUsername}>Edit Username</Button><br/>
                 </div>
                 <div style={{textAlign: 'center', marginTop: '10vh'}}>
-                    <input id="oldpassword" type="text" placeholder="Old Password"/><br/>
-                    <input id="newpassword" type="text" placeholder="New Password"/><br/>
+                    <InputText id="oldpassword" type="text" placeholder="Old Password"/><br/>
+                    <InputText id="newpassword" type="text" placeholder="New Password"/><br/>
                     <p style={{display: 'inline', color: 'red'}} id="login_result"><br/></p>
-                    <button onClick={this.editPassword}>Edit Password</button><br/>
+                    <Button className="p-button-text" onClick={this.editPassword}>Edit Password</Button><br/>
                 </div>
             </div>
         );

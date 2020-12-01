@@ -7,6 +7,7 @@ import { SelectButton } from 'primereact/selectbutton';
 import { Rating } from 'primereact/rating';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { InputText } from 'primereact/inputtext';
+import host from '../util/network.js'
 
 PrimeReact.ripple = true;
 
