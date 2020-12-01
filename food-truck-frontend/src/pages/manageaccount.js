@@ -8,10 +8,6 @@ import { Rating } from 'primereact/rating';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { InputText } from 'primereact/inputtext';
 import host from '../util/network.js'
-import {SelectButton} from "primereact/selectbutton";
-import {Rating} from "primereact/rating";
-import {InputText} from "primereact/inputtext";
-import {Button} from "primereact/button";
 import RecTrucks from "../components/recommendedTruckTable";
 
 class ManageAccount extends Component {

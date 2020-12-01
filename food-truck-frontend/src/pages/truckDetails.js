@@ -125,7 +125,7 @@ class TruckDetails extends Component {
             <div style={{marginBottom: '60px'}}>
                 <NavMenu></NavMenu>
 
-                <img src={map} width={"400px"} height={"400px"}/>
+                <img src={map} width={"400px"} height={"400px"} alt="no location available for map"/>
                 { truck !== null && <div>
                     <h2 style={{textAlign: 'center'}}>{truck.name}</h2>
                     <h3 style={{textAlign: 'center', marginLeft: 'auto', marginRight: 'auto', maxWidth: '1000px'}}>{truck.description}</h3>
