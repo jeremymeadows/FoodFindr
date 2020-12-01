@@ -27,7 +27,7 @@ public class UserEndpoint {
                 return email;
             }
         } catch (SQLException ex) {
-            logger.log(Level.WARNING, "user #" + id + " not found");
+            logger.log(Level.WARNING, "user # " + id + " not found");
         }
 
         return "user not found";
@@ -332,18 +332,25 @@ public class UserEndpoint {
 
     @CrossOrigin(origins="*")
     @PostMapping("/dashboard/getpreferences")
-    public String getPreferences(@RequestBody String user_email) {
+    public String getPreferences(@RequestBody String user_id) {
         String json = "[";
-        logger.log(Level.INFO, " Getting preferences");
+        logger.log(Level.INFO, " Getting preferences of " + user_id);
         try {
-            ResultSet r = Database.query("SELECT * FROM preferences WHERE email='" + user_email + "';");
+            ResultSet r = Database.query("SELECT price, rating, type FROM preferences WHERE userID='" + user_id + "';");
+            logger.log(Level.INFO, " Managed to get preferences of " + user_id);
             if (r.next()) {
                 String price = r.getString("price");
+                logger.log(Level.INFO, " Managed to get price of " + price);
                 String rating = r.getString("rating");
-                String type = r.getString("menu");
-                String concat = price + ";" + rating + ";" + type;
-                json = json + concat + ",";
-                return rating;
+                logger.log(Level.INFO, " Managed to get rating of " + rating);
+                String type = r.getString("type");
+                //logger.log(Level.INFO, " Managed to get type of " + user_id);
+                String concat = "{\"price\":" + price + ",\"rating\":" + rating +
+                        ",\"type\":\"" + type + "\"" + "}";
+                //String concat = price + ";" + rating + ";" + type;
+                logger.log(Level.INFO, " Managed to get info of " + concat);
+                json = json + concat;
+
             } else {
                 return "";
             }
@@ -351,7 +358,12 @@ public class UserEndpoint {
             logger.log(Level.WARNING, "getting preferences failed");
             logger.log(Level.WARNING, ex.toString());
         }
-        json = json.substring(0, json.length() - 1) + "]";
+        //if (json.length() > 1) {
+        //    json = json.substring(0, json.length() - 1) + "]";
+       // } else {
+            json = json + "]";
+            //logger.log(Level.INFO, " There are no preferences currently.");
+        //}
         logger.log(Level.INFO, json);
         return json;
     }

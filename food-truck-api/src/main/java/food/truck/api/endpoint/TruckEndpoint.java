@@ -19,6 +19,24 @@ import lombok.extern.log4j.Log4j2;
 @RestController
 public class TruckEndpoint {
     @CrossOrigin(origins="*")
+    @GetMapping("/truck/location/{id}")
+    public String findTruckLocationById(@PathVariable String id) {
+        try {
+            ResultSet r = Database.query("SELECT location FROM trucks WHERE truck_id='" + id + "';");
+            if (r.next()) {
+                String locationReceived = r.getString("location");
+
+                logger.log(Level.INFO, "Location for truck " + id + ": " + locationReceived);
+                return locationReceived;
+            }
+        } catch (SQLException ex) {
+            logger.log(Level.WARNING, "user #" + id + " not found");
+        }
+
+        return "truck not found";
+    }
+
+    @CrossOrigin(origins="*")
     @GetMapping("/truck/{id}")
     public String findTruckById(@PathVariable String id) {
         try {
@@ -27,14 +45,17 @@ public class TruckEndpoint {
                 String name = r.getString("name");
                 String description = r.getString("description");
                 Float rating = r.getFloat("rating");
+                String type = r.getString("type");
+                Integer price = r.getInt("price");
+                String menu = r.getString("menu");
 
-                Truck t = new Truck(id, name, description, rating);
+                Truck t = new Truck(id, name, description, rating, type, price, menu);
 
                 logger.log(Level.INFO, t.toString());
                 return t.toString();
             }
         } catch (SQLException ex) {
-            logger.log(Level.WARNING, "user #" + id + " not found");
+            logger.log(Level.WARNING, "truck # " + id + " not found");
         }
 
         return "truck not found";
@@ -51,8 +72,10 @@ public class TruckEndpoint {
                 String name = r.getString("name");
                 String description = r.getString("description");
                 Float rating = r.getFloat("rating");
+                String type = r.getString("type");
+                Integer price = r.getInt("price");
 
-                Truck t = new Truck(id, name, description, rating);
+                Truck t = new Truck(id, name, description, rating, type, price);
                 logger.log(Level.INFO, t.toString());
                 json = json + t.toString() + ",";
             }
@@ -127,11 +150,20 @@ public class TruckEndpoint {
 
             Database.update(sql);
             logger.log(Level.INFO, sql);
-        } catch(SQLException ex) {
+
+            sql = "UPDATE trucks SET " +
+                    "ratings = ratings + 1, " +
+                    "rating = ((rating * (ratings - 1)) + " + rating + ") / ratings " +
+                    "WHERE truck_id = '" + truck_id + "';";
+
+            Database.update(sql);
+            logger.log(Level.INFO, sql);
+        } catch (SQLException ex) {
             logger.log(Level.WARNING, ex.toString());
             return "";
         }
-        return truck_id;
+
+        return "ok";
     }
 
     @CrossOrigin(origins="*")
@@ -150,8 +182,10 @@ public class TruckEndpoint {
                     String description = r.getString("description");
                     Float rating = r.getFloat("rating");
                     String id = r.getString("truck_id");
+                    String type = r.getString("type");
+                    Integer price = r.getInt("price");
 
-                    Truck t = new Truck(id, name, description, rating);
+                    Truck t = new Truck(id, name, description, rating, type, price);
 
                     logger.log(Level.INFO, t.toString());
                     json = json + t.toString() + ",";
@@ -164,8 +198,10 @@ public class TruckEndpoint {
                     String description = r.getString("description");
                     Float rating = r.getFloat("rating");
                     String id = r.getString("truck_id");
+                    String type = r.getString("type");
+                    Integer price = r.getInt("price");
 
-                    Truck t = new Truck(id, name, description, rating);
+                    Truck t = new Truck(id, name, description, rating, type, price);
 
                     logger.log(Level.INFO, t.toString());
                     json = json + t.toString() + ",";

@@ -7,6 +7,7 @@ import { SelectButton } from 'primereact/selectbutton';
 import { Rating } from 'primereact/rating';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { InputText } from 'primereact/inputtext';
+import host from '../util/network.js'
 
 PrimeReact.ripple = true;
 
@@ -44,7 +45,7 @@ class Dashboard extends Component {
     get_info() {
         var email = this.state.user.email;
         const xhr = new XMLHttpRequest();
-        xhr.open('POST', 'http://localhost:8080/dashboard', true);
+        xhr.open('POST', host + 'dashboard', true);
 
         xhr.onloadend = function(){
             var res = document.getElementById("info_result");
@@ -68,6 +69,25 @@ class Dashboard extends Component {
                 if (xhr.responseText.split(';')[2] === 1) {
                     HTML += "<tr><td>" + "User is an Owner" + "</td></tr>";
                 }
+            }
+        };
+        xhr.send(email);
+    }
+
+    get_message() {
+        var name = this.state.user.name;
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', host + 'dashboard/messages', true);
+
+        xhr.onloadend = function(){
+            var res = document.getElementById("message_result");
+            if(xhr.responseText == "") {
+                console.log("No messages to display");
+                res.style = "color: black; display: block;";
+                res.innerHTML = "No messages to display";
+            } else {
+                var owner = xhr.responseText.split(';');
+                console.log(xhr.responseText)
                 HTML += "</table></center>";
 
                 res.innerHTML = HTML;
@@ -84,7 +104,7 @@ class Dashboard extends Component {
         console.log(owner_message);
 
         const xhr = new XMLHttpRequest();
-        xhr.open('PATCH', 'http://localhost:8080/dashboard/message', true);
+        xhr.open('PATCH', host + 'dashboard/message', true);
 
         xhr.onloadend = function() {
             var res = document.getElementById("send_message_result");
@@ -113,6 +133,29 @@ class Dashboard extends Component {
         xhr.send(owner_message);
     }
 
+    delete_message() {
+        var user_id = this.state.user.id;
+        const xhr = new XMLHttpRequest();
+
+        xhr.open('POST', host + 'dashboard/delete');
+        xhr.onloadend = function() {
+            var res = document.getElementById("delete_result");
+            if(xhr.status == 200) {
+                if(xhr.responseText == "") {
+                    console.log("could not delete messages");
+                    res.style = "color: red; display: block;";
+                    res.innerHTML = "could not delete messages";
+                } else {
+                    console.log("delete message success");
+                    res.style = "color: green, display: inline;";
+                    res.innerHTML = "messages were deleted successfully";
+                    window.location = "../dashboard";
+                }
+            }
+        }
+        xhr.send(user_id);
+    }
+
     update_preferences(){
         var id_passed = this.state.user.id;
         var price = this.state.price;
@@ -124,7 +167,7 @@ class Dashboard extends Component {
             + "food type with " + foodtype + "\nfor user: " + id_passed);
 
         const xhr = new XMLHttpRequest();
-        xhr.open('POST', 'http://localhost:8080/dashboard/preferences', true);
+        xhr.open('POST', host + 'dashboard/preferences', true);
 
         xhr.onloadend = function() {
             var res = document.getElementById("update_preferences_result");
@@ -148,7 +191,7 @@ class Dashboard extends Component {
         const user = this.state.user;
 
         return (
-            <div>
+            <div style={{marginBottom: '60px'}}>
                 <NavMenu></NavMenu>
 
                 { user !== null && <div>

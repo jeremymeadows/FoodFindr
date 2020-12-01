@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import sha256 from 'js-sha256';
 import NavMenu from "../../components/navmenu";
-import host from '../../util/network';
 import PrimeReact from 'primereact/utils';
 import { Button } from 'primereact/button';
 import { InputText } from "primereact/inputtext";
 import { Checkbox } from 'primereact/checkbox';
+import host from '../../util/network';
 
 PrimeReact.ripple = true;
 
@@ -38,7 +38,7 @@ class Login extends Component {
         console.log(login_cred);
 
         const xhr = new XMLHttpRequest();
-        xhr.open('POST', host.login, true);
+        xhr.open('POST', host + 'login', true);
 
         xhr.onloadend = function() {
             var res = document.getElementById("login_result");

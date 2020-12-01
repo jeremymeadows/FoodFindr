@@ -34,7 +34,7 @@ class Messages extends Component {
     get_message() {
         var name = this.state.user.name;
         const xhr = new XMLHttpRequest();
-        xhr.open('POST', 'http://localhost:8080/messages', true);
+        xhr.open('POST', host + 'messages', true);
 
         xhr.onloadend = function(){
             var res = document.getElementById("message_result");
@@ -65,7 +65,7 @@ class Messages extends Component {
         var user_id = this.state.user.id;
         const xhr = new XMLHttpRequest();
 
-        xhr.open('POST', 'http://localhost:8080/messages/delete');
+        xhr.open('POST', host + 'messages/delete');
         xhr.onloadend = function() {
             var res = document.getElementById("delete_result");
             if(xhr.status == 200) {
@@ -88,7 +88,7 @@ class Messages extends Component {
         var id = this.state.user.id;
 
         const xhr = new XMLHttpRequest();
-        xhr.open('POST', 'http://localhost:8080/messages/unread', true);
+        xhr.open('POST', host + 'messages/unread', true);
         xhr.onloadend = function() {
             if(xhr.status == 200) {
                 if(xhr.responseText == "") {
