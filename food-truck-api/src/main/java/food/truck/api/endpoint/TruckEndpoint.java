@@ -79,6 +79,7 @@ public class TruckEndpoint {
                 json = json.concat("\"loc\":\"" + r.getString("location") + "\"},");
             }
             json = json.substring(0, json.length() > 1 ? json.length() - 1 : json.length()) + "]";
+            logger.log(Level.INFO, json);
             return json;
         }
         catch (SQLException ex) {
