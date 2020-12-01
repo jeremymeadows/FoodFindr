@@ -19,6 +19,7 @@ class TruckDetails extends Component {
         this.sub = this.sub.bind(this);
         this.unsub = this.unsub.bind(this);
         this.getMap = this.getMap.bind(this);
+        this.review = this.review.bind(this);
     }
 
     async sub() {

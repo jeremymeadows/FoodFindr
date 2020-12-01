@@ -133,29 +133,16 @@ public class TruckEndpoint {
         String[] fields = review.split(";");
 
         String user_id = fields[0];
-        String truck_name = fields[1];
+        String truck_id = fields[1];
         int rating = Integer.parseInt(fields[2]);
         String rev = fields[3];
 
         try {
-            ResultSet r = Database.query("SELECT truck_id FROM trucks WHERE name = '" + truck_name + "';");
-
-            String truck_id;
-            if(r.next()) {
-                truck_id = r.getString("truck_id");
-            } else return "";
-            if(r.next()) return "";
-
-            Database.update("INSERT INTO reviews VALUES ('" +
+            String sql = "INSERT INTO reviews VALUES ('" +
                     user_id + "','" +
                     truck_id + "','" +
                     rating + "','" +
-                    rev + "');");
-            logger.log(Level.INFO, "INSERT INTO reviews VALUES ('" +
-                    user_id + "','" +
-                    truck_id + "','" +
-                    rating + "','" +
-                    rev + "');");
+                    rev + "');";
 
             Database.update(sql);
             logger.log(Level.INFO, sql);
@@ -163,7 +150,7 @@ public class TruckEndpoint {
             sql = "UPDATE trucks SET " +
                     "ratings = ratings + 1, " +
                     "rating = ((rating * (ratings - 1)) + " + rating + ") / ratings " +
-                  "WHERE truck_id = '" + truck_id + "';";
+                    "WHERE truck_id = '" + truck_id + "';";
 
             Database.update(sql);
             logger.log(Level.INFO, sql);
@@ -171,7 +158,8 @@ public class TruckEndpoint {
             logger.log(Level.WARNING, ex.toString());
             return "";
         }
-        return truck_name;
+
+        return "ok";
     }
 
     @CrossOrigin(origins="*")
