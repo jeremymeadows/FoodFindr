@@ -1,5 +1,9 @@
 import React, { Component } from 'react';
 import Link from 'next/link';
+import { SelectButton } from 'primereact/selectbutton';
+import { Rating } from 'primereact/rating';
+import { InputTextarea } from 'primereact/inputtextarea';
+import { InputText } from 'primereact/inputtext';
 import host from '../util/network.js'
 
 class TruckTable extends Component {
@@ -218,7 +222,7 @@ class TruckTable extends Component {
         return (
             <div>
                 <div style={{textAlign: 'center'}}>
-                    <input id="search" type="text" onInput={this.searchTrucks} placeholder="Search Truck Name"/><br/><br/>
+                    <InputText id="search" type="text" onInput={this.searchTrucks} placeholder="Search Truck Name"/><br/><br/>
                     <label>Sort by: </label>
                     <select id="sort" defaultValue="rating_d" onChange={this.sortTrucks}>
                         <option value="rating_d">rating ▼</option>
