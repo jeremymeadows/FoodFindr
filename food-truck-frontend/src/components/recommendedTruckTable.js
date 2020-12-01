@@ -79,10 +79,24 @@ class TruckTable extends Component {
         await fetch('http://localhost:8080/dashboard/getpreferences', fetchData)
             .then(res => res.json())
             .then(pref => {
-                console.log("PREF: " + pref);
-                if (pref.length > 0) {
-                    console.log("price found??: " + pref.price);
-                    this.state.preferences = pref;
+                let temp = JSON.stringify(pref);
+                let list = temp.split(",");
+                console.log("PREF: " + list);
+
+                if (list.length === 3) {
+                    let size = list[0].length - 1;
+                    console.log("PR:" + list[0][size] + ":THIS");
+                    this.state.preferences[0].price = list[0][size];
+                    console.log("PR:" + this.state.preferences[0].price + ":THIS");
+                    size = list[1].length - 1;
+                    console.log("B: " + list[1][size]);
+                    this.state.preferences[0].rating = list[1][size];
+                }
+
+                if (list.length > 0) {
+                    console.log("price found??: " + list[0]);
+                    //this.state.preferences[0].price = 1;
+                    console.log("price found??: " + this.state.preferences[0].price);
                 }
                 /*console.log(preferences);
                 console.log("Going to split");
@@ -97,16 +111,21 @@ class TruckTable extends Component {
 
         console.log("Rec algorithm ");
         let temptrucks = [];
-
-        console.log("PRICE: " + this.state.preferences.price);
+        let cost = this.state.preferences[0].price;
+        console.log("PRICE: " + this.state.preferences[0].price);
         if(this.state.preferences) {
             console.log("ALG");
             this.state.trucks.forEach(function (truck) {
-                console.log("TRUCK PRICE: " + truck.price);
-                if (this.state.preferences.price === truck.price /*&& this.state.preferences.includes(truck.rating)*/) {
+                let truckPrice = truck.price;
+                if (cost === truckPrice) {
+                    console.log("THEYRE THE SAME");
+                }
+                console.log("TRUCK PRICE: " + truck.price + " RATING: " + truck.rating);
+                if (cost === truck.price && this.state.preferences[0].rating === truck.rating) {
                     console.log("ONE");
                     temptrucks.unshift(truck);
-                } else if (this.state.preferences.price === truck.price) {
+                } else if (cost === truck.price) {
+                    console.log("TWO");
                     temptrucks.push(truck);
                 }
                 /*else if (this.state.preferences.includes(truck.rating)) {
@@ -115,7 +134,7 @@ class TruckTable extends Component {
             });
             this.state.trucks.forEach(function (truck) {
                 if (!temptrucks.includes(truck)) {
-                    temptrucks.unshift(truck);
+                    temptrucks.push(truck);
                 }
             });
         } else {

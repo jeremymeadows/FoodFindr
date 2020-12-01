@@ -330,7 +330,7 @@ public class UserEndpoint {
                 //logger.log(Level.INFO, " Managed to get type of " + user_id);
                 String concat = "{\"price\":" + price + ",\"rating\":" + rating +
                         ",\"type\":\"" + type + "\"" + "}";
-                //String concat = price + ";" + rating; //+ ";" + type;
+                //String concat = price + ";" + rating + ";" + type;
                 logger.log(Level.INFO, " Managed to get info of " + concat);
                 json = json + concat;
 
