@@ -1,5 +1,10 @@
 import React, { Component } from 'react';
 import NavMenu from '../components/navmenu';
+import PrimeReact from 'primereact/utils';
+import { Button } from 'primereact/button';
+import { InputText } from "primereact/inputtext";
+import { Checkbox } from 'primereact/checkbox';
+import {InputTextarea} from "primereact/inputtextarea";
 
 class TruckDetails extends Component {
     constructor() {
@@ -99,10 +104,10 @@ class TruckDetails extends Component {
 
                     { user !== null && <span>
                         { truck.sub && <div style={{textAlign: 'center'}}>
-                            <button onClick={this.unsub}>unsubscribe</button>
+                            <Button onClick={this.unsub}>Unsubscribe</Button>
                         </div> }
                         { !truck.sub && <div style={{textAlign: 'center'}}>
-                            <button onClick={this.sub}>subscribe</button>
+                            <Button className="p-button-outlined" onClick={this.sub}>Subscribe</Button>
                         </div>}
                     </span> }
 
@@ -122,10 +127,10 @@ class TruckDetails extends Component {
                             <option value="4">4</option>
                             <option value="5">5</option>
                         </select><br/>
-                        <textarea id="review" placeholder="Write your review here" rows="4" cols="50">
-                        </textarea>
+                        <InputTextarea autoResize style={{marginTop: '10px'}} id="review" placeholder="Write your review here" rows="4" cols="50">
+                        </InputTextarea>
                         <p style={{display: 'inline', color: 'red'}} id="review_result"><br/></p>
-                        <button onClick={this.review}>Post Review</button>
+                        <Button className="p-button-text" onClick={this.review}>Post Review</Button>
                         <br/>
                     </div> }
                 </div> }

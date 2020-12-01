@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import NavMenu from "../components/navmenu";
 import TruckTable from '../components/truckTable';
+import {InputTextarea} from "primereact/inputtextarea";
 
 class Trucks extends Component {
     constructor() {
@@ -149,29 +150,29 @@ class Trucks extends Component {
                 { user !== null && <div>
                     <div style={{textAlign: 'center', marginTop: '10vh'}}>
                         { this.state.user.owner && <div>
-                            <input id="truckname" type="text" placeholder="Truck Name"/><br/>
-                            <input id="truckdescription" type="text" placeholder="Truck Description"/><br/>
-                            <input id="rating" type="text" placeholder="Rating"/><br/>
+                            <InputTextarea id="truckname" type="text" placeholder="Truck Name"/><br/>
+                            <InputTextarea id="truckdescription" type="text" placeholder="Truck Description"/><br/>
+                            <InputTextarea id="rating" type="text" placeholder="Rating"/><br/>
                             <p style={{display: 'inline', color: 'red'}} id="create_truck_result"><br/></p>
-                            <button onClick={this.createFoodTruck}>Create Food Truck</button><br/>
+                            <Button onClick={this.createFoodTruck}>Create Food Truck</Button><br/>
                         </div> }
                     </div>
                     <div style={{textAlign: 'center', marginTop: '10vh'}}>
                         { this.state.user.owner && <div>
-                            <input id="oldtruckname" type="text" placeholder="Truck Name"/><br/>
-                            <input id="oldtruckdescription" type="text" placeholder="Truck Description"/><br/>
-                            <input id="oldrating" type="text" placeholder="Rating"/><br/>
-                            <input id="truckid" type="text" placeholder="Truck ID"/><br/>
+                            <InputTextarea id="oldtruckname" type="text" placeholder="Truck Name"/><br/>
+                            <InputTextarea id="oldtruckdescription" type="text" placeholder="Truck Description"/><br/>
+                            <InputTextarea id="oldrating" type="text" placeholder="Rating"/><br/>
+                            <InputTextarea id="truckid" type="text" placeholder="Truck ID"/><br/>
                             <p style={{display: 'inline', color: 'red'}} id="manage_truck_result"><br/></p>
-                            <button onClick={this.manageTruck}>Edit Food Truck</button><br/>
+                            <Button onClick={this.manageTruck}>Edit Food Truck</Button><br/>
                         </div> }
                     </div>
                     <div style={{textAlign: 'center', marginTop: '10vh'}}>
                         { this.state.user.owner && <div>
-                            <input id="truck_id" type="text" placeholder="Truck ID"/><br/>
-                            <input id="schedule" type="text" placeholder="Truck Schedule"/><br/>
+                            <InputTextarea id="truck_id" type="text" placeholder="Truck ID"/><br/>
+                            <InputTextarea id="schedule" type="text" placeholder="Truck Schedule"/><br/>
                             <p style={{display: 'inline', color: 'red'}} id="schedule_truck_result"><br/></p>
-                            <button onClick={this.manageSchedule}>Edit Food Truck Schedule</button><br/>
+                            <Button onClick={this.manageSchedule}>Edit Food Truck Schedule</Button><br/>
                         </div> }
                     </div>
                 </div> }
