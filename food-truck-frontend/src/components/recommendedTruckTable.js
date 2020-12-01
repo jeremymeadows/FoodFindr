@@ -10,15 +10,15 @@ class TruckTable extends Component {
             user: null,
             loading: true,
             trucks: [
-                { id: '', name: '', description: '', rating: 0, subscribed: false }
+                { id: '', name: '', description: '', rating: 0, subscribed: false, price: 0, type: '' }
             ],
             preferences: [
-                {price: '', rating: '', type: ''}
+                {price: 0, rating: 0, type: ''}
             ],
             subs: []
 
         };
-
+        this.getTrucks = this.getTrucks.bind(this);
         this.getNearby = this.getNearby.bind(this);
         this.sub = this.sub.bind(this);
     }
@@ -28,57 +28,189 @@ class TruckTable extends Component {
 
         await fetch(host + 'trucks')
             .then(res => res.json())
-            .then(trucks => this.state.trucks = trucks);
+            .then(trucks => {
+                console.log("got the trucks");
+                if (trucks.length > 0) {
+                    this.state.trucks = trucks;
+                }
+            });
+        console.log("OUT");
 
-       /* await fetch(host + 'trucks', {mode: 'no-cors'})
-            .then(res => {console.log(res);return res.json();})
-            .then(trucks => this.state.trucks = trucks);*/
+        console.log("getting subscriptions");
+        let b = this.getSubscriptions().then(() => {
+            this.forceUpdate();
+        });
+        let result = await b;
 
-        //{console.log(res);return res.json();}
+        /*for (let v = 0; v < this.state.subs.length; v++) {
+            console.log("SSSSSS: " + this.state.sub[v]);
+        }*/
 
         let fetchData = {method: 'post', body: this.state.user.id};
 
         console.log("getting preferences");
-        await fetch(host + 'dashboard/getpreferences', fetchData)
-            .then(res => {console.log(res);return res.json();})
-            .then(function(preferences) {
-                let list = res.split(';');
-                this.state.preferences[0] = list[0];
-                this.state.preferences[1] = list[1];
-                this.state.preferences[2] = list[2];
-                console.log(list);
+        await fetch('http://localhost:8080/dashboard/getpreferences', fetchData)
+            .then(res => res.json())
+            .then(pref => {
+                let temp = JSON.stringify(pref);
+                let list = temp.split(",");
+                console.log("PREF: " + list);
+
+                if (list.length === 3) {
+                    let size = list[0].length - 1;
+                    console.log("PR:" + list[0][size] + ":THIS");
+                    this.state.preferences[0].price = parseInt(list[0][size]);
+                    console.log("PR:" + this.state.preferences[0].price + ":THIS");
+                    size = list[1].length - 1;
+                    console.log("B: " + list[1][size]);
+                    console.log("B: " + list[2]);
+                    this.state.preferences[0].rating = parseInt(list[1][size]);
+                    let i = 0;
+                    while (list[2][i] != ':') {
+                        i++;
+                    }
+                    i = i + 2;
+                    size = list[2].length - 3;
+                    this.state.preferences[0].type = list[2].substring(i, size);
+                    console.log("TYPE: " + this.state.preferences[0].type);
+                }
+
+                if (list.length > 0) {
+                    console.log("price found??: " + list[0]);
+                    console.log("price found??: " + this.state.preferences[0].price);
+                }
             }).catch(error => console.log(error));
 
-
+        console.log("Rec algorithm ");
+        let multipliers = [];
         let temptrucks = [];
-        if(this.preferences !== undefined && this.preferences.length > 0) {
+        let alltrucks = []
+        let cost = this.state.preferences[0].price;
+        let rate = this.state.preferences[0].rating;
+        let type = this.state.preferences[0].type;
+        let iter = 0;
+        console.log("PRICE: " + this.state.preferences[0].price);
+        if(this.state.preferences) {
+            console.log("Price Mult");
             this.state.trucks.forEach(function (truck) {
-                if (this.preferences.includes(truck.price) && this.preferences.includes(truck.rating)) {
-                    temptrucks.unshift(truck);
-                } else if (this.preferences.includes(truck.price)) {
-                    temptrucks.push(truck);
-                } else if (this.preferences.includes(truck.rating)) {
-                    temptrucks.push(truck);
+                console.log("cost inside for: " + cost);
+                console.log("TRUCK PRICE: " + truck.price + " RATING: " + truck.rating);
+                let multiplier = 4;
+                let constval = 3;
+                if (cost === truck.price) {
+                    console.log("ONE");
+                    constval *= multiplier;
+                    multipliers.push(constval);
+                } else {
+                    multiplier = 3;
+                    if (truck.price === 3) {
+                        constval = 1;
+                        constval *= multiplier;
+                        multipliers.push(constval);
+                    }
+                    else if (truck.price === 2) {
+                        constval = 2;
+                        constval *= multiplier;
+                        multipliers.push(constval);
+                    }
+                    else {
+                        constval = 3;
+                        constval *= multiplier;
+                        multipliers.push(constval);
+                    }
                 }
             });
+            console.log("MUL: " + multipliers);
+            this.state.trucks.forEach(function (truck) {
+                console.log("rating inside for: " + rate);
+                console.log("RATING: " + truck.rating);
+                let multiplier = 3;
+                let constval = 5;
+                if (rate === truck.rating) {
+                    console.log("ONE");
+                    constval *= multiplier;
+                    multipliers[iter] += constval;
+                } else {
+                    multiplier = 2;
+                    if (truck.rating === 5) {
+                        constval *= multiplier;
+                        multipliers[iter] += constval;
+                    } else if (truck.rating === 4) {
+                        constval = 4;
+                        constval *= multiplier;
+                        multipliers[iter] += constval;
+                    } else if (truck.rating === 3) {
+                        constval = 3;
+                        constval *= multiplier;
+                        multipliers[iter] += constval;
+                    } else if (truck.rating === 2) {
+                        constval = 2;
+                        constval *= multiplier;
+                        multipliers[iter] += constval;
+                    } else {
+                        constval = 1;
+                        constval *= multiplier;
+                        multipliers[iter] += constval;
+                    }
+                }
+                iter++;
+            });
+            iter = 0;
+            let subscriptions = [];
+            for (let i = 0; i < this.state.subs.length; i++) {
+                console.log("S: " + this.state.subs);
+                subscriptions.push(this.state.subs[i]);
+            }
+            this.state.trucks.forEach(function (truck) {
+                console.log("SUBS: " + subscriptions);
+                if (subscriptions.includes(truck.id)) {
+                    console.log("Subscribed");
+                    multipliers[iter] += 10;
+                }
+                iter++;
+            });
+            iter = 0;
+            type = this.state.preferences[0].type;
+            this.state.trucks.forEach(function (truck) {
+                console.log("TYPE: " + truck.type);
+                if (type === truck.type) {
+                    console.log("type");
+                    multipliers[iter] += 5;
+                }
+                iter++;
+            });
+            iter = 0;
             this.state.trucks.forEach(function (truck) {
                 if (!temptrucks.includes(truck)) {
-                    temptrucks.unshift(truck);
+                    temptrucks.push(truck);
                 }
             });
+            while (iter < this.state.trucks.length) {
+                let max = multipliers[0];
+                let pos = 0;
+                for (let i = 0; i < temptrucks.length; i++) {
+                    if (multipliers[i] > max) {
+                        max = multipliers[i];
+                        pos = i;
+                    }
+                }
+                alltrucks.push(temptrucks[pos]);
+                multipliers[pos] = -1;
+                iter++;
+            }
         } else {
             this.state.trucks.forEach(function (truck) {
-                temptrucks.push(truck);
-
+                alltrucks.push(truck);
             });
         }
-        this.setState({trucks: temptrucks});
+        this.setState({trucks: alltrucks});
         this.forceUpdate();
 
 
     }
 
     async getSubscriptions() {
+        console.log("Went to get subs");
         if (this.state.user !== null) {
             await fetch(host + 'user/' + this.state.user.id)
                 .then(res => res.json())
@@ -118,8 +250,8 @@ class TruckTable extends Component {
     }
 
     renderTableData() {
-        return this.state.trucks.map((truck) => {
-            const { id, name, description, rating } = truck;
+        return this.state.trucks.slice(0,5).map((truck) => {
+            const { id, name, description, rating, price, type } = truck;
             const url = 'truckDetails?id=' + id;
 
             return (
@@ -127,6 +259,8 @@ class TruckTable extends Component {
                     <td><a href={url}>{name}</a></td>
                     <td><a href={url}>{description}</a></td>
                     <td><a href={url}>{rating}</a></td>
+                    <td><a href={url}>{price}</a></td>
+                    <td><a href={url}>{type}</a></td>
                     {this.state.user !== null && <td>
                         <input type="checkbox" id={id} onChange={this.sub} checked={this.state.subs.includes(id)}/>
                     </td> }

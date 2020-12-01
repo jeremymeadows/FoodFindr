@@ -5,20 +5,26 @@ public class Truck {
     private String name;
     private String description;
     private Float rating;
+    private Float price;
+    private String type;
     private String menu;
 
-    public Truck(String id, String name, String description, Float rating) {
+    public Truck(String id, String name, String description, Float rating, Float price, String type) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.rating = rating;
+		this.price = price;
+		this.type = type;
         this.menu = "null";
     }
-    public Truck(String id, String name, String description, Float rating, String menu) {
+    public Truck(String id, String name, String description, Float rating, Float price, String type, String menu) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.rating = rating;
+		this.price = price;
+		this.type = type;
         this.menu = menu;
     }
 
@@ -43,6 +49,8 @@ public class Truck {
             "\"name\":\"" + this.name + "\"," +
             "\"description\":\"" + this.description + "\"," +
             "\"rating\":" + this.rating + "," +
+            "\"price\":" + this.price + "," +
+            "\"type\":\"" + this.type +"\"," +
             "\"menu\":\"" + this.menu + "\"}"
         );
     }
