@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Button } from 'primereact/button';
 import NavMenu from "../components/navmenu";
 import RecTrucks from '../components/recommendedTruckTable';
+import OwnerTrucks from '../components/ownerTruckTable';
 import PrimeReact from 'primereact/utils';
 import { SelectButton } from 'primereact/selectbutton';
 import { Rating } from 'primereact/rating';
@@ -316,8 +317,9 @@ class Dashboard extends Component {
                 { user !== null && <div>
                     <h2 style={{textAlign: 'center'}}>Welcome, { user.name }!</h2>
 
-                    { user.owner && <div>
-                        <h3>My Trucks:(TODO)</h3>
+                    { user.owner && <div className="card" style={{textAlign: 'center', marginTop: '30px'}}>
+                        <h3>My Trucks</h3>
+                        <OwnerTrucks></OwnerTrucks>
                     </div> }
 
 

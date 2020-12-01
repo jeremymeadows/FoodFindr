@@ -328,6 +328,36 @@ public class UserEndpoint {
     }
 
     @CrossOrigin(origins="*")
+    @PostMapping("/dashboard/getownerships")
+    public String getOwnerships(@RequestBody String user_id) {
+        String json = "[";
+        logger.log(Level.INFO, " Getting ownerships of " + user_id);
+        try {
+            ResultSet r = Database.query("SELECT truck_id FROM ownerships WHERE user_id='" + user_id + "';");
+            logger.log(Level.INFO, " Managed to get ownerships of " + user_id);
+            if (r.next()) {
+                String truck = r.getString("truck_id");
+                logger.log(Level.INFO, " Managed to get truck id of " + truck);
+
+                //logger.log(Level.INFO, " Managed to get type of " + user_id);
+                String concat = "{" + truck + "}";
+                //String concat = price + ";" + rating + ";" + type;
+                logger.log(Level.INFO, " Managed to get truck of " + concat);
+                json = json + concat;
+
+            } else {
+                return "";
+            }
+        } catch (SQLException ex) {
+            logger.log(Level.WARNING, "getting ownerships failed");
+            logger.log(Level.WARNING, ex.toString());
+        }
+        json = json + "]";
+        logger.log(Level.INFO, json);
+        return json;
+    }
+
+    @CrossOrigin(origins="*")
     @PostMapping("/dashboard/getpreferences")
     public String getPreferences(@RequestBody String user_id) {
         String json = "[";
