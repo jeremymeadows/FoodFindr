@@ -24,7 +24,6 @@ class TruckTable extends Component {
     }
 
     async getTrucks() {
-
         console.log("getting trucks");
 
         await fetch(host + 'trucks')
@@ -39,14 +38,11 @@ class TruckTable extends Component {
 
         let fetchData = {method: 'post', body: this.state.user.id};
 
-
-
         console.log("getting preferences");
         await fetch(host + 'dashboard/getpreferences', fetchData)
             .then(res => {console.log(res);return res.json();})
             .then(function(preferences) {
-                console.log(preferences);
-                let list = preferences.split(';');
+                let list = res.split(';');
                 this.state.preferences[0] = list[0];
                 this.state.preferences[1] = list[1];
                 this.state.preferences[2] = list[2];

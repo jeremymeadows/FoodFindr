@@ -13,11 +13,12 @@ class TruckDetails extends Component {
 
         this.state = {
             user: null,
-            truck: null
+            truck: null,
+            map: null
         };
         this.sub = this.sub.bind(this);
         this.unsub = this.unsub.bind(this);
-        this.review = this.review.bind(this);
+        this.getMap = this.getMap.bind(this);
     }
 
     async sub() {
@@ -48,6 +49,28 @@ class TruckDetails extends Component {
             .then(() => this.forceUpdate());
     }
 
+    async getMap() {
+        // Store the key to the mapquest api
+        const key = 'HvhBy6rdLPqZkmPnsEa4fMS95IDRRo2K';
+        // Initialize the url
+        let url = "https://www.mapquestapi.com/staticmap/v5/map?key=" + key
+        let center_and_truck_loc = "&center="
+
+        await fetch('http://localhost:8080/truck/location/'
+            + window.location.href.split('?')[1].split('=')[1])
+            .then( res => res.text())
+            .then( function(text){
+                    let address = text.replaceAll(" ","");
+                    center_and_truck_loc += address;
+                    center_and_truck_loc += '&locations=';
+                    center_and_truck_loc += address;
+            })
+
+        url = url + center_and_truck_loc;
+        console.log(url);
+        return url;
+    }
+
     async componentDidMount() {
         this.state.user = JSON.parse(localStorage.getItem('user'));
 
@@ -55,11 +78,16 @@ class TruckDetails extends Component {
             .then(res => res.json())
             .then(json => this.state.truck = json);
 
+        console.log(this.state.truck);
+
         if (this.state.user !== null) {
             await fetch(host + 'user/' + this.state.user.id)
                 .then(res => res.json())
                 .then(json => this.state.truck.sub = json.includes(this.state.truck.id));
         }
+
+        await(this.getMap())
+            .then(url => this.state.map = url);
 
         this.forceUpdate();
     }
@@ -93,10 +121,12 @@ class TruckDetails extends Component {
     render() {
         const user = this.state.user;
         const truck = this.state.truck;
+        const map = this.state.map;
 
         return (
             <div style={{marginBottom: '60px'}}>
                 <NavMenu></NavMenu>
+                <img src={map} width={"400px"} height={"400px"}/>
                 { truck !== null && <div>
                     <h2 style={{textAlign: 'center'}}>{truck.name}</h2>
                     <h3 style={{textAlign: 'center', marginLeft: 'auto', marginRight: 'auto', maxWidth: '1000px'}}>{truck.description}</h3>

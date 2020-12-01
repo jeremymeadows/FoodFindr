@@ -22,7 +22,6 @@ class TruckTable extends Component {
         this.filterTrucks = this.filterTrucks.bind(this);
         this.enableLocation = this.enableLocation.bind(this);
         this.getNearby = this.getNearby.bind(this);
-        this.sub = this.sub.bind(this);
     }
 
     async getTrucks() {

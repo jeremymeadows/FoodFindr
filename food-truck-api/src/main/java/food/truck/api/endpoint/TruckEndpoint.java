@@ -19,6 +19,24 @@ import lombok.extern.log4j.Log4j2;
 @RestController
 public class TruckEndpoint {
     @CrossOrigin(origins="*")
+    @GetMapping("/truck/location/{id}")
+    public String findTruckLocationById(@PathVariable String id) {
+        try {
+            ResultSet r = Database.query("SELECT location FROM trucks WHERE truck_id='" + id + "';");
+            if (r.next()) {
+                String locationReceived = r.getString("location");
+
+                logger.log(Level.INFO, "Location for truck " + id + ": " + locationReceived);
+                return locationReceived;
+            }
+        } catch (SQLException ex) {
+            logger.log(Level.WARNING, "user #" + id + " not found");
+        }
+
+        return "truck not found";
+    }
+
+    @CrossOrigin(origins="*")
     @GetMapping("/truck/{id}")
     public String findTruckById(@PathVariable String id) {
         try {
@@ -115,16 +133,29 @@ public class TruckEndpoint {
         String[] fields = review.split(";");
 
         String user_id = fields[0];
-        String truck_id = fields[1];
+        String truck_name = fields[1];
         int rating = Integer.parseInt(fields[2]);
         String rev = fields[3];
 
         try {
-            String sql = "INSERT INTO reviews VALUES ('" +
+            ResultSet r = Database.query("SELECT truck_id FROM trucks WHERE name = '" + truck_name + "';");
+
+            String truck_id;
+            if(r.next()) {
+                truck_id = r.getString("truck_id");
+            } else return "";
+            if(r.next()) return "";
+
+            Database.update("INSERT INTO reviews VALUES ('" +
                     user_id + "','" +
                     truck_id + "','" +
                     rating + "','" +
-                    rev + "');";
+                    rev + "');");
+            logger.log(Level.INFO, "INSERT INTO reviews VALUES ('" +
+                    user_id + "','" +
+                    truck_id + "','" +
+                    rating + "','" +
+                    rev + "');");
 
             Database.update(sql);
             logger.log(Level.INFO, sql);
@@ -140,7 +171,7 @@ public class TruckEndpoint {
             logger.log(Level.WARNING, ex.toString());
             return "";
         }
-        return truck_id;
+        return truck_name;
     }
 
     @CrossOrigin(origins="*")
