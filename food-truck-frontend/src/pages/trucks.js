@@ -34,7 +34,7 @@ class Trucks extends Component {
         console.log(subInfo);
 
         const xhr = new XMLHttpRequest();
-        xhr.open('POST', 'http://localhost:8080/subscribe');
+        xhr.open('POST', host + 'subscribe');
         xhr.onloadend = function () {
             console.log(xhr.status);
             if (xhr.status == 200) {
@@ -136,7 +136,7 @@ class Trucks extends Component {
         console.log(review_cred);
 
         const xhr = new XMLHttpRequest();
-        xhr.open('POST', 'http://localhost:8080/trucks/review', true);
+        xhr.open('POST', host + 'trucks/review', true);
 
         xhr.onloadend = function() {
             var res = document.getElementById("review_result");

@@ -57,7 +57,7 @@ class TruckDetails extends Component {
         let url = "https://www.mapquestapi.com/staticmap/v5/map?key=" + key
         let center_and_truck_loc = "&center="
 
-        await fetch('http://localhost:8080/truck/location/'
+        await fetch(host + 'truck/location/'
             + window.location.href.split('?')[1].split('=')[1])
             .then( res => res.text())
             .then( function(text){
@@ -68,7 +68,6 @@ class TruckDetails extends Component {
             })
 
         url = url + center_and_truck_loc;
-        console.log(url);
         return url;
     }
 
@@ -78,8 +77,6 @@ class TruckDetails extends Component {
         await fetch(host + 'truck/' + window.location.href.split('?')[1].split('=')[1])
             .then(res => res.json())
             .then(json => this.state.truck = json);
-
-        console.log(this.state.truck);
 
         if (this.state.user !== null) {
             await fetch(host + 'user/' + this.state.user.id)
@@ -127,6 +124,7 @@ class TruckDetails extends Component {
         return (
             <div style={{marginBottom: '60px'}}>
                 <NavMenu></NavMenu>
+
                 <img src={map} width={"400px"} height={"400px"}/>
                 { truck !== null && <div>
                     <h2 style={{textAlign: 'center'}}>{truck.name}</h2>
@@ -141,9 +139,6 @@ class TruckDetails extends Component {
                         </div> }
                     </span> }
 
-                    <p>Todo:
-                    map, schedule
-                    </p>
                     { truck.menu !== 'null' &&
                         <embed src={truck.menu} width="800px" height="800px"/>
                     }

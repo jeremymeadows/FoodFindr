@@ -45,11 +45,11 @@ public class TruckEndpoint {
                 String name = r.getString("name");
                 String description = r.getString("description");
                 Float rating = r.getFloat("rating");
-                Float price = r.getFloat("price");
                 String type = r.getString("type");
+                Float price = r.getFloat("price");
                 String menu = r.getString("menu");
 
-                Truck t = new Truck(id, name, description, rating, price, type, menu);
+                Truck t = new Truck(id, name, description, rating, type, price, menu);
 
                 logger.log(Level.INFO, t.toString());
                 return t.toString();
@@ -72,10 +72,10 @@ public class TruckEndpoint {
                 String name = r.getString("name");
                 String description = r.getString("description");
                 Float rating = r.getFloat("rating");
-                Float price = r.getFloat("price");
                 String type = r.getString("type");
+                Float price = r.getFloat("price");
 
-                Truck t = new Truck(id, name, description, rating, price, type);
+                Truck t = new Truck(id, name, description, rating, type, price);
                 logger.log(Level.INFO, t.toString());
                 json = json + t.toString() + ",";
             }
@@ -182,10 +182,10 @@ public class TruckEndpoint {
                     String description = r.getString("description");
                     Float rating = r.getFloat("rating");
                     String id = r.getString("truck_id");
-                    Float price = r.getFloat("price");
                     String type = r.getString("type");
+                    Float price = r.getFloat("price");
 
-                    Truck t = new Truck(id, name, description, rating, price, type);
+                    Truck t = new Truck(id, name, description, rating, type, price);
 
                     logger.log(Level.INFO, t.toString());
                     json = json + t.toString() + ",";
@@ -198,10 +198,10 @@ public class TruckEndpoint {
                     String description = r.getString("description");
                     Float rating = r.getFloat("rating");
                     String id = r.getString("truck_id");
-                    Float price = r.getFloat("price");
                     String type = r.getString("type");
+                    Float price = r.getFloat("price");
 
-                    Truck t = new Truck(id, name, description, rating, price, type);
+                    Truck t = new Truck(id, name, description, rating, type, price);
 
                     logger.log(Level.INFO, t.toString());
                     json = json + t.toString() + ",";

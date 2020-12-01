@@ -49,7 +49,7 @@ class TruckTable extends Component {
         let fetchData = {method: 'post', body: this.state.user.id};
 
         console.log("getting preferences");
-        await fetch('http://localhost:8080/dashboard/getpreferences', fetchData)
+        await fetch(host + '/dashboard/getpreferences', fetchData)
             .then(res => res.json())
             .then(pref => {
                 let temp = JSON.stringify(pref);

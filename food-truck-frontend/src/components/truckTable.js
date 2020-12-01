@@ -11,7 +11,7 @@ class TruckTable extends Component {
             loading: true,
             updateUsingNearby: false,
             trucks: [
-                { id: '', name: '', description: '', rating: 0, distance: -1, subscribed: false, price: '' }
+                { id: '', name: '', description: '', rating: 0, type: '', price: -1, distance: -1, subscribed: false }
             ],
             subs: [],
             search: '',
@@ -79,7 +79,7 @@ class TruckTable extends Component {
 
     renderTableData() {
         return this.state.trucks.map((truck) => {
-            const { id, name, description, rating, distance } = truck;
+            const { id, name, description, rating, type, price, distance } = truck;
             const url = 'truckDetails?id=' + id;
 
             if (name.toLowerCase().includes(this.state.search.toLowerCase())) {
@@ -88,11 +88,17 @@ class TruckTable extends Component {
                         <td style={{textAlign: 'center'}}>{name}</td>
                         <td>{description}</td>
                         <td>{rating}</td>
+                        { type !== 'null' &&
+                            <td>{type}</td>
+                        }{ type === 'null' &&
+                            <td>n/a</td>
+                        }
+                        <td>{price}</td>
+
                         { this.state.updateUsingNearby && <td>
                             { distance > 0 &&
                                 <a>{distance}</a>
-                            }
-                            { distance < 0 &&
+                            }{ distance < 0 &&
                                 <a>no location provided</a>
                             }
                         </td> }
@@ -122,7 +128,7 @@ class TruckTable extends Component {
               '&location=' + coords).then(res => res.json())
                 .then(res => {
                     // const loc = res.results[0].locations[0];
-                    //const address = loc.street + ', ' + loc.adminArea5 + ' ' + loc.adminArea3 + ', ' + loc.postalCode;
+                    // const address = loc.street + ', ' + loc.adminArea5 + ' ' + loc.adminArea3 + ', ' + loc.postalCode;
 
                     return fetch(host + 'trucks/locations').then(res => res.json())
                         .then(async res => {
