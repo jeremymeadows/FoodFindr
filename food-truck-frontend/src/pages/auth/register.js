@@ -2,6 +2,10 @@ import React, { Component } from 'react';
 import sha256 from 'js-sha256';
 import NavMenu from "../../components/navmenu";
 import host from '../../util/network';
+import {InputText} from "primereact/inputtext";
+import {CheckBox} from "@material-ui/icons";
+import PrimeReact from 'primereact/utils';
+import { Button } from 'primereact/button';
 
 class Register extends Component {
     constructor() {
@@ -32,7 +36,7 @@ class Register extends Component {
         console.log(login_cred);
 
         const xhr = new XMLHttpRequest();
-        xhr.open('POST', 'http://localhost:8080/register', true);
+        xhr.open('POST', host + 'register', true);
 
         xhr.onloadend = function() {
             var res = document.getElementById("login_result");
@@ -73,17 +77,17 @@ class Register extends Component {
 
                 <div style={{textAlign: 'center', marginTop: '30vh'}}>
                     <h1>Food Truck Finder</h1>
-                    <input id="email" type="text" placeholder="email"/><br/>
-                    <input id="uname" type="text" placeholder="username"/><br/>
+                    <InputText id="email" type="text" placeholder="email"/><br/>
+                    <InputText id="uname" type="text" placeholder="username"/><br/>
                     <br/>
-                    <input id="passw" type="password" placeholder="password"/><br/>
-                    <input id="conf" type="password" placeholder="confirm password"/><br/>
+                    <InputText id="passw" type="password" placeholder="password"/><br/>
+                    <InputText id="conf" type="password" placeholder="confirm password"/><br/>
 
                     <input id="owner" type="checkbox"/>
                     <label htmlFor="owner">I am a truck owner</label><br/>
 
                     <p style={{display: 'inline', color: 'red'}} id="login_result"><br/></p>
-                    <button onClick={this.register}>create account</button>
+                    <Button className="p-button-text" onClick={this.register}>Create Account</Button>
                 </div>
             </div>
         );

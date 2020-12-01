@@ -27,10 +27,24 @@ public class UserEndpoint {
                 return email;
             }
         } catch (SQLException ex) {
-            logger.log(Level.WARNING, "user #" + id + " not found");
+            logger.log(Level.WARNING, "user # " + id + " not found");
         }
 
         return "user not found";
+    }
+
+    @CrossOrigin(origins="*")
+    @PostMapping("/messages/unread")
+    public String getUnread(@RequestBody String id) {
+        try {
+            ResultSet r = Database.query("SELECT COUNT(*) AS count FROM inbox WHERE recipientID='" + id + "' and messageRead=0;");
+            if(r.next()) {
+                return r.getString("count");
+            } else return "0";
+        } catch(SQLException ex) {
+            logger.log(Level.WARNING, ex.toString());
+        }
+        return "";
     }
 
     @CrossOrigin(origins="*")
@@ -59,7 +73,7 @@ public class UserEndpoint {
     }
 
     @CrossOrigin(origins="*")
-    @PostMapping("/dashboard/messages")
+    @PostMapping("/messages")
     public String getMessages(@RequestBody String email) {
         try {
             logger.log(Level.INFO, "UPDATE inbox, users SET messageRead=1 WHERE recipientID = users.user_id " +
@@ -84,7 +98,7 @@ public class UserEndpoint {
     }
 
     @CrossOrigin(origins="*")
-    @PostMapping("/dashboard/delete")
+    @PostMapping("/messages/delete")
     public String deleteMessages(@RequestBody String user_id) {
         logger.log(Level.INFO, user_id);
 

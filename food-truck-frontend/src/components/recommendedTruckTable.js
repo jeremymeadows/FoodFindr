@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import host from '../util/network.js'
 
 class TruckTable extends Component {
 
@@ -23,10 +24,9 @@ class TruckTable extends Component {
     }
 
     async getTrucks() {
-
         console.log("getting trucks");
 
-        await fetch('http://localhost:8080/trucks')
+        await fetch(host + 'trucks')
             .then(res => res.json())
             .then(trucks => {
                 console.log("got the trucks");
@@ -49,7 +49,7 @@ class TruckTable extends Component {
         let fetchData = {method: 'post', body: this.state.user.id};
 
         console.log("getting preferences");
-        await fetch('http://localhost:8080/dashboard/getpreferences', fetchData)
+        await fetch(host + '/dashboard/getpreferences', fetchData)
             .then(res => res.json())
             .then(pref => {
                 let temp = JSON.stringify(pref);
@@ -207,14 +207,14 @@ class TruckTable extends Component {
     async getSubscriptions() {
         console.log("Went to get subs");
         if (this.state.user !== null) {
-            await fetch('http://localhost:8080/user/' + this.state.user.id)
+            await fetch(host + 'user/' + this.state.user.id)
                 .then(res => res.json())
                 .then(subs => this.state.subs = subs);
         }
     }
 
     renderTableHeader() {
-        let header = Object.keys(this.state.trucks[0]).filter(key => key !== 'id');
+        let header = Object.keys(this.state.trucks[0]).filter(key => key !== 'id' && key !== 'menu');
         return header.map((key, index) => {
             if (key !== "favourite" || this.state.user !== null) {
                 return <th key={index}>{key.toUpperCase()}</th>;
@@ -234,11 +234,11 @@ class TruckTable extends Component {
         }
 
         if (target.checked) {
-            await fetch('http://localhost:8080/subscribe', options)
+            await fetch(host + 'subscribe', options)
                 .then(res => this.state.subs.push(target.id))
                 .then(() => this.forceUpdate());
         } else {
-            await fetch('http://localhost:8080/unsubscribe', options)
+            await fetch(host + 'unsubscribe', options)
                 .then(res => this.state.subs = this.state.subs.filter(function(id) {return id !== target.id}))
                 .then(() => this.forceUpdate());
         }
@@ -344,7 +344,7 @@ class TruckTable extends Component {
 
                 // Launch an XMLHttp request which returns every truck whose location isn't null
                 const truckLocReq = new XMLHttpRequest();
-                truckLocReq.open('GET', 'http://localhost:8080/trucks/locations', true);
+                truckLocReq.open('GET', host + 'trucks/locations', true);
 
                 truckLocReq.onloadend = function(){
                     // Get the pairs of truck id's and addresses returned
@@ -390,7 +390,7 @@ class TruckTable extends Component {
 
                 { loading && <img id='loading' src="http://i.stack.imgur.com/SBv4T.gif" alt="loading..." width='250'></img> }
 
-                <table id='trucks'>
+                <table id='trucks' style={{marginLeft: 'auto', marginRight: 'auto', maxWidth: '1000px'}}>
                     <thead>
                     <tr>{ !loading && this.renderTableHeader() }</tr>
                     </thead>

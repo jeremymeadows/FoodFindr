@@ -9,6 +9,7 @@ class Logout extends Component {
 
     componentDidMount() {
         localStorage.removeItem('user');
+        this.forceUpdate();
     }
 
     render() {

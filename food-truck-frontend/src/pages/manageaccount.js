@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import sha256 from "js-sha256";
 import NavMenu from "../components/navmenu";
+import host from '../util/network.js'
 
 class ManageAccount extends Component {
     constructor() {
@@ -34,7 +35,7 @@ class ManageAccount extends Component {
         console.log(new_login);
 
         const xhr = new XMLHttpRequest();
-        xhr.open('POST', 'http://localhost:8080/manageaccount', true);
+        xhr.open('POST', host + 'manageaccount', true);
 
         xhr.onload = function() {
             var res = document.getElementById("login_result");
@@ -72,7 +73,7 @@ class ManageAccount extends Component {
         console.log(new_username);
 
         const xhr = new XMLHttpRequest();
-        xhr.open('POST', 'http://localhost:8080/manageaccount/username', true);
+        xhr.open('POST', host + 'manageaccount/username', true);
 
         xhr.onload = function() {
             var res = document.getElementById("user_result");

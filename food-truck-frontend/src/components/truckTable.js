@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Link from 'next/link';
+import host from '../util/network.js'
 
 class TruckTable extends Component {
     constructor(props) {
@@ -10,9 +11,7 @@ class TruckTable extends Component {
             loading: true,
             updateUsingNearby: false,
             trucks: [
-
-                { id: '', name: '', description: '', rating: 0, distance: -1, subscribed: false, price: '' }
-
+                { id: '', name: '', description: '', rating: 0, type: '', price: -1, distance: -1, subscribed: false }
             ],
             subs: [],
             search: '',
@@ -23,36 +22,32 @@ class TruckTable extends Component {
         this.filterTrucks = this.filterTrucks.bind(this);
         this.enableLocation = this.enableLocation.bind(this);
         this.getNearby = this.getNearby.bind(this);
-        this.sub = this.sub.bind(this);
     }
 
     async getTrucks() {
-        await fetch('http://localhost:8080/trucks')
+        await fetch(host + 'trucks')
             .then(res => res.json())
             .then(trucks => {
-                console.log("got the trucks");
                 if (trucks.length > 0) {
                     this.state.trucks = trucks;
                 }
-
                 this.state.trucks.forEach((truck, _) => {
                     truck.distance = -1;
                 });
             })
             .then(() => this.sortTrucks());
-
     }
 
     async getSubscriptions() {
         if (this.state.user !== null) {
-            await fetch('http://localhost:8080/user/' + this.state.user.id)
+            await fetch(host + 'user/' + this.state.user.id)
                 .then(res => res.json())
                 .then(subs => this.state.subs = subs);
         }
     }
 
     renderTableHeader() {
-        let header = Object.keys(this.state.trucks[0]).filter(key => key !== 'id');
+        let header = Object.keys(this.state.trucks[0]).filter(key => key !== 'id' && key !== 'menu');
         return header.map((key, index) => {
             if ((key !== "subscribed" || this.state.user !== null) && (key !== "distance" || this.state.updateUsingNearby)) {
                 return <th key={index}>{key.toUpperCase()}</th>;
@@ -72,77 +67,38 @@ class TruckTable extends Component {
         };
 
         if (target.checked) {
-            await fetch('http://localhost:8080/subscribe', options)
+            await fetch(host + 'subscribe', options)
                 .then(res => this.state.subs.push(target.id))
                 .then(() => this.forceUpdate());
         } else {
-            await fetch('http://localhost:8080/unsubscribe', options)
+            await fetch(host + 'unsubscribe', options)
                 .then(res => this.state.subs = this.state.subs.filter(function(id) { return id !== target.id }))
                 .then(() => this.forceUpdate());
         }
     }
 
     renderTableData() {
-
-        if(this.state.updateUsingNearby){
-            this.state.updateUsingNearby = false;
-            return this.state.trucks.map((truck) => {
-                const { id, name, description, rating, price } = truck;
-                const url = 'truckDetails?id=' + id;
-
-                if (this.state.nearby.includes(id)) {
-                    return (
-                        <tr key={id}>
-                            <td><a href={url}>{name}</a></td>
-                            <td><a href={url}>{description}</a></td>
-                            <td><a href={url}>{rating}</a></td>
-                            <td><a href={url}>{price}</a></td>
-                            {this.state.user !== null && <td>
-								<input type="checkbox" id={id} onChange={this.sub} checked={this.state.subs.includes(id)}/>
-							</td> }
-                        </tr>
-                    );
-                }
-            });
-        }
-
-        else {
-            return this.state.trucks.map((truck) => {
-                const {id, name, description, rating, price, type } = truck;
-                const url = 'truckDetails?id=' + id;
-
-                if (name.toLowerCase().includes(this.state.search.toLowerCase())) {
-                    return (
-                        <tr key={id}>
-                            <td><a href={url}>{name}</a></td>
-                            <td><a href={url}>{description}</a></td>
-                            <td><a href={url}>{rating}</a></td>
-                            <td><a href={url}>{price}</a></td>
-                            <td><a href={url}>{type}</a></td>
-                            {this.state.user !== null && <td>
-								<input type="checkbox" id={id} onChange={this.sub} checked={this.state.subs.includes(id)}/>
-							</td> }
-                        </tr>
-                    );
-                }
-            });
-        }
-
         return this.state.trucks.map((truck) => {
-            const { id, name, description, rating, distance } = truck;
+            const { id, name, description, rating, type, price, distance } = truck;
             const url = 'truckDetails?id=' + id;
 
             if (name.toLowerCase().includes(this.state.search.toLowerCase())) {
                 return (
                     <Link href={url}><tr key={id} style={{cursor: 'pointer'}}>
-                        <td>{name}</td>
+                        <td style={{textAlign: 'center'}}>{name}</td>
                         <td>{description}</td>
                         <td>{rating}</td>
+                        { type !== 'null' &&
+                            <td>{type}</td>
+                        }{ type === 'null' &&
+                            <td>n/a</td>
+                        }
+                        <td>{price}</td>
+
                         { this.state.updateUsingNearby && <td>
                             { distance > 0 &&
                                 <a>{distance}</a>
-                            }
-                            { distance < 0 &&
+                            }{ distance < 0 &&
                                 <a>no location provided</a>
                             }
                         </td> }
@@ -153,7 +109,6 @@ class TruckTable extends Component {
                 );
             }
         });
-
     }
 
     async getNearby() {
@@ -173,9 +128,9 @@ class TruckTable extends Component {
               '&location=' + coords).then(res => res.json())
                 .then(res => {
                     // const loc = res.results[0].locations[0];
-                    //const address = loc.street + ', ' + loc.adminArea5 + ' ' + loc.adminArea3 + ', ' + loc.postalCode;
+                    // const address = loc.street + ', ' + loc.adminArea5 + ' ' + loc.adminArea3 + ', ' + loc.postalCode;
 
-                    return fetch('http://localhost:8080/trucks/locations').then(res => res.json())
+                    return fetch(host + 'trucks/locations').then(res => res.json())
                         .then(async res => {
                             await Promise.all(res.map(truck => {
                                 return fetch('http://open.mapquestapi.com/geocoding/v1/address?key=' + key +
@@ -286,7 +241,7 @@ class TruckTable extends Component {
                 { /* loaging gif */ }
                 { loading && <img id='loading' src="http://i.stack.imgur.com/SBv4T.gif" alt="loading..." width='250'></img> }
 
-                <table id='trucks'>
+                <table id='trucks' style={{marginLeft: 'auto', marginRight: 'auto', maxWidth: '1000px'}}>
                     <thead>
                         <tr>{ !loading && this.renderTableHeader() }</tr>
                     </thead>
