@@ -34,7 +34,7 @@ public class UserEndpoint {
     }
 
     @CrossOrigin(origins="*")
-    @PostMapping("/dashboard/unread")
+    @PostMapping("/messages/unread")
     public String getUnread(@RequestBody String id) {
         try {
             ResultSet r = Database.query("SELECT COUNT(*) AS count FROM inbox WHERE recipientID='" + id + "' and messageRead=0;");
@@ -73,7 +73,7 @@ public class UserEndpoint {
     }
 
     @CrossOrigin(origins="*")
-    @PostMapping("/dashboard/messages")
+    @PostMapping("/messages")
     public String getMessages(@RequestBody String email) {
         try {
             logger.log(Level.INFO, "UPDATE inbox, users SET messageRead=1 WHERE recipientID = users.user_id " +
@@ -98,7 +98,7 @@ public class UserEndpoint {
     }
 
     @CrossOrigin(origins="*")
-    @PostMapping("/dashboard/delete")
+    @PostMapping("/messages/delete")
     public String deleteMessages(@RequestBody String user_id) {
         logger.log(Level.INFO, user_id);
 

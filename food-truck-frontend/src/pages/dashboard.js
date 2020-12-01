@@ -24,11 +24,8 @@ class Dashboard extends Component {
             unread: 0
         }
         this.get_info = this.get_info.bind(this);
-        this.get_message = this.get_message.bind(this);
         this.send_message = this.send_message.bind(this);
         this.update_preferences = this.update_preferences.bind(this);
-        this.delete_message = this.delete_message.bind(this);
-        this.get_unread_count = this.get_unread_count.bind(this);
         this.priceSelect = [
             {name: '$', value: 1},
             {name: '$$', value: 2},
@@ -41,7 +38,6 @@ class Dashboard extends Component {
         if (this.state.user === null) {
             window.location = 'auth/login';
         }
-        this.get_unread_count();
         this.forceUpdate();
     }
 
@@ -70,49 +66,6 @@ class Dashboard extends Component {
             }
         };
         xhr.send(email);
-    }
-
-    get_message() {
-        var name = this.state.user.name;
-        const xhr = new XMLHttpRequest();
-        xhr.open('POST', 'http://localhost:8080/dashboard/messages', true);
-
-        xhr.onloadend = function(){
-            var res = document.getElementById("message_result");
-            if(xhr.responseText == "") {
-                console.log("No messages to display");
-                res.style = "color: black; display: block;";
-                res.innerHTML = "No messages to display";
-            } else {
-                var owner = xhr.responseText.split(';');
-                console.log(xhr.responseText)
-
-                res.innerHTML = "";
-                for(var i = 0; i < xhr.responseText.split(';').length-1; i++) {
-                    res.innerHTML += xhr.responseText.split(';')[i]
-                        + "<br />";
-                }
-            }
-        };
-        xhr.send(name);
-    }
-
-    get_unread_count() {
-        var id = this.state.user.id;
-
-        const xhr = new XMLHttpRequest();
-        xhr.open('POST', 'http://localhost:8080/dashboard/unread', true);
-        xhr.onloadend = function() {
-            if(xhr.status == 200) {
-                if(xhr.responseText == "") {
-                    console.log("could not retrieve message count");
-                } else {
-                    console.log("messages found: " + xhr.responseText);
-                    this.state.unread = xhr.responseText;
-                }
-            }
-        }
-        xhr.send(id);
     }
 
     send_message() {
@@ -150,29 +103,6 @@ class Dashboard extends Component {
             }
         };
         xhr.send(owner_message);
-    }
-
-    delete_message() {
-        var user_id = this.state.user.id;
-        const xhr = new XMLHttpRequest();
-
-        xhr.open('POST', 'http://localhost:8080/dashboard/delete');
-        xhr.onloadend = function() {
-            var res = document.getElementById("delete_result");
-            if(xhr.status == 200) {
-                if(xhr.responseText == "") {
-                    console.log("could not delete messages");
-                    res.style = "color: red; display: block;";
-                    res.innerHTML = "could not delete messages";
-                } else {
-                    console.log("delete message success");
-                    res.style = "color: green, display: inline;";
-                    res.innerHTML = "messages were deleted successfully";
-                    window.location = "../dashboard";
-                }
-            }
-        }
-        xhr.send(user_id);
     }
 
     update_preferences(){
@@ -224,14 +154,6 @@ class Dashboard extends Component {
                     <p style={{display: 'inline', color: 'black'}} id="info_result"><br/></p>
                     <div style={{textAlign: 'center', marginTop: '20px'}}>
                         <Button onClick={this.get_info} label="View Profile" className="p-button-text"/>
-                    </div>
-                    <div style={{textAlign: 'center', marginTop: '20px'}}>
-                        <p style={{display: 'inline', color: 'black'}} id="message_result"><br/></p>
-                        <Button onClick={this.get_message} label="View Messages" className="p-button-text"/>
-                    </div>
-                    <div style={{textAlign: 'center', marginTop: '0px'}}>
-                        <p style={{display: 'inline', color: 'black'}} id="delete_result"><br/></p>
-                        <Button onClick={this.delete_message} label="Delete Read Messages" className="p-button-text"/>
                     </div>
                     { user.owner && <div style={{textAlign: 'center', marginTop: '20px'}}>
                         <InputText id="truck_id_message" type="text" value={this.state.truck} onChange={(e) => this.setState({truck: e.target.value})} placeholder="Truck ID"/><br/>
