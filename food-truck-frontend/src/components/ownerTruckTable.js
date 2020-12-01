@@ -47,8 +47,8 @@ class TruckTable extends Component {
                         ownerships.push(list.substring());
                     }
                 }
-            });
-
+            });*/
+/*
         let trucks = [];
         if (ownerships.length > 0) {
             this.state.trucks.forEach(function (truck) {
@@ -116,7 +116,11 @@ class TruckTable extends Component {
                     <td><a href={url}>{description}</a></td>
                     <td><a href={url}>{rating}</a></td>
                     <td><a href={url}>{price}</a></td>
-                    <td><a href={url}>{type}</a></td>
+                    { type !== 'null' &&
+                    <td>{type}</td>
+                    }{ type === 'null' &&
+                <td>n/a</td>
+                }
                     {this.state.user !== null && <td>
                         <input type="checkbox" id={id} onChange={this.sub} checked={this.state.subs.includes(id)}/>
                     </td> }
@@ -142,7 +146,8 @@ class TruckTable extends Component {
 
     render() {
         let loading = this.state.loading;
-        let empty = this.state.trucks[0].id === '';
+        let empty = this.state.trucks === '';
+        console.log(empty);
 
         return (
             <div>
