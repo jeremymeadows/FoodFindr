@@ -163,9 +163,9 @@ class Dashboard extends Component {
     createFoodTruck() {
         var name = document.getElementById("truckname").value;
         var description = document.getElementById("truckdescription").value;
-        var rating = document.getElementById("rating").value;
+        var type = document.getElementById("type").value;
 
-        var truck_cred = name + ';' + description + ';' + rating;
+        var truck_cred = name + ';' + description + ';' + type;
         console.log(truck_cred);
 
         const xhr = new XMLHttpRequest();
@@ -202,10 +202,10 @@ class Dashboard extends Component {
     manageTruck() {
         var name = document.getElementById("oldtruckname").value;
         var description = document.getElementById("oldtruckdescription").value;
-        var rating = document.getElementById("oldrating").value;
+        var type = document.getElementById("oldtype").value;
         var id = document.getElementById("truckid").value;
 
-        var truck_cred = name + ';' + description + ';' + rating + ';' + id;
+        var truck_cred = name + ';' + description + ';' + type + ';' + id;
         console.log(truck_cred);
 
         const xhr = new XMLHttpRequest();
@@ -339,7 +339,7 @@ class Dashboard extends Component {
                         { this.state.user.owner && <div>
                             <InputTextarea id="truckname" type="text" placeholder="Truck Name"/><br/>
                             <InputTextarea id="truckdescription" type="text" placeholder="Truck Description"/><br/>
-                            <InputTextarea id="rating" type="text" placeholder="Rating"/><br/>
+                            <InputTextarea id="type" type="text" placeholder="Type"/><br/>
                             <p style={{display: 'inline', color: 'red'}} id="create_truck_result"><br/></p>
                             <Button onClick={this.createFoodTruck}>Create Food Truck</Button><br/>
                         </div> }
@@ -348,7 +348,7 @@ class Dashboard extends Component {
                         { this.state.user.owner && <div>
                             <InputTextarea id="oldtruckname" type="text" placeholder="Truck Name"/><br/>
                             <InputTextarea id="oldtruckdescription" type="text" placeholder="Truck Description"/><br/>
-                            <InputTextarea id="oldrating" type="text" placeholder="Rating"/><br/>
+                            <InputTextarea id="oldtype" type="text" placeholder="Type"/><br/>
                             <InputTextarea id="truckid" type="text" placeholder="Truck ID"/><br/>
                             <p style={{display: 'inline', color: 'red'}} id="manage_truck_result"><br/></p>
                             <Button onClick={this.manageTruck}>Edit Food Truck</Button><br/>

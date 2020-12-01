@@ -88,13 +88,13 @@ class TruckTable extends Component {
                         <td style={{textAlign: 'center'}}>{name}</td>
                         <td>{description}</td>
                         <td>{rating}</td>
-
-                        <td>{price}</td>
                         { type !== 'null' &&
-                            <td>{type}</td>
-                            }{ type === 'null' &&
-                        <td>n/a</td>
-                        }
+                        <td>{type}</td>
+                        }{ type === 'null' &&
+                    <td>n/a</td>
+                    }
+                        <td>{price}</td>
+
                         { this.state.updateUsingNearby && <td>
                             { distance > 0 &&
                                 <a>{distance}</a>
