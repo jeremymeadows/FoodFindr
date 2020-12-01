@@ -250,7 +250,7 @@ class TruckTable extends Component {
     }
 
     renderTableData() {
-        return this.state.trucks.map((truck) => {
+        return this.state.trucks.slice(0,5).map((truck) => {
             const { id, name, description, rating, price, type } = truck;
             const url = 'truckDetails?id=' + id;
 
