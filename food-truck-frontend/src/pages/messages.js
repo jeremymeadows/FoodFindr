@@ -46,11 +46,16 @@ class Messages extends Component {
                 var owner = xhr.responseText.split(';');
                 console.log(xhr.responseText)
 
-                res.innerHTML = "";
+                var HTML = "<center><table class=\"center\" border=\"1\"><tr><th>Message</th></tr>";
                 for(var i = 0; i < xhr.responseText.split(';').length-1; i++) {
-                    res.innerHTML += xhr.responseText.split(';')[i]
-                        + "<br /><br />";
+                    HTML += "<tr><td>" + xhr.responseText.split(';')[i] + "</td></tr>";
                 }
+                HTML += "</table></center>";
+
+                console.log(HTML);
+
+                res.innerHTML = HTML;
+                console.log(res.innerHTML)
             }
         };
         xhr.send(name);
@@ -106,7 +111,7 @@ class Messages extends Component {
                 { user !== null && <div>
                     <h2 style={{textAlign: 'center'}}>Welcome, { user.name }!</h2>
 
-                    <div style={{textAlign: 'center', marginTop: '20px'}}>
+                    <div style={{textAlign: 'center', marginTop: '300px'}}>
                         <p style={{display: 'inline', color: 'black'}} id="message_result"><br/></p>
                         <Button onClick={this.get_message} label="View Messages" className="p-button-text"/>
                     </div>
