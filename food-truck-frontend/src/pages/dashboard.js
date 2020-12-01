@@ -21,13 +21,12 @@ class Dashboard extends Component {
             rtg: null,
             food: null,
             message: null,
-            truck: null
+            truck: null,
+            unread: 0
         }
         this.get_info = this.get_info.bind(this);
-        this.get_message = this.get_message.bind(this);
         this.send_message = this.send_message.bind(this);
         this.update_preferences = this.update_preferences.bind(this);
-        this.delete_message = this.delete_message.bind(this);
         this.priceSelect = [
             {name: '$', value: 1},
             {name: '$$', value: 2},
@@ -57,13 +56,18 @@ class Dashboard extends Component {
             } else {
                 console.log(xhr.responseText)
                 //username + ';' + email_address + ';' + owner;
-                res.innerHTML = "";
+
+                var HTML = "<center><table style=\"background-color: #E5E5E5;\" border=\"0\"><tr><th>Profile</th></tr>";
+
                 for(var i = 0; i < xhr.responseText.split(';').length-1; i++) {
-                    res.innerHTML += xhr.responseText.split(';')[i]
-                        + "<br />";
+                    if(i==0) {
+                        HTML += "<tr><td>" + "Username: " + xhr.responseText.split(';')[i] + "</td></tr>";
+                    } else {
+                        HTML += "<tr><td>" + "Email: " + xhr.responseText.split(';')[i] + "</td></tr>";
+                    }
                 }
                 if (xhr.responseText.split(';')[2] === 1) {
-                    res.innerHTML += "User is an Owner" + "<br />";
+                    HTML += "<tr><td>" + "User is an Owner" + "</td></tr>";
                 }
             }
         };
@@ -84,15 +88,12 @@ class Dashboard extends Component {
             } else {
                 var owner = xhr.responseText.split(';');
                 console.log(xhr.responseText)
+                HTML += "</table></center>";
 
-                res.innerHTML = "";
-                for(var i = 0; i < xhr.responseText.split(';').length-1; i++) {
-                    res.innerHTML += xhr.responseText.split(';')[i]
-                        + "<br />";
-                }
+                res.innerHTML = HTML;
             }
         };
-        xhr.send(name);
+        xhr.send(email);
     }
 
     send_message() {
@@ -200,17 +201,10 @@ class Dashboard extends Component {
                         <h3>My Trucks:(TODO)</h3>
                     </div> }
 
+
                     <p style={{display: 'inline', color: 'black'}} id="info_result"><br/></p>
                     <div style={{textAlign: 'center', marginTop: '20px'}}>
                         <Button onClick={this.get_info} label="View Profile" className="p-button-text"/>
-                    </div>
-                    <div style={{textAlign: 'center', marginTop: '20px'}}>
-                        <p style={{display: 'inline', color: 'black'}} id="message_result"><br/></p>
-                        <Button onClick={this.get_message} label="View Messages" className="p-button-text"/>
-                    </div>
-                    <div style={{textAlign: 'center', marginTop: '0px'}}>
-                        <p style={{display: 'inline', color: 'black'}} id="delete_result"><br/></p>
-                        <Button onClick={this.delete_message} label="Delete Read Messages" className="p-button-text"/>
                     </div>
                     { user.owner && <div style={{textAlign: 'center', marginTop: '20px'}}>
                         <InputText id="truck_id_message" type="text" value={this.state.truck} onChange={(e) => this.setState({truck: e.target.value})} placeholder="Truck ID"/><br/>
@@ -220,12 +214,12 @@ class Dashboard extends Component {
                         <Button className="p-button-text" onClick={this.send_message}>Send Message</Button>
                     </div> }
                     { !user.owner && <div className="card" style={{textAlign: 'center', marginTop: '20px'}}>
-                        <p style={{display: 'inline', color: 'red'}} id="pref_result"><br/></p>
-                        <SelectButton value={this.state.price} optionLabel="name" options={this.priceSelect} onChange={(e) => this.setState({price: e.value })}/>
-                        <Rating value={this.state.rtg} onChange={(e) => this.setState({rtg: e.value})}/>
-                        <InputText placeholder="Favorite Food" id="food_type" value={this.state.food} onChange={(e) => this.setState({food: e.target.value})} />
+                        <p style={{display: 'inline', color: 'red', marginTop: '10px'}} id="pref_result"><br/></p>
+                        <SelectButton style={{marginTop: '10px'}} value={this.state.price} optionLabel="name" options={this.priceSelect} onChange={(e) => this.setState({price: e.value })}/>
+                        <Rating style={{marginTop: '10px'}} value={this.state.rtg} onChange={(e) => this.setState({rtg: e.value})}/>
+                        <InputText style={{marginTop: '10px'}} placeholder="Favorite Food" id="food_type" value={this.state.food} onChange={(e) => this.setState({food: e.target.value})} />
                         <p style={{display: 'inline', color: 'red'}} id="update_preferences_result"><br/></p>
-                        <Button className="p-button-text" onClick={this.update_preferences}>Update Preferences</Button><br/><br/>
+                        <Button className="p-button-text" style={{marginTop: '10px'}} onClick={this.update_preferences}>Update Preferences</Button><br/><br/>
                         <RecTrucks></RecTrucks>
                     </div> }
                 </div> }
