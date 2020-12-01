@@ -98,6 +98,7 @@ public class TruckEndpoint {
                 json = json.concat("\"loc\":\"" + r.getString("location") + "\"},");
             }
             json = json.substring(0, json.length() > 1 ? json.length() - 1 : json.length()) + "]";
+            logger.log(Level.INFO, json);
             return json;
         }
         catch (SQLException ex) {
@@ -113,16 +114,16 @@ public class TruckEndpoint {
         String[] fields = truck_cred.split(";");
         String name = fields[0]; //truck.getName()
         String description = fields[1]; //truck.getDescription()
-        String rating = fields[2]; //truck.getRating();
+        String type = fields[2]; //truck.getRating();
         String id = fields[3];
 
         logger.log(Level.INFO, "updating truck " + name);
         try {
             String qry = "UPDATE trucks SET name='" + name + "', description='" + description +
-                     "', rating='" + rating + "' WHERE truck_id='" + id + "';";
+                     "', type='" + type + "' WHERE truck_id='" + id + "';";
             logger.log(Level.INFO, qry);
             Database.update(qry);
-            return name + '_' + Integer.toHexString((id).hashCode()) + '_' + description + '_' + rating;
+            return name + '_' + Integer.toHexString((id).hashCode()) + '_' + description + '_' + type;
 
         } catch (SQLException ex) {
             logger.log(Level.WARNING, ex.toString());
@@ -222,16 +223,18 @@ public class TruckEndpoint {
         String[] fields = truck_cred.split(";");
         String name = fields[0]; //truck.getName()
         String description = fields[1]; //truck.getDescription()
-        float rating = Float.parseFloat(fields[2]); //truck.getRating();
+        String type = fields[2]; //truck.getRating();
         String id = Integer.toHexString(name.hashCode()).substring(0, 4); // generate truck id
+        Float rating = new Float(3);
 
         logger.log(Level.INFO, "changing truck " + name + " data");
         try {
-            String qry = "INSERT INTO trucks (truck_id, name, description, rating) VALUES('" +
+            String qry = "INSERT INTO trucks (truck_id, name, description, type, rating) VALUES('" +
               id + "','" +
               name + "','" +
-              description + "'," +
-              rating + ");";
+              description + "','" +
+              type + "','" +
+              rating + "');";
             logger.log(Level.INFO, qry);
             Database.update(qry);
 

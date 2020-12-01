@@ -8,16 +8,30 @@ import { Rating } from 'primereact/rating';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { InputText } from 'primereact/inputtext';
 import host from '../util/network.js'
+import {SelectButton} from "primereact/selectbutton";
+import {Rating} from "primereact/rating";
+import {InputText} from "primereact/inputtext";
+import {Button} from "primereact/button";
+import RecTrucks from "../components/recommendedTruckTable";
 
 class ManageAccount extends Component {
     constructor() {
         super();
 
         this.state = {
-            user: null
+            user: null,
+            price: null,
+            rtg: null,
+            food: null
         };
         this.editPassword = this.editPassword.bind(this);
         this.editUsername = this.editUsername.bind(this);
+        this.update_preferences = this.update_preferences.bind(this);
+        this.priceSelect = [
+            {name: '$', value: 1},
+            {name: '$$', value: 2},
+            {name: '$$$', value: 3}
+        ];
     }
 
     componentDidMount() {
@@ -113,25 +127,63 @@ class ManageAccount extends Component {
         xhr.send(new_username);
     };
 
+    update_preferences(){
+        var id_passed = this.state.user.id;
+        var price = this.state.price;
+        var rating = this.state.rtg;
+        var foodtype = this.state.food;
+
+        var sendMessage = id_passed + ';' + price + ';' + rating + ';' + foodtype;
+        console.log("updating price with " + price + "\nrating with " + rating
+            + "food type with " + foodtype + "\nfor user: " + id_passed);
+
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', host + 'dashboard/preferences', true);
+
+        xhr.onloadend = function() {
+            var res = document.getElementById("update_preferences_result");
+            if(xhr.status == 200) {
+                if(xhr.responseText == "") {
+                    console.log("could not update preferences");
+                    res.style = "color: red; display: block;";
+                    res.innerHTML = "could not update preferences";
+                } else {
+                    console.log("preferences updated successfully");
+                    res.style = "color: green; display: block;";
+                    res.innerHTML = "preferences updated successfully";
+                }
+            }
+            console.log("status returned: " + xhr.status);
+        };
+        xhr.send(sendMessage);
+    }
+
     render() {
         return (
             <div>
                 <div>
                     <NavMenu></NavMenu>
-                    <h2 style={{textAlign: 'center'}}>Manage Account Data</h2>
-                    <h3 style={{textAlign: 'center'}}>You can edit your username and password here.</h3>
+                    <h2 style={{textAlign: 'center'}}>Manage Account</h2>
                 </div>
-                <div style={{textAlign: 'center', marginTop: '30vh'}}>
-                    <InputText id="oldusername" type="text" placeholder="Old Username"/><br/>
-                    <InputText id="newusername" type="text" placeholder="New Username"/><br/>
+                <div className="card" style={{textAlign: 'center', marginTop: '20px'}}>
+                    <p style={{display: 'inline', color: 'red', marginTop: '10px'}} id="pref_result"><br/></p>
+                    <SelectButton style={{marginTop: '10px'}} value={this.state.price} optionLabel="name" options={this.priceSelect} onChange={(e) => this.setState({price: e.value })}/>
+                    <Rating style={{marginTop: '10px'}} value={this.state.rtg} onChange={(e) => this.setState({rtg: e.value})}/>
+                    <InputText style={{marginTop: '10px'}} placeholder="Favorite Food" id="food_type" value={this.state.food} onChange={(e) => this.setState({food: e.target.value})} />
+                    <p style={{display: 'inline', color: 'red'}} id="update_preferences_result"><br/></p>
+                    <Button className="p-button-text" style={{marginTop: '10px'}} onClick={this.update_preferences}>Update Preferences</Button><br/><br/>
+                </div>
+                <div className="card" style={{textAlign: 'center', marginTop: '20px'}}>
+                    <InputText style={{marginTop: '10px'}}  id="oldusername" type="text" placeholder="Old Username"/><br/>
+                    <InputText style={{marginTop: '10px'}}  id="newusername" type="text" placeholder="New Username"/><br/>
                     <p style={{display: 'inline', color: 'red'}} id="user_result"><br/></p>
-                    <Button className="p-button-text" onClick={this.editUsername}>Edit Username</Button><br/>
+                    <Button className="p-button-text" style={{marginTop: '5px'}} onClick={this.editUsername}>Edit Username</Button><br/>
                 </div>
-                <div style={{textAlign: 'center', marginTop: '10vh'}}>
-                    <InputText id="oldpassword" type="text" placeholder="Old Password"/><br/>
-                    <InputText id="newpassword" type="text" placeholder="New Password"/><br/>
+                <div className="card" style={{textAlign: 'center', marginTop: '20px'}}>
+                    <InputText style={{marginTop: '10px'}} id="oldpassword" type="text" placeholder="Old Password"/><br/>
+                    <InputText style={{marginTop: '10px'}} id="newpassword" type="text" placeholder="New Password"/><br/>
                     <p style={{display: 'inline', color: 'red'}} id="login_result"><br/></p>
-                    <Button className="p-button-text" onClick={this.editPassword}>Edit Password</Button><br/>
+                    <Button className="p-button-text" style={{marginTop: '5px'}} onClick={this.editPassword}>Edit Password</Button><br/>
                 </div>
             </div>
         );

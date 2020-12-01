@@ -34,7 +34,7 @@ class TruckTable extends Component {
                     this.state.trucks = trucks;
                 }
             });
-        console.log("OUT");
+        //console.log("OUT");
 
         console.log("getting subscriptions");
         let b = this.getSubscriptions().then(() => {
@@ -42,9 +42,9 @@ class TruckTable extends Component {
         });
         let result = await b;
 
-        /*for (let v = 0; v < this.state.subs.length; v++) {
-            console.log("SSSSSS: " + this.state.sub[v]);
-        }*/
+        /*this.getNearby().then(() => {
+            this.forceUpdate();
+        });*/
 
         let fetchData = {method: 'post', body: this.state.user.id};
 
@@ -54,16 +54,16 @@ class TruckTable extends Component {
             .then(pref => {
                 let temp = JSON.stringify(pref);
                 let list = temp.split(",");
-                console.log("PREF: " + list);
+                //console.log("PREF: " + list);
 
                 if (list.length === 3) {
                     let size = list[0].length - 1;
-                    console.log("PR:" + list[0][size] + ":THIS");
+                    //console.log("PR:" + list[0][size] + ":THIS");
                     this.state.preferences[0].price = parseInt(list[0][size]);
-                    console.log("PR:" + this.state.preferences[0].price + ":THIS");
+                    //console.log("PR:" + this.state.preferences[0].price + ":THIS");
                     size = list[1].length - 1;
-                    console.log("B: " + list[1][size]);
-                    console.log("B: " + list[2]);
+                    //console.log("B: " + list[1][size]);
+                    //console.log("B: " + list[2]);
                     this.state.preferences[0].rating = parseInt(list[1][size]);
                     let i = 0;
                     while (list[2][i] != ':') {
@@ -72,12 +72,7 @@ class TruckTable extends Component {
                     i = i + 2;
                     size = list[2].length - 3;
                     this.state.preferences[0].type = list[2].substring(i, size);
-                    console.log("TYPE: " + this.state.preferences[0].type);
-                }
-
-                if (list.length > 0) {
-                    console.log("price found??: " + list[0]);
-                    console.log("price found??: " + this.state.preferences[0].price);
+                    //console.log("TYPE: " + this.state.preferences[0].type);
                 }
             }).catch(error => console.log(error));
 
@@ -89,16 +84,16 @@ class TruckTable extends Component {
         let rate = this.state.preferences[0].rating;
         let type = this.state.preferences[0].type;
         let iter = 0;
-        console.log("PRICE: " + this.state.preferences[0].price);
+        //console.log("PRICE: " + this.state.preferences[0].price);
         if(this.state.preferences) {
-            console.log("Price Mult");
+            //console.log("Price Mult");
             this.state.trucks.forEach(function (truck) {
-                console.log("cost inside for: " + cost);
-                console.log("TRUCK PRICE: " + truck.price + " RATING: " + truck.rating);
+                //console.log("cost inside for: " + cost);
+                //console.log("TRUCK PRICE: " + truck.price + " RATING: " + truck.rating);
                 let multiplier = 4;
                 let constval = 3;
                 if (cost === truck.price) {
-                    console.log("ONE");
+                    //console.log("ONE");
                     constval *= multiplier;
                     multipliers.push(constval);
                 } else {
@@ -120,14 +115,14 @@ class TruckTable extends Component {
                     }
                 }
             });
-            console.log("MUL: " + multipliers);
+            //console.log("MUL: " + multipliers);
             this.state.trucks.forEach(function (truck) {
-                console.log("rating inside for: " + rate);
-                console.log("RATING: " + truck.rating);
+                //console.log("rating inside for: " + rate);
+                //console.log("RATING: " + truck.rating);
                 let multiplier = 3;
                 let constval = 5;
                 if (rate === truck.rating) {
-                    console.log("ONE");
+                    //console.log("ONE");
                     constval *= multiplier;
                     multipliers[iter] += constval;
                 } else {
@@ -158,11 +153,11 @@ class TruckTable extends Component {
             iter = 0;
             let subscriptions = [];
             for (let i = 0; i < this.state.subs.length; i++) {
-                console.log("S: " + this.state.subs);
+                //console.log("S: " + this.state.subs);
                 subscriptions.push(this.state.subs[i]);
             }
             this.state.trucks.forEach(function (truck) {
-                console.log("SUBS: " + subscriptions);
+                //console.log("SUBS: " + subscriptions);
                 if (subscriptions.includes(truck.id)) {
                     console.log("Subscribed");
                     multipliers[iter] += 10;
@@ -172,9 +167,9 @@ class TruckTable extends Component {
             iter = 0;
             type = this.state.preferences[0].type;
             this.state.trucks.forEach(function (truck) {
-                console.log("TYPE: " + truck.type);
+                //console.log("TYPE: " + truck.type);
                 if (type === truck.type) {
-                    console.log("type");
+                    //console.log("type");
                     multipliers[iter] += 5;
                 }
                 iter++;
@@ -269,7 +264,49 @@ class TruckTable extends Component {
         });
     }
 
-    getNearby(){
+    async getNearby() {
+        let table = this;
+        // Attempt to get current position, if it is got it is sent to evaluatePosition
+        await navigator.geolocation.getCurrentPosition(async function(position) {
+            await evaluatePosition(position, table.state);
+        });
+
+        // Function evaluating based on current position
+        async function evaluatePosition(position, state) {
+            // Store the key value to access MapQuest's API and the user's coordinates
+            const key = 'HvhBy6rdLPqZkmPnsEa4fMS95IDRRo2K';
+            const coords = position.coords.latitude + ',' + position.coords.longitude;
+            console.log("COORDS: " + coords);
+            await fetch('http://open.mapquestapi.com/geocoding/v1/reverse?key=' + key +
+                '&location=' + coords).then(res => res.json())
+                .then(res => {
+                    // const loc = res.results[0].locations[0];
+                    //const address = loc.street + ', ' + loc.adminArea5 + ' ' + loc.adminArea3 + ', ' + loc.postalCode;
+                    console.log("stringify: " + JSON.stringify(res));
+                    return fetch('http://localhost:8080/trucks/locations').then(res => res.json())
+                        .then(async res => {
+                            console.log("THE STR: " + JSON.stringify(res));
+                            await Promise.all(res.map(truck => {
+                                return fetch('http://open.mapquestapi.com/geocoding/v1/address?key=' + key +
+                                    '&location=' + truck.loc.trim()).then(res => res.json())
+                                    .then(res => {
+                                        const ll = res.results[0].locations[0].latLng;
+                                        return fetch('http://www.mapquestapi.com/directions/v2/route?key=' + key +
+                                            '&from=' + coords + '&to=' + ll.lat + ',' + ll.lng).then(res => res.json())
+                                            .then(res => {
+                                                state.trucks.find(t => t.id === truck.id).distance = res.route.distance;
+                                            });
+                                    });
+                            }));
+                        });
+                })
+                .then(() => {
+                    console.log("Nearby donewgelinwe weoifbeowigw eogi ieg weg iweogi wbeogibweogbw");
+                });
+        }
+    }
+
+    /*getNearby(){
         // If geolocation is supported
         if (navigator.geolocation) {
             // Attempt to get current position, if it is got it is sent to evaluatePosition
@@ -331,7 +368,7 @@ class TruckTable extends Component {
             }
             userLocReq.send();
         }
-    }
+    }*/
 
     async componentDidMount() {
         this.state.user = JSON.parse(localStorage.getItem('user'));

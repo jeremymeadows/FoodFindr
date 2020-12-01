@@ -200,35 +200,6 @@ class Trucks extends Component {
                 <NavMenu></NavMenu>
                 <h2 style={{textAlign: 'center'}}>Trucks</h2>
                 <TruckTable></TruckTable>
-                { user !== null && <div>
-                    <div style={{textAlign: 'center', marginTop: '10vh'}}>
-                        { this.state.user.owner && <div>
-                            <InputTextarea id="truckname" type="text" placeholder="Truck Name"/><br/>
-                            <InputTextarea id="truckdescription" type="text" placeholder="Truck Description"/><br/>
-                            <InputTextarea id="rating" type="text" placeholder="Rating"/><br/>
-                            <p style={{display: 'inline', color: 'red'}} id="create_truck_result"><br/></p>
-                            <Button onClick={this.createFoodTruck}>Create Food Truck</Button><br/>
-                        </div> }
-                    </div>
-                    <div style={{textAlign: 'center', marginTop: '10vh'}}>
-                        { this.state.user.owner && <div>
-                            <InputTextarea id="oldtruckname" type="text" placeholder="Truck Name"/><br/>
-                            <InputTextarea id="oldtruckdescription" type="text" placeholder="Truck Description"/><br/>
-                            <InputTextarea id="oldrating" type="text" placeholder="Rating"/><br/>
-                            <InputTextarea id="truckid" type="text" placeholder="Truck ID"/><br/>
-                            <p style={{display: 'inline', color: 'red'}} id="manage_truck_result"><br/></p>
-                            <Button onClick={this.manageTruck}>Edit Food Truck</Button><br/>
-                        </div> }
-                    </div>
-                    <div style={{textAlign: 'center', marginTop: '10vh'}}>
-                        { this.state.user.owner && <div>
-                            <InputTextarea id="truck_id" type="text" placeholder="Truck ID"/><br/>
-                            <InputTextarea id="schedule" type="text" placeholder="Truck Schedule"/><br/>
-                            <p style={{display: 'inline', color: 'red'}} id="schedule_truck_result"><br/></p>
-                            <Button onClick={this.manageSchedule}>Edit Food Truck Schedule</Button><br/>
-                        </div> }
-                    </div>
-                </div> }
             </div>
         );
     }
