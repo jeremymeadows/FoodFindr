@@ -78,9 +78,9 @@ class Dashboard extends Component {
 
     send_message() {
         var message = this.state.message;
-        var id = this.state.truck;
+        var tr_name = this.state.truck;
 
-        var owner_message = message + ';' + id;
+        var owner_message = message + ';' + tr_name;
         console.log(owner_message);
 
         const xhr = new XMLHttpRequest();
@@ -164,7 +164,7 @@ class Dashboard extends Component {
                         <Button onClick={this.get_info} label="View Profile" className="p-button-text"/>
                     </div>
                     { user.owner && <div style={{textAlign: 'center', marginTop: '20px'}}>
-                        <InputText id="truck_id_message" type="text" value={this.state.truck} onChange={(e) => this.setState({truck: e.target.value})} placeholder="Truck ID"/><br/>
+                        <InputText id="truck_id_message" type="text" value={this.state.truck} onChange={(e) => this.setState({truck: e.target.value})} placeholder="Truck Name"/><br/>
                         <p style={{display: 'inline', color: 'red'}} id="send_message_result"><br/></p>
                         <InputTextarea placeholder="Message" value={this.state.message} onChange={(e) => this.setState({message: e.target.value})} rows={1} cols={30} autoResize />
                         <br/>

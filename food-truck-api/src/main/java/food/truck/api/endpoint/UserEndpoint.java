@@ -273,10 +273,13 @@ public class UserEndpoint {
     public String sendmessage(@RequestBody String owner_message) {
         String[] fields = owner_message.split(";");
         String message = fields[0];
-        String id = fields[1];
+        String tr_name = fields[1];
 
-        logger.log(Level.INFO, "sending message " + message + " to truck " + id + " subscribers");
+        logger.log(Level.INFO, "sending message " + message + " to truck " + tr_name + " subscribers");
         try {
+            ResultSet t = Database.query("SELECT truck_id FROM trucks WHERE name LIKE '" + tr_name + "';");
+            String id = "";
+            if(t.next()) id = t.getString("truck_id");
             ResultSet r = Database.query("SELECT user_id FROM subscriptions WHERE truck_id LIKE '" + id + "';");
             ArrayList<String> recipients = new ArrayList<String>();
             // Go through every row of the result set
