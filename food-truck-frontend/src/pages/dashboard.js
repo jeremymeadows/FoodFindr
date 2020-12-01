@@ -55,14 +55,22 @@ class Dashboard extends Component {
             } else {
                 console.log(xhr.responseText)
                 //username + ';' + email_address + ';' + owner;
-                res.innerHTML = "";
+
+                var HTML = "<center><table style=\"background-color: #E5E5E5;\" border=\"0\"><tr><th>Profile</th></tr>";
+
                 for(var i = 0; i < xhr.responseText.split(';').length-1; i++) {
-                    res.innerHTML += xhr.responseText.split(';')[i]
-                        + "<br />";
+                    if(i==0) {
+                        HTML += "<tr><td>" + "Username: " + xhr.responseText.split(';')[i] + "</td></tr>";
+                    } else {
+                        HTML += "<tr><td>" + "Email: " + xhr.responseText.split(';')[i] + "</td></tr>";
+                    }
                 }
                 if (xhr.responseText.split(';')[2] === 1) {
-                    res.innerHTML += "User is an Owner" + "<br />";
+                    HTML += "<tr><td>" + "User is an Owner" + "</td></tr>";
                 }
+                HTML += "</table></center>";
+
+                res.innerHTML = HTML;
             }
         };
         xhr.send(email);
