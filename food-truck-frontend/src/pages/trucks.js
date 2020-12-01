@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Button } from 'primereact/button';
 import NavMenu from "../components/navmenu";
 import TruckTable from '../components/truckTable';
 import {InputTextarea} from "primereact/inputtextarea";
