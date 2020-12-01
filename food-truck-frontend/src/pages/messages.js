@@ -49,7 +49,7 @@ class Messages extends Component {
                 res.innerHTML = "";
                 for(var i = 0; i < xhr.responseText.split(';').length-1; i++) {
                     res.innerHTML += xhr.responseText.split(';')[i]
-                        + "<br />";
+                        + "<br /><br />";
                 }
             }
         };
@@ -90,7 +90,6 @@ class Messages extends Component {
                     console.log("could not retrieve message count");
                 } else {
                     console.log("messages found: " + xhr.responseText);
-                    //this.state.unread = xhr.response;
                 }
             }
         }
@@ -106,10 +105,6 @@ class Messages extends Component {
 
                 { user !== null && <div>
                     <h2 style={{textAlign: 'center'}}>Welcome, { user.name }!</h2>
-
-                    { user.owner && <div>
-                        <h3>My Trucks:(TODO)</h3>
-                    </div> }
 
                     <div style={{textAlign: 'center', marginTop: '20px'}}>
                         <p style={{display: 'inline', color: 'black'}} id="message_result"><br/></p>
