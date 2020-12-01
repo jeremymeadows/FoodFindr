@@ -232,12 +232,13 @@ class TruckTable extends Component {
                         <option value="rating_a">rating ▲</option>
                         <option value="dist_d">distance ▼</option>
                     </select><br/><br/>
-                    <label>Filter by: </label>
+                    { /*<label>Filter by: </label>
                     <select id="filter" defaultValue="none" onChange={this.filterTrucks}>
                         <option value="none">*todo*</option>
-                        { /* add price, rating, and distance options */ }
-                        { /* a dropdown might not be the best for this and maybe we do something else */ }
+                        { /* add price, rating, and distance options / }
+                        { /* a dropdown might not be the best for this and maybe we do something else / }
                     </select><br/><br/>
+                    */ }
                     <label>Use location? </label>
                     <input type="checkbox" id="nearby" onChange={this.enableLocation}/>
                     <p id="locationError" style={{color: 'red'}}></p>

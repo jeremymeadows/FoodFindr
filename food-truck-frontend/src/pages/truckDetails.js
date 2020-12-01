@@ -2,9 +2,9 @@ import React, { Component } from 'react';
 import NavMenu from '../components/navmenu';
 import PrimeReact from 'primereact/utils';
 import { Button } from 'primereact/button';
-import { InputText } from "primereact/inputtext";
 import { Checkbox } from 'primereact/checkbox';
-import {InputTextarea} from "primereact/inputtextarea";
+import { InputText } from "primereact/inputtext";
+import { InputTextarea } from "primereact/inputtextarea";
 import host from '../util/network.js'
 
 class TruckDetails extends Component {
