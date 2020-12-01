@@ -7,6 +7,7 @@ import { SelectButton } from 'primereact/selectbutton';
 import { Rating } from 'primereact/rating';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { InputText } from 'primereact/inputtext';
+import host from '../util/network.js'
 
 PrimeReact.ripple = true;
 
@@ -45,7 +46,7 @@ class Dashboard extends Component {
     get_info() {
         var email = this.state.user.email;
         const xhr = new XMLHttpRequest();
-        xhr.open('POST', 'http://localhost:8080/dashboard', true);
+        xhr.open('POST', host + 'dashboard', true);
 
         xhr.onloadend = function(){
             var res = document.getElementById("info_result");
@@ -72,7 +73,7 @@ class Dashboard extends Component {
     get_message() {
         var name = this.state.user.name;
         const xhr = new XMLHttpRequest();
-        xhr.open('POST', 'http://localhost:8080/dashboard/messages', true);
+        xhr.open('POST', host + 'dashboard/messages', true);
 
         xhr.onloadend = function(){
             var res = document.getElementById("message_result");
@@ -102,7 +103,7 @@ class Dashboard extends Component {
         console.log(owner_message);
 
         const xhr = new XMLHttpRequest();
-        xhr.open('PATCH', 'http://localhost:8080/dashboard/message', true);
+        xhr.open('PATCH', host + 'dashboard/message', true);
 
         xhr.onloadend = function() {
             var res = document.getElementById("send_message_result");
@@ -135,7 +136,7 @@ class Dashboard extends Component {
         var user_id = this.state.user.id;
         const xhr = new XMLHttpRequest();
 
-        xhr.open('POST', 'http://localhost:8080/dashboard/delete');
+        xhr.open('POST', host + 'dashboard/delete');
         xhr.onloadend = function() {
             var res = document.getElementById("delete_result");
             if(xhr.status == 200) {
@@ -165,7 +166,7 @@ class Dashboard extends Component {
             + "food type with " + foodtype + "\nfor user: " + id_passed);
 
         const xhr = new XMLHttpRequest();
-        xhr.open('POST', 'http://localhost:8080/dashboard/preferences', true);
+        xhr.open('POST', host + 'dashboard/preferences', true);
 
         xhr.onloadend = function() {
             var res = document.getElementById("update_preferences_result");

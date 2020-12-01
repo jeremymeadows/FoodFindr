@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import NavMenu from '../components/navmenu';
+import host from '../util/network.js'
 
 class TruckDetails extends Component {
     constructor() {
@@ -23,7 +24,7 @@ class TruckDetails extends Component {
             }
         }
 
-        await fetch('http://localhost:8080/subscribe', options)
+        await fetch(host + 'subscribe', options)
             .then(res => this.state.truck.sub = true)
             .then(() => this.forceUpdate());
     }
@@ -37,7 +38,7 @@ class TruckDetails extends Component {
             }
         }
 
-        await fetch('http://localhost:8080/unsubscribe', options)
+        await fetch(host + 'unsubscribe', options)
             .then(res => this.state.truck.sub = false)
             .then(() => this.forceUpdate());
     }
@@ -45,12 +46,12 @@ class TruckDetails extends Component {
     async componentDidMount() {
         this.state.user = JSON.parse(localStorage.getItem('user'));
 
-        await fetch('http://localhost:8080/truck/' + window.location.href.split('?')[1].split('=')[1])
+        await fetch(host + 'truck/' + window.location.href.split('?')[1].split('=')[1])
             .then(res => res.json())
             .then(json => this.state.truck = json);
 
         if (this.state.user !== null) {
-            await fetch('http://localhost:8080/user/' + this.state.user.id)
+            await fetch(host + 'user/' + this.state.user.id)
                 .then(res => res.json())
                 .then(json => this.state.truck.sub = json.includes(this.state.truck.id));
         }
@@ -62,13 +63,12 @@ class TruckDetails extends Component {
         var user_id = this.state.user.id;
         var truck_id = this.state.truck.id;
         var rating = document.getElementById("rating").value;
-        var review = document.getElementById("review").value;
+        var review = btoa(document.getElementById("review").value);
 
         var review_cred = user_id + ';' + truck_id + ';' + rating + ';' + review;
-        console.log(review_cred);
 
         const xhr = new XMLHttpRequest();
-        xhr.open('POST', 'http://localhost:8080/trucks/review', true);
+        xhr.open('POST', host + 'trucks/review', true);
 
         xhr.onloadend = function() {
             var res = document.getElementById("review_result");
@@ -102,7 +102,7 @@ class TruckDetails extends Component {
                         </div> }
                         { !truck.sub && <div style={{textAlign: 'center'}}>
                             <button onClick={this.sub}>subscribe</button>
-                        </div>}
+                        </div> }
                     </span> }
 
                     <p>Todo:

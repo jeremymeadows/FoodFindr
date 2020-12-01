@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import host from '../util/network.js'
 
 class TruckTable extends Component {
 
@@ -26,11 +27,11 @@ class TruckTable extends Component {
 
         console.log("getting trucks");
 
-        await fetch('http://localhost:8080/trucks')
+        await fetch(host + 'trucks')
             .then(res => res.json())
             .then(trucks => this.state.trucks = trucks);
 
-       /* await fetch('http://localhost:8080/trucks', {mode: 'no-cors'})
+       /* await fetch(host + 'trucks', {mode: 'no-cors'})
             .then(res => {console.log(res);return res.json();})
             .then(trucks => this.state.trucks = trucks);*/
 
@@ -41,7 +42,7 @@ class TruckTable extends Component {
 
 
         console.log("getting preferences");
-        await fetch('http://localhost:8080/dashboard/getpreferences', fetchData)
+        await fetch(host + 'dashboard/getpreferences', fetchData)
             .then(res => {console.log(res);return res.json();})
             .then(function(preferences) {
                 console.log(preferences);
@@ -83,7 +84,7 @@ class TruckTable extends Component {
 
     async getSubscriptions() {
         if (this.state.user !== null) {
-            await fetch('http://localhost:8080/user/' + this.state.user.id)
+            await fetch(host + 'user/' + this.state.user.id)
                 .then(res => res.json())
                 .then(subs => this.state.subs = subs);
         }
@@ -110,11 +111,11 @@ class TruckTable extends Component {
         }
 
         if (target.checked) {
-            await fetch('http://localhost:8080/subscribe', options)
+            await fetch(host + 'subscribe', options)
                 .then(res => this.state.subs.push(target.id))
                 .then(() => this.forceUpdate());
         } else {
-            await fetch('http://localhost:8080/unsubscribe', options)
+            await fetch(host + 'unsubscribe', options)
                 .then(res => this.state.subs = this.state.subs.filter(function(id) {return id !== target.id}))
                 .then(() => this.forceUpdate());
         }
@@ -176,7 +177,7 @@ class TruckTable extends Component {
 
                 // Launch an XMLHttp request which returns every truck whose location isn't null
                 const truckLocReq = new XMLHttpRequest();
-                truckLocReq.open('GET', 'http://localhost:8080/trucks/locations', true);
+                truckLocReq.open('GET', host + 'trucks/locations', true);
 
                 truckLocReq.onloadend = function(){
                     // Get the pairs of truck id's and addresses returned

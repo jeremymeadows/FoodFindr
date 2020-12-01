@@ -32,7 +32,7 @@ class Register extends Component {
         console.log(login_cred);
 
         const xhr = new XMLHttpRequest();
-        xhr.open('POST', 'http://localhost:8080/register', true);
+        xhr.open('POST', host + 'register', true);
 
         xhr.onloadend = function() {
             var res = document.getElementById("login_result");

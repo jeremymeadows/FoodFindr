@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import NavMenu from "../components/navmenu";
 import TruckTable from '../components/truckTable';
+import host from '../util/network.js'
 
 class Trucks extends Component {
     constructor() {
@@ -31,7 +32,7 @@ class Trucks extends Component {
         console.log(truck_cred);
 
         const xhr = new XMLHttpRequest();
-        xhr.open('PUT', 'http://localhost:8080/trucks/create', true);
+        xhr.open('PUT', host + 'trucks/create', true);
 
         xhr.onloadend = function () {
             var res = document.getElementById("create_truck_result");
@@ -71,7 +72,7 @@ class Trucks extends Component {
         console.log(truck_cred);
 
         const xhr = new XMLHttpRequest();
-        xhr.open('POST', 'http://localhost:8080/trucks/manage', true);
+        xhr.open('POST', host + 'trucks/manage', true);
 
         xhr.onloadend = function () {
             var res = document.getElementById("manage_truck_result");
@@ -108,7 +109,7 @@ class Trucks extends Component {
         console.log(truck_cred);
 
         const xhr = new XMLHttpRequest();
-        xhr.open('POST', 'http://localhost:8080/trucks/schedule', true);
+        xhr.open('POST', host + 'trucks/schedule', true);
 
         xhr.onloadend = function () {
             var res = document.getElementById("schedule_truck_result");

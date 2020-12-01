@@ -30,6 +30,8 @@ CREATE TABLE `trucks` (
   `description` text NOT NULL,
   `ratings` int unsigned DEFAULT 0,
   `rating` float unsigned DEFAULT 0,
+  `price` int unsigned DEFAULT 1,
+  `type` varchar(20) DEFAULT NULL,
   `menu` text DEFAULT NULL,
   `schedule` blob DEFAULT NULL,
   `location` text DEFAULT NULL,

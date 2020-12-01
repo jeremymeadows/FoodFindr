@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Link from 'next/link';
+import host from '../util/network.js'
 
 class TruckTable extends Component {
     constructor(props) {
@@ -25,7 +26,7 @@ class TruckTable extends Component {
     }
 
     async getTrucks() {
-        await fetch('http://localhost:8080/trucks')
+        await fetch(host + 'trucks')
             .then(res => res.json())
             .then(trucks => {
                 if (trucks.length > 0) {
@@ -40,7 +41,7 @@ class TruckTable extends Component {
 
     async getSubscriptions() {
         if (this.state.user !== null) {
-            await fetch('http://localhost:8080/user/' + this.state.user.id)
+            await fetch(host + 'user/' + this.state.user.id)
                 .then(res => res.json())
                 .then(subs => this.state.subs = subs);
         }
@@ -67,11 +68,11 @@ class TruckTable extends Component {
         };
 
         if (target.checked) {
-            await fetch('http://localhost:8080/subscribe', options)
+            await fetch(host + 'subscribe', options)
                 .then(res => this.state.subs.push(target.id))
                 .then(() => this.forceUpdate());
         } else {
-            await fetch('http://localhost:8080/unsubscribe', options)
+            await fetch(host + 'unsubscribe', options)
                 .then(res => this.state.subs = this.state.subs.filter(function(id) { return id !== target.id }))
                 .then(() => this.forceUpdate());
         }
@@ -124,7 +125,7 @@ class TruckTable extends Component {
                     // const loc = res.results[0].locations[0];
                     //const address = loc.street + ', ' + loc.adminArea5 + ' ' + loc.adminArea3 + ', ' + loc.postalCode;
 
-                    return fetch('http://localhost:8080/trucks/locations').then(res => res.json())
+                    return fetch(host + 'trucks/locations').then(res => res.json())
                         .then(async res => {
                             await Promise.all(res.map(truck => {
                                 return fetch('http://open.mapquestapi.com/geocoding/v1/address?key=' + key +
