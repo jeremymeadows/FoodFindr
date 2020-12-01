@@ -29,7 +29,7 @@ class TruckTable extends Component {
             });
         let ownerships = [];
         let fetchData = {method: 'post', body: this.state.user.id};
-        /*await fetch(host + '/dashboard/ownerships', fetchData)
+        /*await fetch(host + '/dashboard/getownerships', fetchData)
             .then(res => res.json())
             .then(owner => {
                 let temp = JSON.stringify(owner);
