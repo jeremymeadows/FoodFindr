@@ -207,21 +207,17 @@ class Dashboard extends Component {
                         <Button onClick={this.get_info} label="View Profile" className="p-button-text"/>
                     </div>
                     { user.owner && <div style={{textAlign: 'center', marginTop: '20px'}}>
+                        <h2>Send Messages to My Trucks</h2>
                         <InputText id="truck_id_message" type="text" value={this.state.truck} onChange={(e) => this.setState({truck: e.target.value})} placeholder="Truck ID"/><br/>
                         <p style={{display: 'inline', color: 'red'}} id="send_message_result"><br/></p>
                         <InputTextarea placeholder="Message" value={this.state.message} onChange={(e) => this.setState({message: e.target.value})} rows={1} cols={30} autoResize />
                         <br/>
                         <Button className="p-button-text" onClick={this.send_message}>Send Message</Button>
                     </div> }
-                    { !user.owner && <div className="card" style={{textAlign: 'center', marginTop: '20px'}}>
-                        <p style={{display: 'inline', color: 'red', marginTop: '10px'}} id="pref_result"><br/></p>
-                        <SelectButton style={{marginTop: '10px'}} value={this.state.price} optionLabel="name" options={this.priceSelect} onChange={(e) => this.setState({price: e.value })}/>
-                        <Rating style={{marginTop: '10px'}} value={this.state.rtg} onChange={(e) => this.setState({rtg: e.value})}/>
-                        <InputText style={{marginTop: '10px'}} placeholder="Favorite Food" id="food_type" value={this.state.food} onChange={(e) => this.setState({food: e.target.value})} />
-                        <p style={{display: 'inline', color: 'red'}} id="update_preferences_result"><br/></p>
-                        <Button className="p-button-text" style={{marginTop: '10px'}} onClick={this.update_preferences}>Update Preferences</Button><br/><br/>
+                    <div className="card" style={{textAlign: 'center', marginTop: '20px'}}>
+                        <h2>Recommended Trucks</h2>
                         <RecTrucks></RecTrucks>
-                    </div> }
+                    </div>
                 </div> }
             </div>
         );
