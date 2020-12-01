@@ -28,8 +28,9 @@ public class TruckEndpoint {
                 String description = r.getString("description");
                 Float rating = r.getFloat("rating");
                 Float price = r.getFloat("price");
+                String type = r.getString("type");
 
-                Truck t = new Truck(id, name, description, rating, price);
+                Truck t = new Truck(id, name, description, rating, price, type);
 
                 logger.log(Level.INFO, t.toString());
                 return t.toString();
@@ -53,8 +54,9 @@ public class TruckEndpoint {
                 String description = r.getString("description");
                 Float rating = r.getFloat("rating");
                 Float price = r.getFloat("price");
+                String type = r.getString("type");
 
-                Truck t = new Truck(id, name, description, rating, price);
+                Truck t = new Truck(id, name, description, rating, price, type);
                 logger.log(Level.INFO, t.toString());
                 json = json + t.toString() + ",";
             }
@@ -153,8 +155,9 @@ public class TruckEndpoint {
                     Float rating = r.getFloat("rating");
                     String id = r.getString("truck_id");
                     Float price = r.getFloat("price");
+                    String type = r.getString("type");
 
-                    Truck t = new Truck(id, name, description, rating, price);
+                    Truck t = new Truck(id, name, description, rating, price, type);
 
                     logger.log(Level.INFO, t.toString());
                     json = json + t.toString() + ",";
@@ -168,8 +171,9 @@ public class TruckEndpoint {
                     Float rating = r.getFloat("rating");
                     String id = r.getString("truck_id");
                     Float price = r.getFloat("price");
+                    String type = r.getString("type");
 
-                    Truck t = new Truck(id, name, description, rating, price);
+                    Truck t = new Truck(id, name, description, rating, price, type);
 
                     logger.log(Level.INFO, t.toString());
                     json = json + t.toString() + ",";

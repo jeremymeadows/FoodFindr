@@ -172,7 +172,7 @@ class TruckTable extends Component {
             iter = 0;
             type = this.state.preferences[0].type;
             this.state.trucks.forEach(function (truck) {
-                console.log("TYPE: " + type);
+                console.log("TYPE: " + truck.type);
                 if (type === truck.type) {
                     console.log("type");
                     multipliers[iter] += 5;
@@ -251,7 +251,7 @@ class TruckTable extends Component {
 
     renderTableData() {
         return this.state.trucks.map((truck) => {
-            const { id, name, description, rating, price } = truck;
+            const { id, name, description, rating, price, type } = truck;
             const url = 'truckDetails?id=' + id;
 
             return (
@@ -260,6 +260,7 @@ class TruckTable extends Component {
                     <td><a href={url}>{description}</a></td>
                     <td><a href={url}>{rating}</a></td>
                     <td><a href={url}>{price}</a></td>
+                    <td><a href={url}>{type}</a></td>
                     {this.state.user !== null && <td>
                         <input type="checkbox" id={id} onChange={this.sub} checked={this.state.subs.includes(id)}/>
                     </td> }

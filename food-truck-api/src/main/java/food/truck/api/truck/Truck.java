@@ -6,13 +6,15 @@ public class Truck {
     private String description;
     private Float rating;
     private Float price;
+    private String type;
 
-    public Truck(String id, String name, String description, Float rating, Float price) {
+    public Truck(String id, String name, String description, Float rating, Float price, String type) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.rating = rating;
         this.price = price;
+        this.type = type;
     }
 
     public String getId() {
@@ -36,7 +38,8 @@ public class Truck {
             "\"name\":\"" + this.name + "\"," +
             "\"description\":\"" + this.description + "\"," +
             "\"rating\":" + this.rating + "," +
-                "\"price\":" + this.price + "}"
+                "\"price\":" + this.price + "," +
+                "\"type\":\"" + this.type +"\"}"
         );
     }
 }
