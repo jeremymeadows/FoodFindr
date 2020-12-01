@@ -9,7 +9,7 @@ class TruckTable extends Component {
             user: null,
             loading: true,
             trucks: [
-                { id: '', name: '', description: '', rating: 0, subscribed: false, price: 0 }
+                { id: '', name: '', description: '', rating: 0, subscribed: false, price: 0, type: '' }
             ],
             preferences: [
                 {price: 0, rating: 0, type: ''}
@@ -166,6 +166,16 @@ class TruckTable extends Component {
                 if (subscriptions.includes(truck.id)) {
                     console.log("Subscribed");
                     multipliers[iter] += 10;
+                }
+                iter++;
+            });
+            iter = 0;
+            type = this.state.preferences[0].type;
+            this.state.trucks.forEach(function (truck) {
+                console.log("TYPE: " + type);
+                if (type === truck.type) {
+                    console.log("type");
+                    multipliers[iter] += 5;
                 }
                 iter++;
             });
