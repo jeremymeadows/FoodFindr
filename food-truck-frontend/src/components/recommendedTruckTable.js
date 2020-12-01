@@ -9,10 +9,10 @@ class TruckTable extends Component {
             user: null,
             loading: true,
             trucks: [
-                { id: '', name: '', description: '', rating: 0, subscribed: false, price: '' }
+                { id: '', name: '', description: '', rating: 0, subscribed: false, price: 0 }
             ],
             preferences: [
-                {price: '', rating: '', type: ''}
+                {price: 0, rating: 0, type: ''}
             ],
             subs: []
 
@@ -22,36 +22,7 @@ class TruckTable extends Component {
         this.sub = this.sub.bind(this);
     }
 
-    /*async getPreferences() {
-        console.log("XML ");
-        let id = this.state.user.id
-        const xhr = new XMLHttpRequest();
-        xhr.open('POST', 'http://localhost:8080/dashboard/getpreferences', true);
-
-        xhr.onloadend = function(){
-            console.log("XML2 ");
-            var res = document.getElementById("lotsofstuff");
-            if(xhr.responseText == "") {
-                console.log("No info to display");
-
-            } else {
-                console.log("GOT IT: " + xhr.responseText)
-                //username + ';' + email_address + ';' + owner;
-
-                for(var i = 0; i < xhr.responseText.split(';').length-1; i++) {
-                    this.state.preferences.price = xhr.responseText.split(';')[i];
-                }
-
-            }
-        };
-        xhr.send(id);
-    }*/
-
     async getTrucks() {
-
-        /*this.getPreferences().then(() => {
-            this.forceUpdate();
-        });*/
 
         console.log("getting trucks");
 
@@ -65,15 +36,7 @@ class TruckTable extends Component {
             });
         console.log("OUT");
 
-       /* await fetch('http://localhost:8080/trucks', {mode: 'no-cors'})
-            .then(res => {console.log(res);return res.json();})
-            .then(trucks => this.state.trucks = trucks);*/
-
-        //{console.log(res);return res.json();}
-
         let fetchData = {method: 'post', body: this.state.user.id};
-
-
 
         console.log("getting preferences");
         await fetch('http://localhost:8080/dashboard/getpreferences', fetchData)
@@ -86,42 +49,40 @@ class TruckTable extends Component {
                 if (list.length === 3) {
                     let size = list[0].length - 1;
                     console.log("PR:" + list[0][size] + ":THIS");
-                    this.state.preferences[0].price = list[0][size];
+                    this.state.preferences[0].price = parseInt(list[0][size]);
                     console.log("PR:" + this.state.preferences[0].price + ":THIS");
                     size = list[1].length - 1;
                     console.log("B: " + list[1][size]);
-                    this.state.preferences[0].rating = list[1][size];
+                    console.log("B: " + list[2]);
+                    this.state.preferences[0].rating = parseInt(list[1][size]);
+                    let i = 0;
+                    while (list[2][i] != ':') {
+                        i++;
+                    }
+                    i = i + 2;
+                    size = list[2].length - 3;
+                    this.state.preferences[0].type = list[2].substring(i, size);
+                    console.log("TYPE: " + this.state.preferences[0].type);
                 }
 
                 if (list.length > 0) {
                     console.log("price found??: " + list[0]);
-                    //this.state.preferences[0].price = 1;
                     console.log("price found??: " + this.state.preferences[0].price);
                 }
-                /*console.log(preferences);
-                console.log("Going to split");
-                //let list = preferences.split(';');
-                let str = preferences
-                console.log("Split pref " + str);
-                this.state.preferences[0] = str[0];
-                //this.state.preferences[1] = str[1];
-                //this.state.preferences[2] = list[2];
-                console.log("Made it!");*/
             }).catch(error => console.log(error));
 
         console.log("Rec algorithm ");
         let temptrucks = [];
         let cost = this.state.preferences[0].price;
+        let rate = this.state.preferences[0].rating;
+        let type = this.state.preferences[0].type;
         console.log("PRICE: " + this.state.preferences[0].price);
         if(this.state.preferences) {
             console.log("ALG");
             this.state.trucks.forEach(function (truck) {
-                let truckPrice = truck.price;
-                if (cost === truckPrice) {
-                    console.log("THEYRE THE SAME");
-                }
+                console.log("cost inside for: " + cost);
                 console.log("TRUCK PRICE: " + truck.price + " RATING: " + truck.rating);
-                if (cost === truck.price && this.state.preferences[0].rating === truck.rating) {
+                if (cost === truck.price && rate === truck.rating) {
                     console.log("ONE");
                     temptrucks.unshift(truck);
                 } else if (cost === truck.price) {
