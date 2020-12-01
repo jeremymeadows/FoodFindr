@@ -11,7 +11,7 @@ class TruckTable extends Component {
             loading: true,
             updateUsingNearby: false,
             trucks: [
-                { id: '', name: '', description: '', rating: 0, price: -1,  type: '', distance: -1, subscribed: false }
+                { id: '', name: '', description: '', rating: 0, type: '', price: -1, distance: -1, subscribed: false }
             ],
             subs: [],
             search: '',
@@ -107,7 +107,7 @@ class TruckTable extends Component {
 
     renderTableData() {
         return this.state.trucks.map((truck) => {
-            const { id, name, description, rating, price, type } = truck;
+            const { id, name, description, rating, type, price } = truck;
             const url = 'truckDetails?id=' + id;
 
             return (
@@ -115,12 +115,12 @@ class TruckTable extends Component {
                     <td><a href={url}>{name}</a></td>
                     <td><a href={url}>{description}</a></td>
                     <td><a href={url}>{rating}</a></td>
-                    <td><a href={url}>{price}</a></td>
                     { type !== 'null' &&
-                    <td>{type}</td>
+                        <td>{type}</td>
                     }{ type === 'null' &&
-                <td>n/a</td>
-                }
+                        <td>n/a</td>
+                    }
+                    <td>{'$'.repeat(price)}</td>
                     {this.state.user !== null && <td>
                         <input type="checkbox" id={id} onChange={this.sub} checked={this.state.subs.includes(id)}/>
                     </td> }
