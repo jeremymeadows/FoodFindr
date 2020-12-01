@@ -11,9 +11,7 @@ class TruckTable extends Component {
             loading: true,
             updateUsingNearby: false,
             trucks: [
-
                 { id: '', name: '', description: '', rating: 0, distance: -1, subscribed: false, price: '' }
-
             ],
             subs: [],
             search: '',

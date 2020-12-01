@@ -45,18 +45,11 @@ public class TruckEndpoint {
                 String name = r.getString("name");
                 String description = r.getString("description");
                 Float rating = r.getFloat("rating");
-<<<<<<< HEAD
                 Float price = r.getFloat("price");
                 String type = r.getString("type");
                 String menu = r.getString("menu");
+
                 Truck t = new Truck(id, name, description, rating, price, type, menu);
-
-======
-                Float price = r.getFloat("price");
-                String type = r.getString("type");
-
-                Truck t = new Truck(id, name, description, rating, price, type);
->>>>>>> 03240db7e470139f1a7f612e438d4ec486659a3c
 
                 logger.log(Level.INFO, t.toString());
                 return t.toString();
