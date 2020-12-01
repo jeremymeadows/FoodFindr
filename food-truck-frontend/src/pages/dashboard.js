@@ -22,11 +22,15 @@ class Dashboard extends Component {
             food: null,
             message: null,
             truck: null,
-            unread: 0
+            unread: 0,
+            isOwner: 0
         }
         this.get_info = this.get_info.bind(this);
         this.send_message = this.send_message.bind(this);
         this.update_preferences = this.update_preferences.bind(this);
+        this.createFoodTruck = this.createFoodTruck.bind(this);
+        this.manageTruck = this.manageTruck.bind(this);
+        this.manageSchedule = this.manageSchedule.bind(this);
         this.priceSelect = [
             {name: '$', value: 1},
             {name: '$$', value: 2},
@@ -156,6 +160,121 @@ class Dashboard extends Component {
         xhr.send(user_id);
     }
 
+    createFoodTruck() {
+        var name = document.getElementById("truckname").value;
+        var description = document.getElementById("truckdescription").value;
+        var rating = document.getElementById("rating").value;
+
+        var truck_cred = name + ';' + description + ';' + rating;
+        console.log(truck_cred);
+
+        const xhr = new XMLHttpRequest();
+        xhr.open('PUT', host + 'trucks/create', true);
+
+        xhr.onloadend = function () {
+            var res = document.getElementById("create_truck_result");
+            //Since POST return for create is 201, wouldn't we want the status to be 201?
+            console.log(xhr.status);
+            if (xhr.status === 200) {
+                if (xhr.responseText === "") {
+                    console.log("could not create truck");
+                    res.style = "color: red; display: block;";
+                    res.innerHTML = "could not create truck";
+                } else {
+                    console.log("create truck success");
+                    res.style = "color: green, display: inline;";
+                    res.innerHTML = xhr.responseText + " was created successfully";
+                    window.location = "../trucks";
+                }
+            } else {
+                if (res === null) {
+                    console.log("Res returned NULL");
+                } else {
+                    console.log("could not connect to server");
+                    res.style = "color: red; display: block;";
+                    res.innerHTML = "could not connect to server";
+                }
+            }
+        };
+        xhr.send(truck_cred);
+    };
+
+    manageTruck() {
+        var name = document.getElementById("oldtruckname").value;
+        var description = document.getElementById("oldtruckdescription").value;
+        var rating = document.getElementById("oldrating").value;
+        var id = document.getElementById("truckid").value;
+
+        var truck_cred = name + ';' + description + ';' + rating + ';' + id;
+        console.log(truck_cred);
+
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', host + 'trucks/manage', true);
+
+        xhr.onloadend = function () {
+            var res = document.getElementById("manage_truck_result");
+            //Since POST return for create is 201, wouldn't we want the status to be 201?
+            if (xhr.status === 200) {
+                if (xhr.responseText === "") {
+                    console.log("could not update truck");
+                    res.style = "color: red; display: block;";
+                    res.innerHTML = "could not update truck";
+                } else {
+                    console.log("update truck success");
+                    res.style = "color: green, display: inline;";
+                    res.innerHTML = xhr.responseText + " was updated successfully";
+                    window.location = "../trucks";
+                }
+            } else {
+                if (res === null) {
+                    console.log("Res returned NULL");
+                } else {
+                    console.log("could not connect to server");
+                    res.style = "color: red; display: block;";
+                    res.innerHTML = "could not connect to server";
+                }
+            }
+        };
+        xhr.send(truck_cred);
+    };
+
+    manageSchedule() {
+        var id = document.getElementById("truck_id").value;
+        var schedule = document.getElementById("schedule").value;
+
+        var truck_cred = id + ';' + schedule;
+        console.log(truck_cred);
+
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', host + 'trucks/schedule', true);
+
+        xhr.onloadend = function () {
+            var res = document.getElementById("schedule_truck_result");
+            //Since POST return for create is 201, wouldn't we want the status to be 201?
+            if (xhr.status === 200) {
+                if (xhr.responseText === "") {
+                    console.log("could not update truck schedule");
+                    res.style = "color: red; display: block;";
+                    res.innerHTML = "could not update truck schedule";
+                } else {
+                    console.log("update truck success");
+                    res.style = "color: green, display: inline;";
+                    res.innerHTML = xhr.responseText + " was updated successfully";
+                    window.location = "../trucks";
+                }
+            } else {
+                if (res === null) {
+                    console.log("Res returned NULL");
+                } else {
+                    console.log("could not connect to server");
+                    res.style = "color: red; display: block;";
+                    res.innerHTML = "could not connect to server";
+                }
+            }
+        };
+        xhr.send(truck_cred);
+    };
+
     update_preferences(){
         var id_passed = this.state.user.id;
         var price = this.state.price;
@@ -214,6 +333,36 @@ class Dashboard extends Component {
                         <br/>
                         <Button className="p-button-text" onClick={this.send_message}>Send Message</Button>
                     </div> }
+
+                    <div style={{textAlign: 'center', marginTop: '10vh'}}>
+                        <h2>Manage My Trucks</h2>
+                        { this.state.user.owner && <div>
+                            <InputTextarea id="truckname" type="text" placeholder="Truck Name"/><br/>
+                            <InputTextarea id="truckdescription" type="text" placeholder="Truck Description"/><br/>
+                            <InputTextarea id="rating" type="text" placeholder="Rating"/><br/>
+                            <p style={{display: 'inline', color: 'red'}} id="create_truck_result"><br/></p>
+                            <Button onClick={this.createFoodTruck}>Create Food Truck</Button><br/>
+                        </div> }
+                    </div>
+                    <div style={{textAlign: 'center', marginTop: '10vh'}}>
+                        { this.state.user.owner && <div>
+                            <InputTextarea id="oldtruckname" type="text" placeholder="Truck Name"/><br/>
+                            <InputTextarea id="oldtruckdescription" type="text" placeholder="Truck Description"/><br/>
+                            <InputTextarea id="oldrating" type="text" placeholder="Rating"/><br/>
+                            <InputTextarea id="truckid" type="text" placeholder="Truck ID"/><br/>
+                            <p style={{display: 'inline', color: 'red'}} id="manage_truck_result"><br/></p>
+                            <Button onClick={this.manageTruck}>Edit Food Truck</Button><br/>
+                        </div> }
+                    </div>
+                    <div style={{textAlign: 'center', marginTop: '10vh'}}>
+                        { this.state.user.owner && <div>
+                            <InputTextarea id="truck_id" type="text" placeholder="Truck ID"/><br/>
+                            <InputTextarea id="schedule" type="text" placeholder="Truck Schedule"/><br/>
+                            <p style={{display: 'inline', color: 'red'}} id="schedule_truck_result"><br/></p>
+                            <Button onClick={this.manageSchedule}>Edit Food Truck Schedule</Button><br/>
+                        </div> }
+                    </div>
+
                     <div className="card" style={{textAlign: 'center', marginTop: '20px'}}>
                         <h2>Recommended Trucks</h2>
                         <RecTrucks></RecTrucks>

@@ -11,7 +11,7 @@ class TruckTable extends Component {
             loading: true,
             updateUsingNearby: false,
             trucks: [
-                { id: '', name: '', description: '', rating: 0, type: '', price: -1, distance: -1, subscribed: false }
+                { id: '', name: '', description: '', rating: 0, price: -1,  type: '', distance: -1, subscribed: false }
             ],
             subs: [],
             search: '',
@@ -79,7 +79,7 @@ class TruckTable extends Component {
 
     renderTableData() {
         return this.state.trucks.map((truck) => {
-            const { id, name, description, rating, type, price, distance } = truck;
+            const { id, name, description, rating, price, type, distance } = truck;
             const url = 'truckDetails?id=' + id;
 
             if (name.toLowerCase().includes(this.state.search.toLowerCase())) {
@@ -88,13 +88,13 @@ class TruckTable extends Component {
                         <td style={{textAlign: 'center'}}>{name}</td>
                         <td>{description}</td>
                         <td>{rating}</td>
+
+                        <td>{price}</td>
                         { type !== 'null' &&
                             <td>{type}</td>
-                        }{ type === 'null' &&
-                            <td>n/a</td>
+                            }{ type === 'null' &&
+                        <td>n/a</td>
                         }
-                        <td>{price}</td>
-
                         { this.state.updateUsingNearby && <td>
                             { distance > 0 &&
                                 <a>{distance}</a>
