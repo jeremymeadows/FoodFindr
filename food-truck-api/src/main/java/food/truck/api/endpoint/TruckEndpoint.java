@@ -19,6 +19,24 @@ import lombok.extern.log4j.Log4j2;
 @RestController
 public class TruckEndpoint {
     @CrossOrigin(origins="*")
+    @GetMapping("/truck/location/{id}")
+    public String findTruckLocationById(@PathVariable String id) {
+        try {
+            ResultSet r = Database.query("SELECT location FROM trucks WHERE truck_id='" + id + "';");
+            if (r.next()) {
+                String locationReceived = r.getString("location");
+
+                logger.log(Level.INFO, "Location for truck " + id + ": " + locationReceived);
+                return locationReceived;
+            }
+        } catch (SQLException ex) {
+            logger.log(Level.WARNING, "user #" + id + " not found");
+        }
+
+        return "truck not found";
+    }
+
+    @CrossOrigin(origins="*")
     @GetMapping("/truck/{id}")
     public String findTruckById(@PathVariable String id) {
         try {
