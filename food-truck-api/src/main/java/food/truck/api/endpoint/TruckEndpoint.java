@@ -46,7 +46,7 @@ public class TruckEndpoint {
                 String description = r.getString("description");
                 Float rating = r.getFloat("rating");
                 String type = r.getString("type");
-                Float price = r.getFloat("price");
+                Integer price = r.getInt("price");
                 String menu = r.getString("menu");
 
                 Truck t = new Truck(id, name, description, rating, type, price, menu);
@@ -73,7 +73,7 @@ public class TruckEndpoint {
                 String description = r.getString("description");
                 Float rating = r.getFloat("rating");
                 String type = r.getString("type");
-                Float price = r.getFloat("price");
+                Integer price = r.getInt("price");
 
                 Truck t = new Truck(id, name, description, rating, type, price);
                 logger.log(Level.INFO, t.toString());
@@ -183,7 +183,7 @@ public class TruckEndpoint {
                     Float rating = r.getFloat("rating");
                     String id = r.getString("truck_id");
                     String type = r.getString("type");
-                    Float price = r.getFloat("price");
+                    Integer price = r.getInt("price");
 
                     Truck t = new Truck(id, name, description, rating, type, price);
 
@@ -199,7 +199,7 @@ public class TruckEndpoint {
                     Float rating = r.getFloat("rating");
                     String id = r.getString("truck_id");
                     String type = r.getString("type");
-                    Float price = r.getFloat("price");
+                    Integer price = r.getInt("price");
 
                     Truck t = new Truck(id, name, description, rating, type, price);
 
