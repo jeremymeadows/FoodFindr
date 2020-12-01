@@ -46,7 +46,7 @@ class Messages extends Component {
                 var owner = xhr.responseText.split(';');
                 console.log(xhr.responseText)
 
-                var HTML = "<center><table class=\"center\" border=\"1\"><tr><th>Message</th></tr>";
+                var HTML = "<center><table style=\"background-color: #E5E5E5;\" border=\"0\"><tr><th>Messages</th></tr>";
                 for(var i = 0; i < xhr.responseText.split(';').length-1; i++) {
                     HTML += "<tr><td>" + xhr.responseText.split(';')[i] + "</td></tr>";
                 }

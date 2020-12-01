@@ -163,12 +163,12 @@ class Dashboard extends Component {
                         <Button className="p-button-text" onClick={this.send_message}>Send Message</Button>
                     </div> }
                     { !user.owner && <div className="card" style={{textAlign: 'center', marginTop: '20px'}}>
-                        <p style={{display: 'inline', color: 'red'}} id="pref_result"><br/></p>
-                        <SelectButton value={this.state.price} optionLabel="name" options={this.priceSelect} onChange={(e) => this.setState({price: e.value })}/>
-                        <Rating value={this.state.rtg} onChange={(e) => this.setState({rtg: e.value})}/>
-                        <InputText placeholder="Favorite Food" id="food_type" value={this.state.food} onChange={(e) => this.setState({food: e.target.value})} />
+                        <p style={{display: 'inline', color: 'red', marginTop: '10px'}} id="pref_result"><br/></p>
+                        <SelectButton style={{marginTop: '10px'}} value={this.state.price} optionLabel="name" options={this.priceSelect} onChange={(e) => this.setState({price: e.value })}/>
+                        <Rating style={{marginTop: '10px'}} value={this.state.rtg} onChange={(e) => this.setState({rtg: e.value})}/>
+                        <InputText style={{marginTop: '10px'}} placeholder="Favorite Food" id="food_type" value={this.state.food} onChange={(e) => this.setState({food: e.target.value})} />
                         <p style={{display: 'inline', color: 'red'}} id="update_preferences_result"><br/></p>
-                        <Button className="p-button-text" onClick={this.update_preferences}>Update Preferences</Button><br/><br/>
+                        <Button className="p-button-text" style={{marginTop: '10px'}} onClick={this.update_preferences}>Update Preferences</Button><br/><br/>
                         <RecTrucks></RecTrucks>
                     </div> }
                 </div> }
